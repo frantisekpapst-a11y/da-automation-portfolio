@@ -1,0 +1,4 @@
+visit_id;branch_code;visit_date;customer_id;service_type;duration_minutes;status
+PLZ-20260912-001;PLZ;2026-09-12;1001;Consultation;25;completed
+PLZ-20260912-002;PLZ;2026-09-12;1002;Complaint;40;completed
+PLZ-20260912-003;PLZ;2026-09-12;1003;Consultation;15;completed

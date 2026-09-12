@@ -1,0 +1,4 @@
+visit_id;branch_code;visit_date;customer_id;service_type;duration_minutes;status
+BRN-20260912-001;BRN;2026-09-12;3001;Consultation;35;completed
+BRN-20260912-002;BRN;2026-09-12;3002;Complaint;45;completed
+BRN-20260912-003;BRN;2026-09-12;3003;Consultation;20;completed

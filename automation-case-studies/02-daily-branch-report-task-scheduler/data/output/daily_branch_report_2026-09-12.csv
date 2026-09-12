@@ -1,0 +1,10 @@
+﻿visit_id;branch_code;visit_date;customer_id;service_type;duration_minutes;status;source_file
+BRN-20260912-001;BRN;2026-09-12;3001;Consultation;35;completed;branch_visits_2026-09-12_brno_v01.csv
+BRN-20260912-002;BRN;2026-09-12;3002;Complaint;45;completed;branch_visits_2026-09-12_brno_v01.csv
+BRN-20260912-003;BRN;2026-09-12;3003;Consultation;20;completed;branch_visits_2026-09-12_brno_v01.csv
+PLZ-20260912-001;PLZ;2026-09-12;1001;Consultation;25;completed;branch_visits_2026-09-12_plzen_v01.csv
+PLZ-20260912-002;PLZ;2026-09-12;1002;Complaint;40;completed;branch_visits_2026-09-12_plzen_v01.csv
+PLZ-20260912-003;PLZ;2026-09-12;1003;Consultation;15;completed;branch_visits_2026-09-12_plzen_v01.csv
+PRA-20260912-001;PRA;2026-09-12;2001;Consultation;30;completed;branch_visits_2026-09-12_praha_v01.csv
+PRA-20260912-002;PRA;2026-09-12;2002;Complaint;50;completed;branch_visits_2026-09-12_praha_v01.csv
+PRA-20260912-003;PRA;2026-09-12;2003;Consultation;20;completed;branch_visits_2026-09-12_praha_v01.csv

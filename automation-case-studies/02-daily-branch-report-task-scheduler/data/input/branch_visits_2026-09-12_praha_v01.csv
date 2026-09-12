@@ -1,0 +1,4 @@
+visit_id;branch_code;visit_date;customer_id;service_type;duration_minutes;status
+PRA-20260912-001;PRA;2026-09-12;2001;Consultation;30;completed
+PRA-20260912-002;PRA;2026-09-12;2002;Complaint;50;completed
+PRA-20260912-003;PRA;2026-09-12;2003;Consultation;20;completed

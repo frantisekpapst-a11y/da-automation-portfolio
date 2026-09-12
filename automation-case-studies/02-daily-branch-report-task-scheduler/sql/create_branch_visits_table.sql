@@ -41,3 +41,12 @@ SELECT
     COUNT(*) AS total_rows,
     COUNT(DISTINCT visit_id) AS unique_visits
 FROM dbo.branch_visits;
+
+SELECT
+    branch_code,
+    COUNT(*) AS visit_count,
+    SUM(duration_minutes) AS total_duration_minutes
+FROM dbo.branch_visits
+WHERE visit_date = '2026-09-12'
+GROUP BY branch_code
+ORDER BY branch_code;

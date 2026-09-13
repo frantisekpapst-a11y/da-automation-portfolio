@@ -910,293 +910,369 @@ kritická chyba
 
 ---
 
-## 20. Jupyter Notebook versus Python skript
-
-Jupyter Notebook i soubor `.py` používají Python, ale hodí se pro jiný způsob práce.
-
-### Jupyter Notebook
-
-Vhodný zejména pro:
-
-- průzkum dat;
-- postupnou analýzu;
-- kombinaci kódu, výsledků a Markdown komentářů;
-- prezentaci analytického postupu.
-
-Notebook je stavové prostředí. Výsledek může záviset na pořadí, ve kterém byly buňky spuštěny.
-
-### Python skript
-
-Vhodný zejména pro:
-
-- opakované zpracování;
-- automatické spuštění bez obsluhy;
-- pevně dané pořadí kroků;
-- předvídatelný návratový stav.
-
-V praxi se řešení často nejprve připraví a ověří v notebooku a stabilní proces se následně převede do skriptu.
-
----
-
-## 21. Jednoduchá lokální automatizace
-
-Základní architektura lokálního procesu může vypadat takto:
+## 20. Co si pamatovat
 
 ```text
-Windows Task Scheduler
-→ BAT soubor
-→ Python skript
-→ CSV a databáze
-→ log
+Trigger
+→ zahájí proces
+
+Task
+→ představuje jednu úlohu
+
+Dependency
+→ určuje závislost úloh
+
+Scheduling
+→ určuje čas spuštění
+
+Automation
+→ provede kroky bez ručního zásahu
+
+Orchestration
+→ koordinuje více úloh
+
+Idempotence
+→ chrání před nežádoucím výsledkem opakovaného spuštění
+
+Determinismus
+→ stejné vstupy vytvářejí stejný výsledek
+
+Fail fast
+→ zastaví proces při kritické chybě
+
+Atomic publication
+→ chrání poslední správný výstup
 ```
 
-Jednotlivé části mají rozdílnou odpovědnost:
+Hlavní zásada:
 
-- **Windows Task Scheduler** určuje, kdy se proces spustí;
-- **BAT soubor** připraví způsob spuštění a zavolá správný Python;
-- **Python skript** provede načtení, validaci, transformaci a zápis;
-- **databáze a soubor** uchovávají výsledky;
-- **log** uchovává informace o průběhu a chybách.
+> Dobrá automatizace neznamená pouze automatické spuštění. Musí také ověřit vstupy, bezpečně reagovat na chybu, chránit poslední správný výstup a zaznamenat svůj výsledek.
 
-Oddělení těchto odpovědností usnadňuje testování i hledání problému.
-
----
-
-## 22. Windows Task Scheduler
-
-**Windows Task Scheduler** neboli Plánovač úloh umožňuje spouštět programy podle nastaveného plánu.
-
-### Základní části úlohy
-
-
-- **General** určuje uživatelský účet a oprávnění;
-- **Triggers** určují čas nebo událost spuštění;
-- **Actions** určují, co se má spustit;
-- **Conditions** stanovují další podmínky, například napájení nebo síť;
-- **Settings** určují provozní chování úlohy.
-
-### Praktická nastavení
-
-Pro pravidelný lokální datový proces je obvykle vhodné:
-
-- povolit ruční spuštění úlohy;
-- spustit zmeškanou úlohu co nejdříve;
-- nastavit maximální dobu běhu;
-- při souběhu nespouštět novou instanci;
-- nevyžadovat napájení ze sítě, pokud to není nutné;
-- nevyžadovat síťové připojení pro čistě lokální proces.
-
-Volba **Do not start a new instance** chrání proces před tím, aby současně běželo více jeho kopií.
-
-Účet použitý Plánovačem musí mít přístup ke skriptu, vstupům, výstupům a databázi.
-
----
-
-## 23. BAT soubor a běhové prostředí
-
-**BAT soubor** je spouštěcí soubor systému Windows. V automatizaci může:
-
-- nastavit pracovní složku;
-- použít konkrétní Python interpreter;
-- spustit Python skript;
-- předat jeho návratový kód Plánovači úloh.
-
-Pro automatické spouštění je bezpečnější používat úplné cesty. Proces potom není závislý na tom, ze které složky byl spuštěn.
-
-### Virtuální prostředí
-
-**Virtual environment** neboli virtuální prostředí odděluje Python a knihovny konkrétního projektu.
-
-Plánovač nemá spoléhat na ruční aktivaci prostředí ve VS Code. BAT soubor proto přímo spouští Python uložený ve složce `.venv`.
-
-### Závislosti
-
-Automatizace vyžaduje také dostupné knihovny a systémové ovladače. Pro připojení Pythonu k SQL Serveru mohou být potřeba například:
-
-- balíček `pyodbc` ve virtuálním prostředí;
-- Microsoft ODBC Driver for SQL Server v operačním systému.
-
----
-
-## 24. Validace automatizovaného vstupu
-
-Automatický proces musí ověřit data ještě před vytvořením oficiálního výstupu.
-
-Typické kontroly:
-
-- zda byly nalezeny vstupní soubory;
-- zda existují povinné sloupce;
-- zda lze převést datum a číselné hodnoty;
-- zda nechybí povinné hodnoty;
-- zda nejsou porušena business pravidla;
-- zda neexistují duplicitní klíče;
-- zda datum uvnitř dat odpovídá zpracovávanému období.
-
-Kontrola názvu souboru nestačí. Soubor může mít správné datum v názvu, ale obsahovat data za jiný den.
-
-### Kritická a nekritická chyba
-
-- Kritická chyba ukončí proces jako `FAILED`.
-- Nekritický problém dovolí pokračovat, ale zapíše se jako `WARNING`.
-
-Rozdělení musí vycházet z business pravidel. Chybějící povinný sloupec je typicky kritický, zatímco chybějící volitelný vstup může být pouze varováním.
-
----
-
-## 25. Zpracovávané období
-
-U pravidelného procesu má být jednoznačně určeno, za jaké období data zpracovává.
-
-Příklad denního reportu:
+## 21. Základní struktura cvičného projektu
 
 ```text
-spuštění 13. září
-→ zpracování dat za 12. září
+02-python-script-basics/
+├── data/
+│   ├── input/
+│   └── output/
+└── src/
+    └── check_input.py
 ```
 
-Výběr vstupů podle data omezuje riziko, že se do jednoho běhu omylem smíchají soubory z různých dní.
-
-Datum má být ověřeno:
-
-- v názvu vstupního souboru;
-- uvnitř načtených dat;
-- v názvu nebo metadatech výstupu;
-- při zápisu do databáze.
+- `src` obsahuje zdrojový Python kód;
+- `data/input` obsahuje očekávané vstupy;
+- `data/output` obsahuje výstupy vytvořené skriptem.
 
 ---
 
-## 26. Logging a monitoring
+## 22. Modul `pathlib` a objekt `Path`
 
-**Logging** znamená průběžné zapisování informací o běhu procesu. **Monitoring** znamená sledování, zda proces běží správně a zda vyžaduje zásah.
+```python
+from pathlib import Path
+```
 
-### Úrovně logu
+`pathlib` je standardní Python modul pro práci s cestami k souborům a složkám. `Path` převádí textovou cestu na objekt cesty.
 
-- `INFO` — běžný průběh procesu;
-- `WARNING` — nekritický problém;
-- `ERROR` — chyba, kvůli které proces selhal.
+```python
+file_path = Path(__file__)
+```
 
-Log má zaznamenat zejména:
+Objekt `Path` umožňuje používat například:
 
-- začátek nového běhu;
-- zpracovávané datum;
-- počet nalezených souborů;
-- počet načtených a uložených řádků;
-- výsledek validace;
-- vytvořený výstup;
-- úspěšné dokončení nebo konkrétní chybu.
-
-Samotný log ještě není plný monitoring. V podnikovém prostředí bývá doplněn upozorněním, dashboardem běhů nebo centrálním monitorovacím nástrojem.
+- `.resolve()` – vytvoření jednoznačné absolutní cesty;
+- `.parent` – získání nadřazené složky;
+- `.exists()` – kontrola existence;
+- `.mkdir()` – vytvoření složky;
+- `.write_text()` – zápis textu do souboru.
 
 ---
 
-## 27. Návratové kódy
+## 23. `__file__`, `resolve()` a `parent`
 
-**Exit code** neboli návratový kód sděluje operačnímu systému nebo Plánovači, jak proces skončil.
+`__file__` je speciální proměnná vytvořená Pythonem. Obsahuje cestu k aktuálnímu Python souboru.
 
-- `0` znamená úspěšné dokončení;
-- nenulová hodnota, například `1`, znamená chybu.
+Rozepsaná učící varianta:
 
-Návratový kód není podrobný popis chyby. Podrobnosti patří do logu.
+```python
+file_path = Path(__file__)
+resolved_path = file_path.resolve()
+script_dir = resolved_path.parent
+```
+
+Běžná zkrácená varianta:
+
+```python
+script_dir = Path(__file__).resolve().parent
+```
+
+Význam jednotlivých kroků:
 
 ```text
-návratový kód
-→ rychlá informace pro Plánovač
+__file__
+→ cesta k souboru jako text
 
-log
-→ podrobné vysvětlení průběhu a chyby
+Path(__file__)
+→ objekt cesty
+
+.resolve()
+→ jednoznačná absolutní cesta
+
+.parent
+→ složka, ve které leží skript
 ```
 
-BAT soubor musí návratový kód Python skriptu správně předat dál. Jinak může Plánovač označit chybný běh jako úspěšný.
+Další `.parent` umožní přejít ze složky `src` do kořene projektu:
+
+```python
+base_dir = script_dir.parent
+```
 
 ---
 
-## 28. Bezpečný zápis do souboru a databáze
+## 24. Pracovní složka versus složka skriptu
 
-### Souborový výstup
+```python
+current_dir = Path.cwd()
+script_dir = Path(__file__).resolve().parent
+```
 
-Bezpečný postup:
+- `Path.cwd()` vrací složku, ze které byl proces spuštěn;
+- `script_dir` označuje složku, ve které skutečně leží Python skript.
+
+Tyto složky nemusí být stejné. Při automatizaci proto odvozujeme cesty od `__file__`, nikoliv od aktuální pracovní složky.
 
 ```text
-zapsat dočasný soubor
-→ dokončit zápis
-→ nahradit oficiální výstup
+jiná pracovní složka
+→ může se měnit podle způsobu spuštění
+
+složka skriptu
+→ zůstává stejná
 ```
 
-Tím se snižuje riziko, že po chybě zůstane neúplný oficiální soubor.
+---
 
-### Databázový výstup
+## 25. Skládání cest
 
-Související databázové změny mají proběhnout v jedné transakci:
+Jednotlivé části cesty spojujeme pomocí znaku `/`:
 
-- při úspěchu `COMMIT`;
-- při chybě `ROLLBACK`.
+```python
+input_dir = base_dir / "data" / "input"
+output_dir = base_dir / "data" / "output"
+```
 
-Opakované spuštění nad stejným obdobím nesmí vytvářet duplicity. Jedním z řešení je odstranit data daného období a poté vložit jejich novou ověřenou verzi v rámci jedné transakce.
-
-Databázová omezení, například primární klíč nebo kontrola nezáporné hodnoty, tvoří další ochrannou vrstvu. Nenahrazují však validaci ve skriptu.
-
-### Lineage
-
-**Data lineage** označuje dohledatelnost původu dat. Praktickými metadaty mohou být:
-
-- název zdrojového souboru;
-- čas načtení;
-- datum reportu;
-- identifikátor běhu.
+U objektu `Path` znak `/` neznamená dělení. Slouží ke skládání cest a Python použije správný oddělovač pro daný operační systém.
 
 ---
 
-## 29. Lokální a produkční řešení
+## 26. Kontrola vstupní složky
 
-Kombinace Windows Task Scheduleru, BAT souboru, Pythonu a SQL Server LocalDB je vhodná pro:
+```python
+input_exists = input_dir.exists()
+```
 
-- výuku;
-- osobní projekt;
-- portfolio;
-- menší proces na jednom počítači.
+Metoda `.exists()` vrací:
 
-Pro důležitý podnikový proces mohou být potřeba:
+- `True`, pokud cesta existuje;
+- `False`, pokud cesta neexistuje.
 
-- centrální databáze nebo cloudové úložiště;
-- správa přístupových údajů;
-- automatické upozornění při chybě;
-- centrální historie běhů;
-- řízené nasazení nové verze;
-- specializovaný orchestrační nástroj.
+Chybějící vstupní složku můžeme považovat za kritickou chybu:
 
-LocalDB je lokální vývojová databáze svázaná s konkrétním uživatelským prostředím. Není náhradou za produkční databázový server.
+```python
+if not input_dir.exists():
+    print("Vstupní složka neexistuje.")
+    return 1
+```
+
+Tento způsob zápisu kontroluje chybový stav jako první. Jde o **guard clause**, tedy vstupní kontrolu, která při kritickém problému funkci včas ukončí.
+
+---
+
+## 27. Vytvoření výstupní složky
+
+```python
+output_dir.mkdir(
+    parents=True,
+    exist_ok=True
+)
+```
+
+- `parents=True` dovolí vytvořit také chybějící nadřazené složky;
+- `exist_ok=True` zabrání chybě, pokud už složka existuje.
+
+Vstupní složku očekáváme od zdroje dat, proto její chybějící stav kontrolujeme. Výstupní složku spravuje náš proces, proto ji může bezpečně vytvořit.
 
 ---
 
-## 30. Rychlý provozní checklist
+## 28. Funkce `main()`
 
-### Před automatizací
+```python
+def main():
+    # jednotlivé kroky procesu
+    return 0
+```
 
-- Je jasné zpracovávané období?
-- Jsou definované povinné vstupy?
-- Jsou kritické a nekritické chyby rozlišené?
-- Je proces idempotentní?
+`main()` je běžná konvence pro hlavní funkci, která řídí pořadí celého procesu. Název není v Pythonu povinný ani speciální.
 
-### Při nastavení
+Funkce může například koordinovat:
 
-- Používá se správný Python a virtuální prostředí?
-- Jsou cesty dostupné účtu Plánovače?
-- Je nastavena správná pracovní složka?
-- Je zakázáno souběžné spuštění více instancí?
-
-### Při testování
-
-- Projde proces se správnými vstupy?
-- Selže řízeně při chybném vstupu?
-- Vrací správný návratový kód?
-- Zůstane při chybě zachován poslední správný výstup?
-- Nevzniknou po opakovaném spuštění duplicity?
-
-### Při provozu
-
-- Je z logu poznat výsledek běhu?
-- Je možné dohledat zdroj záznamů?
-- Je určeno, kdo řeší chybu?
-- Je proces po změně kódu znovu otestován?
+```text
+určení cest
+→ kontrolu vstupu
+→ vytvoření výstupní složky
+→ vytvoření výstupu
+→ vrácení výsledného stavu
+```
 
 ---
+
+## 29. `__name__` a přímé spuštění
+
+```python
+if __name__ == "__main__":
+    result = main()
+```
+
+`__name__` je speciální proměnná vytvořená Pythonem.
+
+| Způsob použití souboru | Hodnota `__name__` | Automatické spuštění `main()` |
+|---|---|---|
+| Přímé spuštění souboru | `"__main__"` | Ano |
+| Import do jiného souboru | název modulu, například `"check_input"` | Ne |
+
+Podmínka chrání hlavní proces před nechtěným spuštěním při importu souboru.
+
+Import pouze zpřístupní obsah modulu:
+
+```python
+import check_input
+```
+
+Funkci lze následně spustit záměrně:
+
+```python
+check_input.main()
+```
+
+---
+
+## 30. Návratové kódy a `sys.exit()`
+
+```python
+import sys
+```
+
+Funkce `main()` vrací stav procesu:
+
+```python
+return 0
+```
+
+znamená úspěšné dokončení.
+
+```python
+return 1
+```
+
+znamená chybu.
+
+`sys.exit()` předá návratovou hodnotu operačnímu systému:
+
+```python
+result = main()
+sys.exit(result)
+```
+
+Běžná zkrácená varianta:
+
+```python
+sys.exit(main())
+```
+
+Poslední návratový kód lze v PowerShellu ověřit:
+
+```powershell
+$LASTEXITCODE
+```
+
+Základní konvence:
+
+```text
+0
+→ úspěch
+
+nenulová hodnota
+→ chyba
+```
+
+---
+
+## 31. Jednoduchý textový výstup
+
+Cestu k souboru vytvoříme stejně jako cestu ke složce:
+
+```python
+output_file = output_dir / "check_result.txt"
+```
+
+Text zapíšeme metodou `.write_text()`:
+
+```python
+output_file.write_text(
+    "Kontrola byla úspěšná. Vstupní složka existuje.",
+    encoding="utf-8"
+)
+```
+
+Pokud soubor neexistuje, metoda ho vytvoří. Pokud existuje, jeho původní obsah nahradí.
+
+---
+
+## 32. Učící a běžná verze kódu
+
+Učící verze používá pomocné proměnné a `print()` pro zobrazení mezikroků:
+
+```python
+file_path = Path(__file__)
+resolved_path = file_path.resolve()
+script_dir = resolved_path.parent
+```
+
+Běžná verze stejnou logiku zkracuje:
+
+```python
+script_dir = Path(__file__).resolve().parent
+```
+
+Učící verze pomáhá pochopit postup. Běžná verze je přehlednější pro standardní provoz. Pokud jsou obě varianty uložené v jednom souboru, aktivně se má volat pouze jedna z nich, aby se proces nespustil dvakrát.
+
+---
+
+## 33. Základní tok skriptu
+
+```text
+přímé spuštění souboru
+→ zavolání main()
+→ určení cest
+→ kontrola vstupní složky
+→ vytvoření výstupní složky
+→ vytvoření výstupního souboru
+→ return 0 nebo return 1
+→ sys.exit()
+→ předání výsledku operačnímu systému
+```
+
+---
+
+## 34. Hlavní poznatky Lekce 2
+
+- notebook je vhodný pro průzkum a vývoj, skript pro opakovatelný provoz;
+- `Path` umožňuje pracovat s cestami jako s objekty;
+- cesty při automatizaci odvozujeme od `__file__`;
+- `Path.cwd()` a složka skriptu mohou být rozdílné;
+- vstupní složku kontrolujeme, výstupní složku může skript vytvořit;
+- `main()` koordinuje celý proces;
+- blok `if __name__ == "__main__":` rozlišuje přímé spuštění a import;
+- návratový kód `0` znamená úspěch;
+- nenulový návratový kód znamená chybu;
+- `sys.exit()` předává návratový kód operačnímu systému.
+

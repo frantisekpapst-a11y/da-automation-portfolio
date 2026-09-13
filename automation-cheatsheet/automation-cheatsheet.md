@@ -1,4 +1,4 @@
-# Automation Basics Cheatsheet
+# Automation Cheatsheet
 
 Praktický přehled základních principů automatizace datových procesů.
 
@@ -1276,3 +1276,400 @@ přímé spuštění souboru
 - nenulový návratový kód znamená chybu;
 - `sys.exit()` předává návratový kód operačnímu systému.
 
+## 35. Základní datový tok
+
+```text
+API
+
+→ Python odešle HTTP požadavek
+
+→ odpověď se uloží jako raw JSON
+
+→ JSON se převede na Python objekty
+
+→ data se zkontrolují a normalizují
+
+→ výsledek se uloží do CSV
+```
+
+---
+
+## 36. API endpoint
+
+Endpoint je konkrétní adresa, na kterou Python posílá požadavek.
+
+```python
+API_URL = "https://api.github.com/repos/pandas-dev/pandas/issues"
+```
+
+V této lekci používáme metodu `GET`, protože z API data získáváme.
+
+---
+
+## 37. Odeslání GET požadavku
+
+```python
+response = requests.get(
+    API_URL,
+    params=params,
+    timeout=10
+)
+```
+
+- `API_URL` určuje adresu API;
+- `params` obsahuje parametry požadavku;
+- `timeout=10` ukončí čekání, pokud API včas neodpoví.
+
+---
+
+## 38. Parametry požadavku
+
+```python
+params = {
+    "state": "all",
+    "per_page": PER_PAGE,
+    "page": page
+}
+```
+
+Parametry upravují požadavek bez ručního skládání celé URL.
+
+---
+
+## 39. HTTP status
+
+HTTP status informuje, jak požadavek dopadl.
+
+| Status | Význam |
+|---:|---|
+| `200` | požadavek byl úspěšný |
+| `404` | požadovaný zdroj nebyl nalezen |
+| `429` | byl překročen povolený počet požadavků |
+| `500–599` | chyba na straně serveru |
+
+```python
+if response.status_code != 200:
+    print("Chyba HTTP:", response.status_code)
+    return 1
+```
+
+---
+
+## 40. Timeout a komunikační chyba
+
+Timeout zabraňuje tomu, aby skript čekal na odpověď neomezeně dlouho.
+
+```python
+try:
+    response = requests.get(
+        API_URL,
+        params=params,
+        timeout=10
+    )
+except requests.RequestException as error:
+    print("Chyba při komunikaci s API:", error)
+    return 1
+```
+
+`RequestException` zachytí například timeout nebo problém s připojením.
+
+---
+
+## 41. Pagination
+
+Pagination znamená, že API rozděluje větší množství dat na stránky.
+
+```python
+for page in range(1, MAX_PAGES + 1):
+    params = {
+        "state": "all",
+        "per_page": PER_PAGE,
+        "page": page
+    }
+```
+
+Při `MAX_PAGES = 3` stáhneme stránky `1`, `2` a `3`.
+
+---
+
+## 42. Spojení záznamů ze stránek
+
+```python
+all_records = []
+
+all_records.extend(page_data)
+```
+
+Metoda `extend()` přidá jednotlivé záznamy ze stránky do společného seznamu.
+
+---
+
+## 43. Rate limit
+
+Rate limit omezuje počet požadavků, které můžeme za určitou dobu odeslat.
+
+```python
+remaining = response.headers.get(
+    "X-RateLimit-Remaining",
+    "neuvedeno"
+)
+```
+
+Hodnota `X-RateLimit-Remaining` ukazuje počet zbývajících požadavků.
+
+---
+
+## 44. Uložení původní odpovědi
+
+Raw data jsou původní data přesně v podobě, v jaké je API poslalo.
+
+```python
+raw_file.write_text(
+    response.text,
+    encoding="utf-8"
+)
+```
+
+Raw odpověď pomáhá při kontrole, ladění a opakovaném zpracování dat.
+
+---
+
+## 45. Timestamp načtení
+
+Timestamp zaznamenává, kdy byla data získána.
+
+```python
+downloaded_at = datetime.now(timezone.utc)
+timestamp = downloaded_at.strftime("%Y%m%d_%H%M%S")
+```
+
+Je možné jej použít v názvu raw souboru i jako sloupec ve výsledných datech.
+
+---
+
+## 46. Převod JSON odpovědi
+
+```python
+page_data = response.json()
+```
+
+Metoda `.json()` převede JSON odpověď na Python objekty:
+
+- JSON pole se obvykle převede na `list`;
+- JSON objekt se obvykle převede na `dict`.
+
+---
+
+## 47. Kontrola základní struktury odpovědi
+
+Nejdříve ověříme, zda API vrátilo očekávaný seznam.
+
+```python
+if not isinstance(page_data, list):
+    print("Odpověď API nemá očekávanou strukturu.")
+    return 1
+```
+
+Pokud očekáváme seznam záznamů a získáme jiný typ, proces bezpečně ukončíme.
+
+---
+
+## 48. Kontrola neúplné odpovědi
+
+```python
+required_keys = {
+    "id",
+    "number",
+    "title",
+    "state",
+    "user",
+    "created_at",
+    "updated_at",
+    "html_url"
+}
+
+missing_keys = required_keys - record.keys()
+```
+
+Pokud `missing_keys` není prázdné, záznam neobsahuje všechny povinné klíče.
+
+---
+
+## 49. Vnořená data v JSON
+
+Hodnota pod jedním klíčem může obsahovat další objekt nebo seznam.
+
+```python
+record["user"]["login"]
+```
+
+V tomto příkladu je `user` vnořený objekt a `login` je jeho položka.
+
+---
+
+## 50. Normalizace JSON
+
+```python
+dataframe = pd.json_normalize(all_records)
+```
+
+`json_normalize()` převede seznam JSON objektů na tabulku a zpřístupní vnořené hodnoty například jako `user.login`.
+
+---
+
+## 51. Výběr sloupců
+
+Z API nemusíme ukládat všechny dostupné položky.
+
+```python
+selected_columns = [
+    "id",
+    "number",
+    "title",
+    "state",
+    "user.login",
+    "created_at",
+    "updated_at",
+    "html_url"
+]
+
+result_df = dataframe[selected_columns].copy()
+```
+
+Výsledný dataset tak obsahuje pouze sloupce potřebné pro další analýzu.
+
+---
+
+## 52. Validace výsledku
+
+Před exportem kontrolujeme zejména:
+
+- zda výsledek není prázdný;
+- zda existují povinné sloupce;
+- zda v povinných sloupcích nechybějí hodnoty;
+- zda se neopakují hodnoty, které mají být jedinečné.
+
+```python
+if result_df.empty:
+    print("Výsledná data jsou prázdná.")
+    return 1
+
+if result_df["number"].duplicated().any():
+    print("Výsledná data obsahují duplicity.")
+    return 1
+```
+
+---
+
+## 53. Export do CSV
+
+```python
+result_df.to_csv(
+    output_file,
+    sep=";",
+    index=False,
+    encoding="utf-8-sig"
+)
+```
+
+- `sep=";"` nastaví oddělovač;
+- `index=False` neuloží index DataFrame;
+- `utf-8-sig` usnadní správné zobrazení češtiny v Excelu.
+
+---
+
+## 54. Řízené ukončení
+
+```python
+if __name__ == "__main__":
+    result = main()
+    sys.exit(result)
+```
+
+- `return 0` znamená úspěch;
+- `return 1` znamená chybu;
+- `sys.exit()` předá návratový kód operačnímu systému.
+
+---
+
+## 55. Pravidelné stahování dat
+
+Skript je připravený na opakované spouštění, protože při každém běhu:
+
+- kontaktuje API;
+- stáhne aktuální data;
+- uloží raw odpovědi;
+- provede validaci;
+- vytvoří nový výstup.
+
+Samotné časové plánování pomocí Windows Task Scheduleru patří do pozdější lekce.
+
+---
+
+## 56. Retry – základní princip
+
+Retry znamená opakování požadavku po dočasné chybě, například po timeoutu, statusu `429` nebo chybě serveru `500–599`.
+
+Má mít:
+
+- omezený počet pokusů;
+- krátkou prodlevu mezi pokusy;
+- ukončení po vyčerpání pokusů.
+
+Retry jsme ve finálním kódu Lekce 3 záměrně nepoužili. Nejprve upevňujeme základní tok jednoho požadavku a zpracování odpovědi.
+
+---
+
+## 57. Základní tok skriptu
+
+```text
+přímé spuštění souboru
+
+→ zavolání main()
+
+→ určení výstupních cest a timestampu
+
+→ odeslání GET požadavku s timeoutem
+
+→ kontrola HTTP statusu a rate limitu
+
+→ uložení raw odpovědi
+
+→ převod JSON na Python objekty
+
+→ kontrola struktury odpovědi
+
+→ opakování pro další stránky
+
+→ spojení všech záznamů
+
+→ normalizace do DataFrame
+
+→ validace výsledku
+
+→ export do CSV
+
+→ return 0 nebo return 1
+
+→ sys.exit()
+```
+
+---
+
+## 58. Hlavní poznatky Lekce 3
+
+- API umožňuje programu získávat data z jiné aplikace nebo služby;
+- metoda `GET` slouží ke čtení dat;
+- HTTP status informuje o výsledku požadavku;
+- timeout omezuje dobu čekání na odpověď;
+- pagination rozděluje větší výsledek na více stránek;
+- rate limit omezuje počet požadavků;
+- raw odpověď uchovává původní podobu získaných dat;
+- timestamp zaznamenává čas načtení;
+- JSON se v Pythonu převádí hlavně na `list` a `dict`;
+- před zpracováním kontrolujeme typ odpovědi a povinné klíče;
+- `pd.json_normalize()` převádí vnořený JSON na tabulku;
+- před exportem ověřujeme úplnost, prázdné hodnoty a duplicity;
+- výsledek lze uložit jako CSV nebo JSON;
+- `return 0`, `return 1` a `sys.exit()` umožňují řízené ukončení procesu;
+- retry patří mezi užitečné rozšíření, ale není součástí základního finálního kódu této lekce.

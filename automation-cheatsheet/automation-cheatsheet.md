@@ -1673,3 +1673,517 @@ přímé spuštění souboru
 - výsledek lze uložit jako CSV nebo JSON;
 - `return 0`, `return 1` a `sys.exit()` umožňují řízené ukončení procesu;
 - retry patří mezi užitečné rozšíření, ale není součástí základního finálního kódu této lekce.
+
+---
+
+## 59. Datový tok Lekce 4
+
+```text
+CSV z Lekce 3
+→ Pandas
+→ příprava dat
+→ SQL Server LocalDB
+→ SQL dotaz
+→ Pandas
+→ Excel
+```
+
+---
+
+## 60. SQL Server, LocalDB a SSMS
+
+- **SQL Server** je databázový systém, který ukládá a zpracovává data;
+- **LocalDB** je lehká lokální varianta SQL Serveru;
+- **SSMS** nebo rozšíření MSSQL ve VS Code je klient pro práci s databází;
+- Python se připojuje přímo k SQL Serveru přes `pyodbc` a ODBC ovladač.
+
+---
+
+## 61. Systémová a uživatelská databáze
+
+- `master` je systémová databáze SQL Serveru;
+- používá se například při vytváření nové databáze;
+- `automation_lesson_04` je naše databáze pro Lekci 4;
+- `automation_practice` je jiná, dříve vytvořená databáze.
+
+---
+
+## 62. Vytvoření databáze
+
+```sql
+IF DB_ID('automation_lesson_04') IS NULL
+    CREATE DATABASE automation_lesson_04;
+GO
+
+USE automation_lesson_04;
+```
+
+`DB_ID()` vrátí identifikátor databáze. Pokud databáze neexistuje, vrátí `NULL`.
+
+---
+
+## 63. Význam příkazu `GO`
+
+- `GO` odděluje skupiny SQL příkazů neboli **batche**;
+- není příkazem jazyka T-SQL, ale pokynem pro SQL klienta;
+- po vytvoření databáze umožní v následujícím batchi použít `USE`;
+- není nutné ho psát mezi každý SQL příkaz.
+
+---
+
+## 64. `BEGIN` a `END`
+
+```sql
+IF podmínka
+BEGIN
+    příkaz_1;
+    příkaz_2;
+END;
+```
+
+`BEGIN` a `END` spojují více příkazů do jednoho bloku.
+
+Sami o sobě nevytvářejí databázovou transakci. Pokud má podmínka jen jeden příkaz, nejsou nutné.
+
+---
+
+## 65. Základní datové typy v SQL Serveru
+
+| Datový typ | Typické použití |
+|---|---|
+| `INT` | běžná celá čísla a identifikátory |
+| `BIGINT` | velmi velká celá čísla, například ID z API |
+| `NVARCHAR(n)` | text včetně českých znaků |
+| `DATETIME2` | datum a čas |
+
+Datový typ by měl odpovídat významu a rozsahu ukládané hodnoty.
+
+---
+
+## 66. Primární a cizí klíč
+
+- `PRIMARY KEY` jednoznačně identifikuje řádek tabulky;
+- nesmí obsahovat duplicity ani hodnotu `NULL`;
+- `FOREIGN KEY` propojuje záznam s primárním klíčem jiné tabulky;
+- pomáhá udržet platné vztahy mezi tabulkami.
+
+```text
+repositories.repository_id
+→ github_issues.repository_id
+```
+
+---
+
+## 67. Automaticky generované ID
+
+```sql
+repository_id INT IDENTITY PRIMARY KEY
+```
+
+`IDENTITY` zajistí automatické číslování nových řádků.
+
+Zápis `IDENTITY(1,1)` výslovně určuje:
+
+- první hodnota bude `1`;
+- každá další hodnota se zvýší o `1`.
+
+U SQL Serveru jsou to výchozí hodnoty, proto v tomto případě stačí i samotné `IDENTITY`.
+
+---
+
+## 68. Textové hodnoty v SQL
+
+```sql
+WHERE repository_owner = 'pandas-dev'
+```
+
+- textové hodnoty se zapisují do jednoduchých uvozovek;
+- názvy tabulek a sloupců se do jednoduchých uvozovek nepíšou;
+- prefix `N`, například `N'Plzeň'`, označuje Unicode text;
+- u hodnoty `'pandas-dev'` prefix `N` nepotřebujeme.
+
+---
+
+## 69. Bezpečné vytvoření tabulky
+
+```sql
+IF OBJECT_ID('dbo.repositories', 'U') IS NULL
+    CREATE TABLE dbo.repositories
+    (
+        repository_id INT IDENTITY PRIMARY KEY,
+        repository_owner NVARCHAR(100) NOT NULL,
+        repository_name NVARCHAR(200) NOT NULL
+    );
+```
+
+`OBJECT_ID()` ověří existenci objektu a `'U'` označuje uživatelskou tabulku.
+
+---
+
+## 70. Ruční vytvoření tabulky versus Python
+
+- tabulku může vytvořit SQL skript i Python;
+- databázové schéma se v praxi často spravuje samostatnými SQL skripty;
+- Python potom pracuje s již připravenou tabulkou;
+- toto rozdělení zpřehledňuje odpovědnost jednotlivých částí procesu.
+
+---
+
+## 71. Připojení Pythonu k SQL Serveru
+
+```python
+import pyodbc
+
+connection = pyodbc.connect(CONNECTION_STRING)
+```
+
+Knihovna `pyodbc` zprostředkuje komunikaci mezi Pythonem a SQL Serverem prostřednictvím ODBC ovladače.
+
+---
+
+## 72. Connection string
+
+```python
+CONNECTION_STRING = (
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "SERVER=(localdb)\\DataAnalyticsLocalDB;"
+    "DATABASE=automation_lesson_04;"
+    "Trusted_Connection=yes;"
+    "TrustServerCertificate=yes;"
+)
+```
+
+Connection string určuje:
+
+- použitý ODBC ovladač;
+- instanci SQL Serveru;
+- cílovou databázi;
+- způsob přihlášení;
+- nastavení důvěryhodnosti certifikátu.
+
+---
+
+## 73. Cursor a provedení SQL příkazu
+
+```python
+cursor = connection.cursor()
+
+cursor.execute("SELECT DB_NAME()")
+
+database_name = cursor.fetchone()[0]
+```
+
+- **cursor** odesílá SQL příkazy databázi a čte výsledky;
+- `execute()` provede SQL příkaz;
+- `fetchone()` načte jeden řádek výsledku;
+- `[0]` vybere první hodnotu z načteného řádku.
+
+---
+
+## 74. Načtení CSV do Pandas
+
+```python
+dataframe = pd.read_csv(
+    input_file,
+    sep=";",
+    encoding="utf-8-sig"
+)
+```
+
+Před zápisem do databáze jsme:
+
+- načetli CSV do DataFrame;
+- přejmenovali sloupce podle databázového schématu;
+- převedli datumové sloupce;
+- odstranili časovou zónu kvůli typu `DATETIME2`;
+- seřadili sloupce podle SQL příkazu `INSERT`.
+
+---
+
+## 75. Přejmenování sloupců
+
+```python
+dataframe = dataframe.rename(
+    columns={
+        "id": "issue_id",
+        "number": "issue_number",
+        "user.login": "user_login",
+        "downloaded_at_utc": "downloaded_at"
+    }
+)
+```
+
+Přejmenováním sjednotíme názvy z CSV s názvy sloupců v databázi.
+
+---
+
+## 76. Převod data a času
+
+```python
+for column in [
+    "created_at",
+    "updated_at",
+    "downloaded_at"
+]:
+    dataframe[column] = (
+        pd.to_datetime(
+            dataframe[column],
+            utc=True
+        )
+        .dt.tz_localize(None)
+    )
+```
+
+- `pd.to_datetime()` převede hodnoty na datum a čas;
+- `utc=True` správně interpretuje čas jako UTC;
+- `tz_localize(None)` odstraní informaci o časové zóně;
+- výsledek lze uložit do SQL typu `DATETIME2`.
+
+---
+
+## 77. Pořadí databázových sloupců
+
+```python
+database_columns = [
+    "issue_id",
+    "repository_id",
+    "issue_number",
+    "title",
+    "state",
+    "user_login",
+    "created_at",
+    "updated_at",
+    "html_url",
+    "downloaded_at"
+]
+
+dataframe = dataframe[database_columns]
+```
+
+Pořadí hodnot musí odpovídat pořadí sloupců v SQL příkazu `INSERT`.
+
+---
+
+## 78. Převod dat pro hromadný zápis
+
+```python
+records = list(
+    dataframe.itertuples(
+        index=False,
+        name=None
+    )
+)
+```
+
+`itertuples()` převede řádky DataFrame na n-tice hodnot, které lze předat metodě `executemany()`.
+
+---
+
+## 79. Parametrizovaný SQL příkaz
+
+```python
+cursor.execute(
+    """
+    DELETE FROM dbo.github_issues
+    WHERE repository_id = ?
+    """,
+    1
+)
+```
+
+- otazník `?` je zástupný symbol pro hodnotu;
+- skutečná hodnota se předává odděleně;
+- parametrizace správně ošetřuje hodnoty a datové typy;
+- hodnoty nevkládáme do SQL příkazu skládáním textu.
+
+---
+
+## 80. Hromadné vložení záznamů
+
+```python
+cursor.executemany(
+    insert_sql,
+    records
+)
+```
+
+`executemany()` provede stejný parametrizovaný SQL příkaz pro více záznamů.
+
+Je vhodnější než ruční volání `execute()` pro každý řádek zvlášť.
+
+---
+
+## 81. `commit()` a `rollback()`
+
+```python
+connection.commit()
+```
+
+- `commit()` potvrdí změny a trvale je uloží;
+- `rollback()` vrátí nepotvrzené změny při chybě;
+- používají se pro základní řízení databázové transakce.
+
+```python
+if connection is not None:
+    connection.rollback()
+```
+
+---
+
+## 82. Bezpečné uzavření spojení
+
+```python
+finally:
+    if connection is not None:
+        connection.close()
+```
+
+Blok `finally` se provede při úspěchu i při chybě.
+
+Databázové spojení se proto uzavře také tehdy, když funkce skončí pomocí `return`.
+
+---
+
+## 83. `JOIN` mezi tabulkami
+
+```sql
+SELECT
+    r.repository_owner,
+    r.repository_name,
+    i.issue_number,
+    i.title,
+    i.state
+FROM dbo.github_issues i
+JOIN dbo.repositories r
+    ON i.repository_id = r.repository_id;
+```
+
+- `JOIN` bez dalšího označení znamená `INNER JOIN`;
+- vrací řádky, které mají odpovídající klíč v obou tabulkách;
+- `LEFT JOIN` zachová všechny řádky z levé tabulky;
+- pro běžnou práci analytika jsou nejdůležitější `JOIN` a `LEFT JOIN`.
+
+---
+
+## 84. Načtení SQL výsledku do Pandas
+
+```python
+report_df = pd.read_sql_query(
+    report_query,
+    connection
+)
+```
+
+Výsledek SQL dotazu se načte do DataFrame.
+
+S výsledkem můžeme dále pracovat v Pythonu nebo ho exportovat.
+
+---
+
+## 85. Export více tabulek do jednoho Excelu
+
+```python
+with pd.ExcelWriter(
+    output_file,
+    engine="openpyxl"
+) as writer:
+    report_df.to_excel(
+        writer,
+        sheet_name="Issues",
+        index=False
+    )
+
+    summary_df.to_excel(
+        writer,
+        sheet_name="State summary",
+        index=False
+    )
+```
+
+`ExcelWriter` umožňuje uložit více DataFrame do různých listů jednoho souboru.
+
+Knihovna `openpyxl` zajišťuje vytvoření souboru `.xlsx`.
+
+---
+
+## 86. Kontrola balíčků ve virtuálním prostředí
+
+Výpis nainstalovaných balíčků:
+
+```powershell
+python -m pip list
+```
+
+Ověření používaného Python interpreteru:
+
+```powershell
+python -c "import sys; print(sys.executable)"
+```
+
+Instalace chybějícího balíčku:
+
+```powershell
+python -m pip install openpyxl
+```
+
+Použití `python -m pip` pomáhá zajistit, že balíček instalujeme ke stejnému Pythonu, kterým spouštíme skript.
+
+---
+
+## 87. Rozdělení práce mezi SQL a Python
+
+### SQL je vhodné pro
+
+- tabulky, klíče a vztahy;
+- filtrování databázových dat;
+- spojování tabulek;
+- agregace;
+- ukládání a kontrolu integrity dat.
+
+### Python je vhodný pro
+
+- práci se soubory;
+- načítání a přípravu dat v Pandas;
+- řízení celého procesu;
+- komunikaci mezi různými zdroji;
+- export výsledku do Excelu.
+
+---
+
+## 88. Hlavní tok Python skriptu
+
+```text
+určení cest
+→ kontrola vstupního CSV
+→ vytvoření výstupní složky
+→ načtení CSV do Pandas
+→ přejmenování sloupců
+→ převod datových typů
+→ připojení k SQL Serveru
+→ odstranění starého snímku dat
+→ vložení aktuálních řádků
+→ commit
+→ SQL dotaz s JOIN
+→ načtení výsledku do Pandas
+→ export do Excelu
+→ uzavření databázového spojení
+→ návratový kód 0 nebo 1
+```
+
+---
+
+## 89. Hlavní poznatky Lekce 4
+
+- SQL Server je databázový systém, zatímco SSMS nebo VS Code jsou klientské nástroje;
+- LocalDB umožňuje pracovat se SQL Serverem lokálně;
+- primární klíč identifikuje řádek;
+- cizí klíč propojuje tabulky;
+- Python se připojuje přes `pyodbc` a ODBC ovladač;
+- hodnoty do SQL předáváme parametrizovaně;
+- `executemany()` slouží k hromadnému vložení záznamů;
+- `commit()` změny potvrdí;
+- `rollback()` nepotvrzené změny při chybě vrátí;
+- `finally` zajistí uzavření databázového spojení;
+- SQL připraví relační výsledek;
+- Pandas může výsledek exportovat do Excelu;
+- `openpyxl` je potřeba pro vytvoření souboru `.xlsx`.

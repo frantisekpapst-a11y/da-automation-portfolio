@@ -1,7 +1,10 @@
 from pathlib import Path
 import sys
+import logging
+import time
 
 import pandas as pd
+import as pd
 import pyodbc
 
 
@@ -14,7 +17,6 @@ CONNECTION_STRING = (
 )
 
 
-# Povinné sloupce očekávané v původním vstupním CSV.
 REQUIRED_COLUMNS = [
     "id",
     "number",
@@ -29,7 +31,6 @@ REQUIRED_COLUMNS = [
 
 
 def validate_structure(dataframe):
-    # Nejdříve ověříme, zda lze se vstupními daty bezpečně pracovat.
     missing_columns = []
 
     for column in REQUIRED_COLUMNS:
@@ -51,7 +52,6 @@ def validate_structure(dataframe):
 
 
 def clean_data(dataframe):
-    # Čištění provádíme na kopii původních dat.
     clean_dataframe = dataframe.copy()
 
     text_columns = [
@@ -61,31 +61,26 @@ def clean_data(dataframe):
         "html_url"
     ]
 
-    # Odstranění nadbytečných mezer z textových hodnot.
     for column in text_columns:
         clean_dataframe[column] = (
             clean_dataframe[column].str.strip()
         )
 
-    # Sjednocení hodnot state na malá písmena.
     clean_dataframe["state"] = (
         clean_dataframe["state"].str.lower()
     )
 
-    # Prázdný text převedeme na chybějící hodnotu.
     for column in text_columns:
         clean_dataframe[column] = (
             clean_dataframe[column].replace("", pd.NA)
         )
 
-    # user.login je nepovinný, proto lze chybějící hodnotu doplnit.
     clean_dataframe["user.login"] = (
         clean_dataframe["user.login"].fillna("unknown")
     )
 
     row_count_before = len(clean_dataframe)
 
-    # Odstranění pouze úplně identických řádků.
     clean_dataframe = clean_dataframe.drop_duplicates()
 
     row_count_after = len(clean_dataframe)
@@ -104,8 +99,6 @@ def clean_data(dataframe):
         "number"
     ]
 
-    # Neplatné číselné hodnoty se převedou na NaN.
-    # Následná validace je zachytí jako kritickou chybu.
     for column in numeric_columns:
         clean_dataframe[column] = pd.to_numeric(
             clean_dataframe[column],
@@ -118,8 +111,6 @@ def clean_data(dataframe):
         "downloaded_at_utc"
     ]
 
-    # Neplatná data se převedou na NaT.
-    # Následná validace je zachytí jako kritickou chybu.
     for column in datetime_columns:
         clean_dataframe[column] = (
             pd.to_datetime(
@@ -135,7 +126,6 @@ def clean_data(dataframe):
 
 
 def validate_data(dataframe):
-    # Tyto sloupce odpovídají sloupcům, které v SQL nepovolují NULL.
     required_value_columns = [
         "issue_id",
         "repository_id",
@@ -148,7 +138,6 @@ def validate_data(dataframe):
         "downloaded_at"
     ]
 
-    # Chybějící povinná hodnota představuje kritickou chybu.
     for column in required_value_columns:
         missing_count = dataframe[column].isna().sum()
 
@@ -163,7 +152,6 @@ def validate_data(dataframe):
 
     print("Kontrola povinných hodnot byla úspěšná.")
 
-    # issue_id je primární klíč, proto musí být unikátní.
     duplicate_id_count = (
         dataframe["issue_id"].duplicated().sum()
     )
@@ -182,6 +170,34 @@ def validate_data(dataframe):
 def main():
     base_dir = Path(__file__).resolve().parent.parent
 
+    # Sestavení cesty ke složce a souboru s logem.
+    logs_dir = base_dir / "logs"
+    log_file = logs_dir / "github_issues.log"
+
+    # Složka pro logy se vytvoří, pokud ještě neexistuje.
+    logs_dir.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    # Základní konfigurace logování:
+    # - záznamy se ukládají do souboru,
+    # - ukládají se úrovně INFO, WARNING a ERROR,
+    # - každý záznam obsahuje timestamp, úroveň a zprávu.
+    logging.basicConfig(
+        filename=log_file,
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        encoding="utf-8"
+    )
+
+    # Spuštění stopek pro změření celkové délky procesu.
+    start_time = time.perf_counter()
+
+    # První provozní informace v logu.
+    logging.info("Proces byl zahájen.")
+
     input_file = (
         base_dir
         / "data"
@@ -199,9 +215,14 @@ def main():
     connection = None
 
     try:
-        # Chybějící vstupní soubor je kritická chyba.
         if not input_file.exists():
             print("Vstupní soubor neexistuje.")
+
+            # ERROR označuje kritickou chybu, kvůli které proces končí.
+            logging.error(
+                "Vstupní soubor neexistuje: %s",
+                input_file
+            )
             return 1
 
         output_dir.mkdir(
@@ -215,9 +236,20 @@ def main():
             encoding="utf-8-sig"
         )
 
-        # Při chybné struktuře proces skončí před čištěním a zápisem.
+        # Záznam počtu řádků bezprostředně po načtení vstupu.
+        logging.info(
+            "Načten počet vstupních řádků: %s",
+            len(dataframe)
+        )
+
         if not validate_structure(dataframe):
+            # LEKCE 6:
+            # Neúspěšná validace je důvodem k ukončení procesu.
+            logging.error("Validace struktury selhala.")
             return 1
+
+        # Záznam úspěšného výsledku první validace.
+        logging.info("Validace struktury byla úspěšná.")
 
         dataframe = clean_data(dataframe)
 
@@ -232,9 +264,20 @@ def main():
 
         dataframe["repository_id"] = 1
 
-        # Neplatná data se nesmějí dostat do databáze.
         if not validate_data(dataframe):
+            # LEKCE 6:
+            # Záznam neúspěšné finální validace.
+            logging.error("Finální validace dat selhala.")
             return 1
+
+        # Záznam úspěšné finální validace.
+        logging.info("Finální validace dat byla úspěšná.")
+
+        # Počet řádků, které prošly čištěním a validací.
+        logging.info(
+            "Počet řádků po vyčištění a validaci: %s",
+            len(dataframe)
+        )
 
         database_columns = [
             "issue_id",
@@ -347,8 +390,25 @@ def main():
                 index=False
             )
 
-        # Změny v databázi potvrdíme až po úspěšném vytvoření Excelu.
+        # Záznam vytvořeného výstupu včetně jeho cesty.
+        logging.info(
+            "Excelový výstup byl vytvořen: %s",
+            output_file
+        )
+
+        # Skutečný počet řádků v hlavním listu Excelového reportu.
+        logging.info(
+            "Počet řádků v Excelovém výstupu: %s",
+            len(report_df)
+        )
+
         connection.commit()
+
+        # Záznam počtu řádků uložených do SQL Serveru.
+        logging.info(
+            "Počet řádků uložených do databáze: %s",
+            len(records)
+        )
 
         print(
             "Počet řádků uložených do databáze:",
@@ -356,11 +416,30 @@ def main():
         )
         print("Excel byl vytvořen:", output_file)
 
+        # Výpočet délky procesu v sekundách.
+        duration_seconds = round(
+            time.perf_counter() - start_time,
+            2
+        )
+
+        logging.info(
+            "Délka zpracování v sekundách: %s",
+            duration_seconds
+        )
+
+        # Poslední záznam potvrzuje úspěšné dokončení procesu.
+        logging.info("Proces byl úspěšně dokončen.")
+
         return 0
 
     except pyodbc.Error as error:
-        # Databázová chyba představuje kritickou chybu procesu.
         print("Chyba při práci s databází:", error)
+
+        # Uložení databázové chyby do logu.
+        logging.error(
+            "Chyba při práci s databází: %s",
+            error
+        )
 
         if connection is not None:
             connection.rollback()
@@ -368,20 +447,23 @@ def main():
         return 1
 
     except (OSError, ValueError) as error:
-        # Zachycení chyb při načítání, čištění nebo ukládání souboru.
         print(
             "Chyba při práci se souborem nebo daty:",
             error
         )
 
-        # Pokud už začala databázová transakce, změny se vrátí.
+        # Uložení souborové nebo datové chyby do logu.
+        logging.error(
+            "Chyba při práci se souborem nebo daty: %s",
+            error
+        )
+
         if connection is not None:
             connection.rollback()
 
         return 1
 
     finally:
-        # Spojení se uzavře při úspěchu, chybě i předčasném return.
         if connection is not None:
             connection.close()
 

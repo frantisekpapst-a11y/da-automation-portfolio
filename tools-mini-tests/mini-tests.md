@@ -383,3 +383,156 @@ Co znamená, když funkce `main()` vrátí hodnotu `1`?
 **Správná odpověď:** C
 
 Nenulový návratový kód signalizuje neúspěšné dokončení procesu.
+
+---
+
+## Otázka 24
+
+Jaký je hlavní účel funkce `validate_structure()`?
+
+- A) Uložit data do SQL Serveru
+- B) Ověřit povinné sloupce a neprázdný dataset
+- C) Odstranit duplicitní řádky
+- D) Vytvořit výsledný Excel
+
+**Správná odpověď:** B
+
+Funkce ověřuje, zda lze se vstupními daty bezpečně začít pracovat.
+
+---
+
+## Otázka 25
+
+Proč voláme `validate_structure()` před `clean_data()`?
+
+- A) Aby se vytvořilo databázové spojení
+- B) Aby se změnil návratový kód na `0`
+- C) Aby cleaning pracoval s očekávanými sloupci
+- D) Aby se odstranily všechny hodnoty `NULL`
+
+**Správná odpověď:** C
+
+Pokud by potřebný sloupec chyběl, cleaning by při jeho použití skončil chybou.
+
+---
+
+## Otázka 26
+
+Co vrací funkce `clean_data()`?
+
+- A) Vyčištěný DataFrame
+- B) Návratový kód procesu
+- C) Databázové spojení
+- D) Cestu k Excel souboru
+
+**Správná odpověď:** A
+
+Funkce vrací pracovní kopii DataFrame po provedeném čištění.
+
+---
+
+## Otázka 27
+
+Co způsobí `errors="coerce"` při převodu neplatné číselné hodnoty?
+
+- A) Odstraní celý řádek
+- B) Nahradí hodnotu nulou
+- C) Okamžitě ukončí Python
+- D) Převede hodnotu na `NaN`
+
+**Správná odpověď:** D
+
+Neplatná číselná hodnota se změní na `NaN`, kterou následně zachytí validace.
+
+---
+
+## Otázka 28
+
+Jak má proces reagovat na chybějící hodnotu `issue_id`?
+
+- A) Doplnit hodnotu `unknown`
+- B) Zastavit proces jako chybný
+- C) Nahradit hodnotu nulou
+- D) Pokračovat bez upozornění
+
+**Správná odpověď:** B
+
+`issue_id` je primární klíč, a proto nesmí být prázdný.
+
+---
+
+## Otázka 29
+
+Jaký je rozdíl mezi `drop_duplicates()` a kontrolou `duplicated()` ve sloupci `issue_id`?
+
+- A) Obě kontroly vždy dělají totéž
+- B) Obě kontroly pouze vypisují varování
+- C) První odstraní stejné řádky, druhá kontroluje duplicitní klíč
+- D) První kontroluje klíč, druhá vytváří kopii
+
+**Správná odpověď:** C
+
+Úplné duplicity odstraníme při čištění, ale opakovaný primární klíč zastaví proces.
+
+---
+
+## Otázka 30
+
+Proč `validate_data()` vrací `False`, zatímco `main()` při stejné chybě vrací `1`?
+
+- A) Validace vrací stav dat a `main()` stav procesu
+- B) `False` a `1` vždy znamenají úspěch
+- C) `main()` nemůže vracet logickou hodnotu
+- D) `validate_data()` nemůže vracet číslo
+
+**Správná odpověď:** A
+
+`False` označuje neplatná data, zatímco návratový kód `1` oznamuje chybu celého procesu.
+
+---
+
+## Otázka 31
+
+Co zajišťuje blok `finally` v našem skriptu?
+
+- A) Vždy vytvoří nový Excel
+- B) Vždy potvrdí databázové změny
+- C) Vždy vrátí návratový kód `0`
+- D) Uzavře existující databázové spojení
+
+**Správná odpověď:** D
+
+`finally` se provede při úspěchu, chybě i předčasném ukončení funkce.
+
+---
+
+## Otázka 32
+
+Proč je `connection.commit()` ve finálním skriptu až po vytvoření Excelu?
+
+- A) Aby byl SQL dotaz rychlejší
+- B) Aby bylo možné při chybě exportu vrátit databázové změny
+- C) Aby Pandas našel vstupní CSV
+- D) Aby se odstranily duplicity v Excelu
+
+**Správná odpověď:** B
+
+Pokud export selže před `commit()`, lze pomocí `rollback()` zachovat předchozí stav databáze.
+
+---
+
+## Otázka 33
+
+Která situace je v našem procesu pouze varováním, nikoliv kritickou chybou?
+
+- A) Chybějící sloupec `issue_id`
+- B) Duplicitní hodnota `issue_id`
+- C) Chybějící nepovinný `user_login`
+- D) Nedostupné databázové připojení
+
+**Správná odpověď:** C
+
+`user_login` je nepovinný a chybějící hodnotu lze bezpečně ošetřit.
+
+---
+

@@ -2186,4 +2186,424 @@ určení cest
 - `finally` zajistí uzavření databázového spojení;
 - SQL připraví relační výsledek;
 - Pandas může výsledek exportovat do Excelu;
-- `openpyxl` je potřeba pro vytvoření souboru `.xlsx`.
+- `openpyxl` je potřeba pro vytvoření souboru `.xlsx`.¨
+
+---
+
+## 90. Datový tok Lekce 5
+
+```text
+načtení vstupu
+→ validate_structure()
+→ clean_data()
+→ validate_data()
+→ zápis do databáze
+→ vytvoření Excelu
+→ návratový kód procesu
+```
+
+---
+
+## 91. Rozdělení odpovědnosti funkcí
+
+```python
+validate_structure(dataframe)
+```
+
+Ověří, zda lze s daty bezpečně začít pracovat.
+
+```python
+clean_data(dataframe)
+```
+
+Vyčistí data a vrátí nový DataFrame.
+
+```python
+validate_data(dataframe)
+```
+
+Ověří kvalitu vyčištěných dat.
+
+```python
+main()
+```
+
+Řídí pořadí celého procesu a vrací návratový kód `0` nebo `1`.
+
+---
+
+## 92. Kontrola povinných sloupců
+
+```python
+missing_columns = []
+
+for column in REQUIRED_COLUMNS:
+    if column not in dataframe.columns:
+        missing_columns.append(column)
+```
+
+- `dataframe.columns` obsahuje názvy sloupců DataFrame;
+- chybějící názvy ukládáme do seznamu `missing_columns`;
+- pokud některý povinný sloupec chybí, proces se zastaví.
+
+---
+
+## 93. Kontrola prázdného DataFrame
+
+```python
+if dataframe.empty:
+    print("Vstupní data neobsahují žádné řádky.")
+    return False
+```
+
+Atribut `.empty` vrací `True`, pokud DataFrame neobsahuje žádné datové řádky.
+
+---
+
+## 94. Proč validovat strukturu před čištěním
+
+Funkce pro čištění používá konkrétní sloupce. Pokud by některý chyběl, cleaning by skončil Python chybou.
+
+```text
+kontrola struktury
+→ potvrzení očekávaných sloupců
+→ bezpečné zahájení čištění
+```
+
+---
+
+## 95. Cleaning a validace
+
+- **cleaning** data opravuje nebo standardizuje;
+- **validace** kontroluje, zda data splňují stanovená pravidla;
+- kritická validační chyba proces zastaví;
+- bezpečně ošetřitelná situace může skončit pouze varováním.
+
+---
+
+## 96. Čištění pracovní kopie
+
+```python
+clean_dataframe = dataframe.copy()
+```
+
+Čištění provádíme na kopii původního DataFrame. Vyčištěnou kopii funkce vrátí:
+
+```python
+return clean_dataframe
+```
+
+V `main()` ji převezmeme:
+
+```python
+dataframe = clean_data(dataframe)
+```
+
+---
+
+## 97. Text cleaning
+
+```python
+for column in text_columns:
+    clean_dataframe[column] = (
+        clean_dataframe[column].str.strip()
+    )
+```
+
+`.str.strip()` odstraní mezery na začátku a konci textu.
+
+```python
+clean_dataframe["state"] = (
+    clean_dataframe["state"].str.lower()
+)
+```
+
+`.str.lower()` sjednotí text na malá písmena.
+
+---
+
+## 98. Prázdný text a chybějící hodnota
+
+```python
+clean_dataframe[column] = (
+    clean_dataframe[column].replace("", pd.NA)
+)
+```
+
+Po odstranění mezer může zůstat prázdný text `""`. Pomocí `pd.NA` ho označíme jako chybějící hodnotu.
+
+---
+
+## 99. Povinná a nepovinná hodnota
+
+- chybějící povinnou hodnotu nevymýšlíme a proces zastavíme;
+- nepovinnou hodnotu můžeme ponechat prázdnou nebo bezpečně doplnit;
+- v našem projektu je `user_login` nepovinný.
+
+```python
+clean_dataframe["user.login"] = (
+    clean_dataframe["user.login"].fillna("unknown")
+)
+```
+
+---
+
+## 100. Odstranění identických řádků
+
+```python
+clean_dataframe = clean_dataframe.drop_duplicates()
+```
+
+Bez parametru `subset` porovnává `drop_duplicates()` všechny sloupce a odstraní pouze úplně stejné řádky.
+
+Počet odstraněných řádků:
+
+```python
+removed_duplicates = row_count_before - row_count_after
+```
+
+---
+
+## 101. Převod čísel s `errors="coerce"`
+
+```python
+clean_dataframe[column] = pd.to_numeric(
+    clean_dataframe[column],
+    errors="coerce"
+)
+```
+
+```text
+platná číselná hodnota
+→ číslo
+
+neplatná číselná hodnota
+→ NaN
+```
+
+Následná validace hodnotu `NaN` zachytí jako chybu.
+
+---
+
+## 102. Převod data a času
+
+```python
+clean_dataframe[column] = (
+    pd.to_datetime(
+        clean_dataframe[column],
+        errors="coerce",
+        utc=True
+    )
+    .dt.tz_localize(None)
+)
+```
+
+Neplatné datum se při použití `errors="coerce"` převede na `NaT`.
+
+---
+
+## 103. Kontrola povinných hodnot
+
+```python
+missing_count = dataframe[column].isna().sum()
+
+if missing_count > 0:
+    return False
+```
+
+`.isna().sum()` spočítá hodnoty `NaN`, `NA` a `NaT`. Pokud chybí povinná hodnota, data nesmějí pokračovat do databáze.
+
+---
+
+## 104. Kontrola duplicitního primárního klíče
+
+```python
+duplicate_id_count = (
+    dataframe["issue_id"].duplicated().sum()
+)
+
+if duplicate_id_count > 0:
+    return False
+```
+
+`issue_id` je primární klíč, proto musí být vyplněný a unikátní.
+
+Rozdíl:
+
+```text
+drop_duplicates()
+→ odstraní úplně stejné řádky
+
+duplicated() na issue_id
+→ odhalí opakovaný primární klíč
+```
+
+---
+
+## 105. Ochrana klíčů v Pythonu a SQL
+
+```text
+Python
+→ včasná kontrola prázdných a duplicitních klíčů
+
+SQL Server
+→ konečná ochrana pomocí PRIMARY KEY a FOREIGN KEY
+```
+
+Pokud odkazované `repository_id` neexistuje, SQL Server vložení odmítne.
+
+---
+
+## 106. `True`, `False`, `0` a `1`
+
+Validační funkce odpovídají na otázku, zda jsou data platná:
+
+```python
+True   # data jsou platná
+False  # data nejsou platná
+```
+
+Funkce `main()` vrací stav celého procesu:
+
+```python
+0  # úspěch
+1  # chyba
+```
+
+---
+
+## 107. `return` a `sys.exit()`
+
+- `return` ukončí právě běžící funkci a vrátí hodnotu volajícímu;
+- `sys.exit()` ukončí celý skript a předá návratový kód operačnímu systému.
+
+```python
+result = main()
+sys.exit(result)
+```
+
+---
+
+## 108. Kritická chyba a varování
+
+| Situace | Reakce |
+|---|---|
+| Chybí povinný sloupec | zastavit proces |
+| Dataset je prázdný | zastavit proces |
+| Chybí primární klíč | zastavit proces |
+| Primární klíč je duplicitní | zastavit proces |
+| Databáze není dostupná | zastavit proces |
+| Chybí nepovinný `user_login` | doplnit nebo pokračovat |
+| Byl odstraněn identický řádek | oznámit a pokračovat |
+
+Kritická chyba může způsobit nesprávný výsledek nebo porušit integritu dat.
+
+---
+
+## 109. `try`, `except` a `finally`
+
+```text
+try
+→ pokus o provedení procesu
+
+except
+→ zachycení a ošetření očekávané chyby
+
+finally
+→ úklid, který proběhne při úspěchu i chybě
+```
+
+V našem skriptu `finally` zajišťuje uzavření databázového spojení.
+
+---
+
+## 110. `commit()` a `rollback()`
+
+```python
+connection.commit()
+```
+
+`commit()` trvale potvrdí databázové změny.
+
+```python
+connection.rollback()
+```
+
+`rollback()` vrátí nepotvrzené změny při chybě.
+
+---
+
+## 111. Bezpečná publikace
+
+```text
+načtení úspěšné
++ čištění úspěšné
++ validace úspěšná
++ databázové zpracování úspěšné
++ výstup vytvořený
+= proces úspěšně dokončen
+```
+
+Neplatná data se nesmějí dostat do publikační části procesu.
+
+V našem skriptu potvrzujeme databázové změny až po úspěšném vytvoření Excelu:
+
+```python
+connection.commit()
+```
+
+---
+
+## 112. Zachování posledního správného výstupu
+
+Pokud validace selže před zápisem:
+
+```text
+databáze se nezmění
+→ Excel se nepřepíše
+→ poslední správný výstup zůstane zachován
+```
+
+Pokročilejší řešení může nejdříve vytvořit dočasný soubor a původní výstup nahradit až po úspěšné kontrole.
+
+---
+
+## 113. Základní tok validačního procesu
+
+```text
+kontrola existence vstupu
+→ načtení CSV
+→ kontrola povinných sloupců
+→ kontrola neprázdného datasetu
+→ text cleaning
+→ převod prázdných textů na NA
+→ odstranění identických řádků
+→ převod čísel a datumů
+→ přejmenování sloupců
+→ kontrola povinných hodnot
+→ kontrola duplicitního issue_id
+→ zápis do SQL Serveru
+→ vytvoření Excelu
+→ commit nebo rollback
+→ uzavření spojení
+→ návratový kód 0 nebo 1
+```
+
+---
+
+## 114. Hlavní poznatky Lekce 5
+
+- strukturu vstupu kontrolujeme před čištěním;
+- cleaning a validace mají rozdílnou odpovědnost;
+- vyčištěný DataFrame vracíme zpět do `main()`;
+- neplatné hodnoty lze pomocí `errors="coerce"` převést na `NaN` nebo `NaT`;
+- povinné hodnoty nesmějí být prázdné;
+- primární klíč musí být unikátní;
+- validační funkce vracejí `True` nebo `False`;
+- `main()` vrací stav procesu `0` nebo `1`;
+- kritická chyba proces zastaví, varování může umožnit pokračování;
+- `rollback()` chrání databázi při chybě;
+- poslední správný výstup se nemá přepsat neplatnými daty.
+
+---
+

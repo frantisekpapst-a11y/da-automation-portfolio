@@ -1,26 +1,3 @@
-A7 — Secrets a environment variables
-API key;
-heslo;
-přístupový token;
-connection string;
-environment variables;
-soubor .env;
-soubor .env.example;
-.gitignore;
-GitHub Secrets;
-proč citlivé údaje nepatří do kódu ani repozitáře.
-Struktura
-.env
-→ obsahuje skutečné hodnoty
-→ neukládat na GitHub
-.env.example
-→ obsahuje pouze názvy proměnných
-→ uložit na GitHub
-Příklad:
-API_KEY=
-DATABASE_SERVER=
-DATABASE_NAME=
-
 A8 — Windows Task Scheduler a .bat
 
 Toto bude hlavní praktický způsob automatického spouštění.

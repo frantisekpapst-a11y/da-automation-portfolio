@@ -4,7 +4,7 @@ import logging
 import time
 
 import pandas as pd
-import as pd
+import pandas as pd
 import pyodbc
 
 

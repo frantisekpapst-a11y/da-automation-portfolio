@@ -850,3 +850,153 @@ Proč jsme do `requirements.txt` přidali `python-dotenv`, ale nepřidali `os` a
 Do `requirements.txt` zapisujeme externí závislosti instalované přes `pip`, nikoliv standardní moduly Pythonu.
 
 ---
+
+## Otázka 54
+
+Jaká je hlavní úloha souboru `run_pipeline.bat` v našem procesu?
+
+- A) Provádět transformace v pandas
+- B) Spustit správný Python interpreter a Python skript
+- C) Vytvořit databázové tabulky
+- D) Nahradit Windows Task Scheduler
+
+**Správná odpověď:** B
+
+BAT soubor spustí Python z projektového virtuálního prostředí a předá mu cestu ke skriptu.
+
+---
+
+## Otázka 55
+
+Co způsobí příkaz `@echo off` na začátku BAT souboru?
+
+- A) Skryje vypisování prováděných BAT příkazů
+- B) Vypne všechny chybové zprávy
+- C) Ukončí otevřený terminál
+- D) Aktivuje virtuální prostředí
+
+**Správná odpověď:** A
+
+Příkaz omezí technické výpisy BAT příkazů, ale chyby Pythonu zůstávají viditelné.
+
+---
+
+## Otázka 56
+
+Co v BAT souboru označuje zápis `%~dp0`?
+
+- A) Složku Python interpreteru
+- B) Aktuální uživatelský profil
+- C) Složku, ve které leží spuštěný BAT soubor
+- D) Složku výstupního Excelu
+
+**Správná odpověď:** C
+
+Zápis vrací cestu ke složce aktuálního BAT souboru.
+
+---
+
+## Otázka 57
+
+Proč před spuštěním Python skriptu používáme příkaz `cd /d`?
+
+- A) Aby se vytvořila databáze
+- B) Aby se aktivoval Python balíček
+- C) Aby se vymazal předchozí výstup
+- D) Aby se nastavila správná pracovní složka a případně změnil disk
+
+**Správná odpověď:** D
+
+`cd` změní pracovní složku a přepínač `/d` dovolí současně změnit také disk.
+
+---
+
+## Otázka 58
+
+Proč v BAT souboru voláme přímo `.venv\Scripts\python.exe`?
+
+- A) Aby nebyl potřeba Python skript
+- B) Aby se použil Python a knihovny ze správného virtuálního prostředí
+- C) Aby se automaticky vytvořilo `.venv`
+- D) Aby se otevřel VS Code
+
+**Správná odpověď:** B
+
+Přímá cesta zaručí použití Pythonu a nainstalovaných knihoven z projektového `.venv`.
+
+---
+
+## Otázka 59
+
+K čemu jsme při testování dočasně použili příkaz `pause`?
+
+- A) K ponechání okna otevřeného, abychom mohli přečíst výstup
+- B) K pozastavení denního plánu
+- C) K vrácení návratového kódu `0`
+- D) K uzavření databázového spojení
+
+**Správná odpověď:** A
+
+`pause` čeká na stisknutí klávesy, takže se příkazové okno ihned nezavře.
+
+---
+
+## Otázka 60
+
+Proč nemá příkaz `pause` zůstat ve finálním BAT souboru pro plánované spuštění?
+
+- A) Protože odstraní vytvořený Excel
+- B) Protože změní pracovní složku
+- C) Protože by automatická úloha čekala na stisknutí klávesy
+- D) Protože vypne virtuální prostředí
+
+**Správná odpověď:** C
+
+Plánovaný proces by zůstal čekat na ruční zásah a řádně by se nedokončil.
+
+---
+
+## Otázka 61
+
+Co dělá příkaz `exit /b %ERRORLEVEL%` na konci BAT souboru?
+
+- A) Spustí Python podruhé
+- B) Ukončí BAT soubor a předá návratový kód systému Windows
+- C) Vymaže předchozí log
+- D) Otevře výsledný Excel
+
+**Správná odpověď:** B
+
+BAT soubor předá Windows informaci, zda Python proces skončil úspěchem, nebo chybou.
+
+---
+
+## Otázka 62
+
+Co v našem případě znamená výsledek posledního spuštění `0x0`?
+
+- A) Úloha byla úspěšně dokončena
+- B) Úloha ještě nebyla spuštěna
+- C) Vstupní soubor nebyl nalezen
+- D) Proces vytvořil nula řádků
+
+**Správná odpověď:** A
+
+Hodnota `0x0` odpovídá návratovému kódu `0`, který označuje úspěšné dokončení.
+
+---
+
+## Otázka 63
+
+Jak nejlépe ověříme úspěch automaticky spuštěného procesu?
+
+- A) Pouze otevřením VS Code
+- B) Pouze existencí BAT souboru
+- C) Kontrolou výsledku `0x0`, nového záznamu v logu a aktualizovaného výstupu
+- D) Kontrolou posledního přístupu k Excelu
+
+**Správná odpověď:** C
+
+Návratový kód, log a skutečně aktualizovaný Excel společně potvrzují úspěšný běh.
+
+---

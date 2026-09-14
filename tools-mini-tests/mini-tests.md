@@ -536,3 +536,167 @@ Která situace je v našem procesu pouze varováním, nikoliv kritickou chybou?
 
 ---
 
+## Otázka 34
+
+Jaký je hlavní účel modulu `logging`?
+
+- A) Čistit data v DataFrame
+- B) Vytvářet záznamy o průběhu programu
+- C) Připojovat Python k SQL Serveru
+- D) Vytvářet Excelové soubory
+
+**Správná odpověď:** B
+
+Modul `logging` zaznamenává průběh, výsledky a případné chyby programu.
+
+---
+
+## Otázka 35
+
+Jaký je hlavní rozdíl mezi `print()` a `logging`?
+
+- A) `print()` může zobrazit text, zatímco `logging` pracuje pouze s čísly
+- B) `logging` může ukládat strukturované záznamy do souboru
+- C) `print()` automaticky přidává datum a čas
+- D) Mezi nimi není žádný rozdíl
+
+**Správná odpověď:** B
+
+`print()` vypíše zprávu do terminálu, zatímco `logging` ji může trvale uložit.
+
+---
+
+## Otázka 36
+
+Co nastavuje tento parametr?
+
+```python
+level=logging.INFO
+```
+
+- A) Název logovacího souboru
+- B) Formát data
+- C) Nejnižší zaznamenávanou úroveň logování
+- D) Maximální počet řádků v logu
+
+**Správná odpověď:** C
+
+Při nastavení `INFO` se zaznamenávají zprávy úrovní `INFO`, `WARNING` a `ERROR`.
+
+---
+
+## Otázka 37
+
+Která úroveň je vhodná pro běžnou informaci o správném průběhu procesu?
+
+- A) `INFO`
+- B) `WARNING`
+- C) `ERROR`
+- D) `STOP`
+
+**Správná odpověď:** A
+
+`INFO` slouží pro běžné provozní informace, například zahájení procesu.
+
+---
+
+## Otázka 38
+
+Která úroveň je vhodná pro nekritický problém, při kterém může proces pokračovat?
+
+- A) `INFO`
+- B) `WARNING`
+- C) `ERROR`
+- D) `SUCCESS`
+
+**Správná odpověď:** B
+
+`WARNING` upozorňuje na problém, který nemusí vyžadovat zastavení procesu.
+
+---
+
+## Otázka 39
+
+Co znamená timestamp v logu?
+
+- A) Počet zpracovaných řádků
+- B) Celkovou délku procesu
+- C) Datum a čas konkrétní události
+- D) Návratový kód skriptu
+
+**Správná odpověď:** C
+
+Timestamp ukazuje, kdy přesně byl konkrétní záznam vytvořen.
+
+---
+
+## Otázka 40
+
+K čemu používáme následující příkaz?
+
+```python
+start_time = time.perf_counter()
+```
+
+- A) K získání aktuálního kalendářního data
+- B) K zahájení měření délky procesu
+- C) K vytvoření timestampu v logu
+- D) K zastavení skriptu
+
+**Správná odpověď:** B
+
+`time.perf_counter()` použijeme jako přesné stopky pro měření délky zpracování.
+
+---
+
+## Otázka 41
+
+Co představuje `%s` v tomto zápisu?
+
+```python
+logging.info(
+    "Počet řádků: %s",
+    len(dataframe)
+)
+```
+
+- A) Zástupné místo pro předanou hodnotu
+- B) Název logovacího souboru
+- C) Chybový návratový kód
+- D) Formát aktuálního času
+
+**Správná odpověď:** A
+
+Na místo `%s` se při vytvoření záznamu vloží hodnota `len(dataframe)`.
+
+---
+
+## Otázka 42
+
+Proč zapisujeme informaci o vytvoření Excelu až po dokončení bloku `ExcelWriter`?
+
+- A) Aby log nepotvrdil vytvoření souboru, který ve skutečnosti nevznikl
+- B) Protože `logging` nelze použít uvnitř funkce `main()`
+- C) Aby se automaticky vytvořila databázová tabulka
+- D) Protože logování funguje pouze po příkazu `return`
+
+**Správná odpověď:** A
+
+Úspěšné vytvoření výstupu zaznamenáme až ve chvíli, kdy byl soubor skutečně uložen.
+
+---
+
+## Otázka 43
+
+Co znamená monitoring v rozsahu této lekce?
+
+- A) Automatickou opravu všech chyb
+- B) Vytvoření samostatného Power BI dashboardu
+- C) Kontrolu logu, úspěchu procesu, počtů řádků, chyb a délky zpracování
+- D) Pravidelné mazání vstupních dat
+
+**Správná odpověď:** C
+
+Jednoduchý monitoring znamená kontrolovat podle logu stav a výsledek automatizovaného procesu.
+
+---

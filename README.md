@@ -1,0 +1,223 @@
+A6 — Logging a monitoring
+modul logging;
+log soubor;
+timestamp;
+status;
+úrovně INFO, WARNING a ERROR;
+počet vstupních a výstupních řádků;
+čas zahájení a dokončení;
+délka zpracování;
+výsledek validace;
+vytvořený výstup;
+záznam chyby.
+Příklad logu
+2026-09-12 06:00:01 | INFO | Proces zahájen
+2026-09-12 06:00:03 | INFO | Načteno 1 250 řádků
+2026-09-12 06:00:04 | INFO | Validace úspěšná
+2026-09-12 06:00:06 | INFO | Výstup vytvořen
+2026-09-12 06:00:06 | INFO | Proces dokončen
+
+Při chybě:
+
+2026-09-12 06:00:03 | ERROR | Kurzovní API není dostupné
+
+A7 — Secrets a environment variables
+Témata
+API key;
+heslo;
+přístupový token;
+connection string;
+environment variables;
+soubor .env;
+soubor .env.example;
+.gitignore;
+GitHub Secrets;
+proč citlivé údaje nepatří do kódu ani repozitáře.
+Struktura
+.env
+→ obsahuje skutečné hodnoty
+→ neukládat na GitHub
+
+.env.example
+→ obsahuje pouze názvy proměnných
+→ uložit na GitHub
+
+Příklad:
+
+API_KEY=
+DATABASE_SERVER=
+DATABASE_NAME=
+
+A8 — Windows Task Scheduler a .bat
+
+Toto bude hlavní praktický způsob automatického spouštění.
+
+Témata
+vytvoření .bat;
+aktivace správného .venv;
+cesta k Python interpreteru;
+cesta ke skriptu;
+pracovní adresář;
+spuštění bez otevřeného VS Code;
+časové plánování;
+spuštění při přihlášení;
+ruční test úlohy;
+historie spuštění;
+návratový kód;
+řešení rozdílu mezi ručním a naplánovaným během.
+Datový tok
+Windows Task Scheduler
+→ run_pipeline.bat
+→ Python z .venv
+→ pipeline.py
+→ výstupní data
+→ log
+
+A9 — GitHub Actions
+Témata
+workflow;
+job;
+step;
+runner;
+YAML;
+schedule;
+workflow_dispatch;
+instalace Pythonu;
+instalace dependencies;
+GitHub Secrets;
+spuštění Python skriptu;
+workflow artifacts;
+kontrola úspěchu a selhání.
+Praktická hranice
+
+GitHubem hostovaný runner se běžně nepřipojí k LocalDB na uživatelově počítači.
+
+Proto:
+
+GitHub Actions
+→ API-only automatizace
+
+Windows Task Scheduler
+→ LocalDB a lokální soubory
+Praktický scénář
+GitHub Actions
+→ plánované stažení z API
+→ validace
+→ CSV nebo JSON
+→ workflow artifact
+
+A10 — SQL scheduling
+Témata
+princip SQL Server Agentu;
+job;
+job step;
+schedule;
+historie spuštění;
+úspěch a chyba;
+kdy plánovat proces v databázi;
+kdy použít Python;
+kdy použít orchestrační platformu.
+Omezení LocalDB
+
+LocalDB nemá SQL Server Agent. Praktickou variantou proto bude:
+
+Windows Task Scheduler
+→ Python nebo sqlcmd
+→ SQL LocalDB
+→ SQL skript nebo uložená procedura
+SQL scheduling je vhodný, když
+celý proces zůstává v SQL Serveru;
+transformaci lze provést uloženou procedurou;
+výstup zůstává v databázi;
+nejsou potřeba API ani soubory;
+databázový tým job spravuje.
+Python je vhodnější, když
+získáváme data z API;
+zpracováváme JSON, CSV nebo Excel;
+kombinujeme různé zdroje;
+potřebujeme nestandardní logiku;
+vytváříme souborové výstupy;
+Python řídí validaci a logování.
+
+A11 — Power Query a Power BI refresh
+Power Query refresh
+
+Power Query definuje:
+
+připojení ke zdroji;
+načítání;
+transformační kroky;
+načtení výsledku.
+
+Prostředí, ve kterém Power Query běží, určuje způsob obnovy.
+
+Power Query
+→ jak data načíst a transformovat
+
+Excel nebo Power BI
+→ kdy obnovu spustit
+Kdy Power Query stačí
+proces má málo zdrojů;
+transformace jsou jednoduché;
+zdroje jsou přímo dostupné;
+nejsou složité závislosti;
+není potřeba pokročilé logování;
+případná chyba nevyžaduje speciální reakci.
+Kdy potřebujeme další automatizaci
+nejprve se musí stáhnout API;
+musí proběhnout Python;
+několik zdrojů je dostupných v různých časech;
+publikace závisí na validaci;
+je potřeba detailní log;
+chyba musí zastavit navazující kroky.
+Power BI
+scheduled refresh;
+data source credentials;
+refresh history;
+gateway;
+závislost na dostupnosti zdroje;
+poslední úspěšná aktualizace;
+Power BI Desktop versus Power BI Service.
+Praktický rozsah
+SQL LocalDB nebo exportní soubor
+→ Power BI Desktop
+Gateway a plánovanou obnovu v Power BI Service probereme koncepčně.
+
+A12 — Závěrečná case study Automation
+Daily Pricing Control Automation
+Vstupy
+SQL Server LocalDB s produkty a nákupními cenami;
+API s měnovými kurzy;
+Excel s cenovými limity.
+Datový tok
+Windows Task Scheduler
+→ .bat
+→ Python
+→ SQL LocalDB + API + Excel
+→ validace
+→ převod cen do CZK
+→ kontrola cenových limitů
+→ zápis výsledku
+→ export pro Power BI
+→ log
+GitHub Actions větev
+GitHub Actions
+→ plánované stažení kurzů
+→ validace
+→ export
+→ workflow artifact
+Výstupy
+funkční Python skript;
+SQL skripty;
+.bat;
+.env.example;
+log;
+ukázkový export;
+naplánovaná úloha;
+GitHub Actions workflow;
+README;
+Automation cheatsheet;
+minitesty.
+Časový odhad bloku
+
+Přibližně 14–19 hodin.

@@ -1000,3 +1000,154 @@ Jak nejlépe ověříme úspěch automaticky spuštěného procesu?
 Návratový kód, log a skutečně aktualizovaný Excel společně potvrzují úspěšný běh.
 
 ---
+
+## Otázka 64
+
+Ve které složce repozitáře musí být uložen soubor GitHub Actions workflow?
+
+- A) `automation-lessons/workflows`
+- B) `.github/workflows`
+- C) `.venv/actions`
+- D) `src/github`
+
+**Správná odpověď:** B
+
+GitHub automaticky načítá workflow soubory uložené ve složce `.github/workflows`.
+
+---
+
+## Otázka 65
+
+Co je runner v GitHub Actions?
+
+- A) Soubor s výsledným CSV
+- B) Seznam kroků workflow
+- C) Počítač, na kterém běží job
+- D) Tajná proměnná repozitáře
+
+**Správná odpověď:** C
+
+Runner poskytuje operační systém a prostředí potřebné k provedení jobu.
+
+---
+
+## Otázka 66
+
+K čemu slouží `workflow_dispatch`?
+
+- A) K ručnímu spuštění workflow
+- B) K instalaci Python knihoven
+- C) K uložení workflow artifactu
+- D) K připojení k LocalDB
+
+**Správná odpověď:** A
+
+`workflow_dispatch` zpřístupní na kartě Actions tlačítko **Run workflow**.
+
+---
+
+## Otázka 67
+
+Co znamená cron zápis `0 6 * * *` v našem workflow?
+
+- A) Každých šest minut
+- B) Každou hodinu v šesté minutě
+- C) Každý šestý den v měsíci
+- D) Každý den v 06:00
+
+**Správná odpověď:** D
+
+První hodnota určuje minutu `0`, druhá hodinu `6` a hvězdičky povolují každý den.
+
+---
+
+## Otázka 68
+
+Co provede `actions/checkout` v prvním kroku jobu?
+
+- A) Vytvoří nový GitHub repozitář
+- B) Stáhne obsah repozitáře na runner
+- C) Nainstaluje všechny Python knihovny
+- D) Nahraje výsledné soubory jako artifact
+
+**Správná odpověď:** B
+
+Akce zpřístupní runneru Python skripty, `requirements.txt` a další projektové soubory.
+
+---
+
+## Otázka 69
+
+Proč workflow používá `actions/setup-python`?
+
+- A) Aby vytvořilo vstupní JSON
+- B) Aby nastavilo databázi LocalDB
+- C) Aby připravilo požadovanou verzi Pythonu
+- D) Aby odeslalo změny přes `git push`
+
+**Správná odpověď:** C
+
+Akce připraví na runneru verzi Pythonu uvedenou v nastavení `python-version`.
+
+---
+
+## Otázka 70
+
+Proč se knihovny na runneru instalují ze souboru `requirements.txt`?
+
+- A) Runner nepoužívá naše lokální `.venv`
+- B) GitHub zakazuje používat pandas lokálně
+- C) `requirements.txt` vytváří časový plán
+- D) `requirements.txt` ukládá GitHub Secrets
+
+**Správná odpověď:** A
+
+Nový runner si připravuje vlastní prostředí a potřebné knihovny musí nainstalovat znovu.
+
+---
+
+## Otázka 71
+
+Co je workflow artifact?
+
+- A) Trvalý virtuální počítač GitHubu
+- B) Automatický commit do repozitáře
+- C) Náhrada za `requirements.txt`
+- D) Balíček výstupů vytvořených během konkrétního běhu
+
+**Správná odpověď:** D
+
+Artifact umožňuje po dokončení workflow stáhnout soubory vytvořené na runneru.
+
+---
+
+## Otázka 72
+
+Co se stane, když Python skript ve workflow vrátí nenulový návratový kód?
+
+- A) Krok se označí jako úspěšný
+- B) Krok se označí jako neúspěšný
+- C) Workflow automaticky vytvoří prázdný artifact
+- D) GitHub spustí LocalDB
+
+**Správná odpověď:** B
+
+Nenulový návratový kód signalizuje chybu a workflow se standardně zastaví.
+
+---
+
+## Otázka 73
+
+Proč náš GitHub Actions workflow nezapisuje přímo do LocalDB na osobním počítači?
+
+- A) GitHub Actions neumí spouštět Python
+- B) LocalDB nepodporuje SQL dotazy
+- C) Vzdálený runner nemá přímý přístup k lokálnímu počítači
+- D) Workflow používá formát YAML
+
+**Správná odpověď:** C
+
+GitHub-hosted runner je oddělený virtuální počítač bez automatického přístupu k lokální LocalDB.
+
+---
+    

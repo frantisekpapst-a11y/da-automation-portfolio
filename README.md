@@ -1,28 +1,4 @@
-A6 — Logging a monitoring
-modul logging;
-log soubor;
-timestamp;
-status;
-úrovně INFO, WARNING a ERROR;
-počet vstupních a výstupních řádků;
-čas zahájení a dokončení;
-délka zpracování;
-výsledek validace;
-vytvořený výstup;
-záznam chyby.
-Příklad logu
-2026-09-12 06:00:01 | INFO | Proces zahájen
-2026-09-12 06:00:03 | INFO | Načteno 1 250 řádků
-2026-09-12 06:00:04 | INFO | Validace úspěšná
-2026-09-12 06:00:06 | INFO | Výstup vytvořen
-2026-09-12 06:00:06 | INFO | Proces dokončen
-
-Při chybě:
-
-2026-09-12 06:00:03 | ERROR | Kurzovní API není dostupné
-
 A7 — Secrets a environment variables
-Témata
 API key;
 heslo;
 přístupový token;
@@ -37,13 +13,10 @@ Struktura
 .env
 → obsahuje skutečné hodnoty
 → neukládat na GitHub
-
 .env.example
 → obsahuje pouze názvy proměnných
 → uložit na GitHub
-
 Příklad:
-
 API_KEY=
 DATABASE_SERVER=
 DATABASE_NAME=

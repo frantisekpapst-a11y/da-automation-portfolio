@@ -2607,3 +2607,444 @@ kontrola existence vstupu
 
 ---
 
+# Lekce 6 – Logging a monitoring
+
+## 115. K čemu slouží logging
+
+Modul `logging` vytváří trvalé záznamy o průběhu skriptu.
+
+Umožňuje zaznamenat:
+
+- datum a čas události;
+- úroveň zprávy;
+- zahájení a dokončení procesu;
+- počty zpracovaných řádků;
+- výsledky validace;
+- vytvořené výstupy;
+- chyby.
+
+```python
+import logging
+```
+
+Modul `logging` je součástí Pythonu a nemusí se instalovat přes `pip`.
+
+---
+
+## 116. Print a logging
+
+```python
+print("Proces byl zahájen.")
+```
+
+`print()` zobrazí zprávu během aktuálního spuštění skriptu.
+
+```python
+logging.info("Proces byl zahájen.")
+```
+
+`logging.info()` může zprávu trvale uložit do logovacího souboru.
+
+```text
+print()
+→ okamžitá informace v terminálu
+
+logging
+→ trvalý záznam o průběhu procesu
+```
+
+---
+
+## 117. Složka a soubor pro log
+
+```python
+logs_dir = base_dir / "logs"
+log_file = logs_dir / "github_issues.log"
+```
+
+- `logs_dir` obsahuje cestu ke složce s logy;
+- `log_file` obsahuje cestu ke konkrétnímu logovacímu souboru.
+
+Tyto řádky pouze sestavují cesty. Složku ani soubor zatím nevytvářejí.
+
+---
+
+## 118. Vytvoření složky pro logy
+
+```python
+logs_dir.mkdir(
+    parents=True,
+    exist_ok=True
+)
+```
+
+- `parents=True` umožní vytvořit také chybějící nadřazené složky;
+- `exist_ok=True` zabrání chybě, pokud složka již existuje.
+
+---
+
+## 119. Základní konfigurace logování
+
+```python
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    encoding="utf-8"
+)
+```
+
+Význam parametrů:
+
+- `filename` určuje logovací soubor;
+- `level` určuje nejnižší zaznamenávanou úroveň;
+- `format` určuje podobu jednoho řádku;
+- `datefmt` určuje formát data a času;
+- `encoding` nastavuje kódování souboru.
+
+---
+
+## 120. Formát jednoho záznamu
+
+```python
+format="%(asctime)s | %(levelname)s | %(message)s"
+```
+
+- `%(asctime)s` vloží datum a čas;
+- `%(levelname)s` vloží úroveň zprávy;
+- `%(message)s` vloží samotný text zprávy.
+
+Příklad výsledku:
+
+```text
+2026-09-14 20:30:01 | INFO | Proces byl zahájen.
+```
+
+Znak `%` označuje zástupné místo. Písmeno `s` znamená vložení hodnoty jako textu.
+
+---
+
+## 121. Formát data a času
+
+```python
+datefmt="%Y-%m-%d %H:%M:%S"
+```
+
+- `%Y` – rok;
+- `%m` – měsíc;
+- `%d` – den;
+- `%H` – hodina;
+- `%M` – minuta;
+- `%S` – sekunda.
+
+Výsledek:
+
+```text
+2026-09-14 20:30:01
+```
+
+---
+
+## 122. Timestamp a délka procesu
+
+Timestamp označuje konkrétní datum a čas události:
+
+```text
+2026-09-14 20:30:01
+```
+
+Délka procesu říká, kolik času zpracování zabralo:
+
+```text
+Délka zpracování v sekundách: 1.25
+```
+
+```text
+timestamp
+→ kdy se událost stala
+
+délka procesu
+→ jak dlouho proces trval
+```
+
+---
+
+## 123. Úrovně logování
+
+Základní úrovně používané v našem procesu:
+
+```python
+logging.info("Proces byl zahájen.")
+
+logging.warning("Některé nepovinné hodnoty chybějí.")
+
+logging.error("Vstupní soubor neexistuje.")
+```
+
+- `INFO` – běžná provozní informace;
+- `WARNING` – problém, při kterém může proces pokračovat;
+- `ERROR` – chyba, kvůli které proces zpravidla končí.
+
+`WARNING` nepřidáváme do skriptu uměle, pokud nemáme skutečnou situaci vhodnou pro varování.
+
+---
+
+## 124. Zahájení procesu
+
+```python
+logging.info("Proces byl zahájen.")
+```
+
+Tento záznam ukazuje, že se skript skutečně spustil.
+
+Logovací soubor se standardně vytvoří při zápisu prvního záznamu.
+
+---
+
+## 125. Zápis hodnoty do logu
+
+```python
+logging.info(
+    "Načten počet vstupních řádků: %s",
+    len(dataframe)
+)
+```
+
+`%s` je zástupné místo pro předanou hodnotu.
+
+Do logu se může zapsat:
+
+```text
+2026-09-14 20:30:01 | INFO | Načten počet vstupních řádků: 30
+```
+
+---
+
+## 126. Záznam vstupních a výstupních řádků
+
+Po načtení vstupu:
+
+```python
+logging.info(
+    "Načten počet vstupních řádků: %s",
+    len(dataframe)
+)
+```
+
+Po čištění a validaci:
+
+```python
+logging.info(
+    "Počet řádků po vyčištění a validaci: %s",
+    len(dataframe)
+)
+```
+
+Po vytvoření reportu:
+
+```python
+logging.info(
+    "Počet řádků v Excelovém výstupu: %s",
+    len(report_df)
+)
+```
+
+Porovnáním počtů lze zjistit, zda se během zpracování řádky odstranily nebo ztratily.
+
+---
+
+## 127. Záznam výsledku validace
+
+Úspěšná validace:
+
+```python
+if not validate_structure(dataframe):
+    logging.error("Validace struktury selhala.")
+    return 1
+
+logging.info("Validace struktury byla úspěšná.")
+```
+
+Pokud validace vrátí `False`, proces zapíše chybu a skončí.
+
+Pokud vrátí `True`, pokračuje se zápisem úspěšného výsledku.
+
+---
+
+## 128. Záznam vytvořeného výstupu
+
+```python
+logging.info(
+    "Excelový výstup byl vytvořen: %s",
+    output_file
+)
+```
+
+Záznam včetně cesty umožňuje zjistit, kde byl výsledný soubor vytvořen.
+
+Tento příkaz patří až za vytvoření Excelu, aby log nepotvrdil výstup, který ve skutečnosti nevznikl.
+
+---
+
+## 129. Záznam databázové chyby
+
+```python
+except pyodbc.Error as error:
+    logging.error(
+        "Chyba při práci s databází: %s",
+        error
+    )
+
+    if connection is not None:
+        connection.rollback()
+
+    return 1
+```
+
+`logging.error()` uloží chybovou zprávu do logu a `return 1` oznámí neúspěšné dokončení procesu.
+
+---
+
+## 130. Záznam souborové nebo datové chyby
+
+```python
+except (OSError, ValueError) as error:
+    logging.error(
+        "Chyba při práci se souborem nebo daty: %s",
+        error
+    )
+
+    if connection is not None:
+        connection.rollback()
+
+    return 1
+```
+
+Log pomáhá zpětně zjistit, proč automatizovaný proces skončil chybou.
+
+---
+
+## 131. Měření délky procesu
+
+Modul `time` použijeme jako stopky:
+
+```python
+import time
+```
+
+Na začátku procesu:
+
+```python
+start_time = time.perf_counter()
+```
+
+Na konci procesu:
+
+```python
+duration_seconds = round(
+    time.perf_counter() - start_time,
+    2
+)
+```
+
+`round(..., 2)` zaokrouhlí výsledek na dvě desetinná místa.
+
+---
+
+## 132. Záznam délky a dokončení procesu
+
+```python
+logging.info(
+    "Délka zpracování v sekundách: %s",
+    duration_seconds
+)
+
+logging.info("Proces byl úspěšně dokončen.")
+```
+
+Tyto záznamy patří až na konec úspěšné části před:
+
+```python
+return 0
+```
+
+---
+
+## 133. Příklad výsledného logu
+
+```text
+2026-09-14 20:30:01 | INFO | Proces byl zahájen.
+2026-09-14 20:30:01 | INFO | Načten počet vstupních řádků: 30
+2026-09-14 20:30:01 | INFO | Validace struktury byla úspěšná.
+2026-09-14 20:30:01 | INFO | Finální validace dat byla úspěšná.
+2026-09-14 20:30:01 | INFO | Počet řádků po vyčištění a validaci: 30
+2026-09-14 20:30:02 | INFO | Excelový výstup byl vytvořen: C:\...\github_issues_report.xlsx
+2026-09-14 20:30:02 | INFO | Počet řádků v Excelovém výstupu: 30
+2026-09-14 20:30:02 | INFO | Počet řádků uložených do databáze: 30
+2026-09-14 20:30:02 | INFO | Délka zpracování v sekundách: 1.25
+2026-09-14 20:30:02 | INFO | Proces byl úspěšně dokončen.
+```
+
+---
+
+## 134. Co znamená monitoring
+
+Monitoring znamená sledování, zda automatizovaný proces funguje správně.
+
+V našem juniorském rozsahu kontrolujeme v logu:
+
+- kdy se proces naposledy spustil;
+- zda byl úspěšně dokončen;
+- kolik řádků zpracoval;
+- zda validace proběhla úspěšně;
+- zda vznikl očekávaný výstup;
+- zda se objevilo `WARNING` nebo `ERROR`;
+- jak dlouho proces trval.
+
+Monitoring zatím nevyžaduje samostatný dashboard ani automatické e-mailové upozornění.
+
+---
+
+## 135. Základní tok logování
+
+```text
+spuštění skriptu
+
+→ vytvoření nebo otevření logovacího souboru
+
+→ záznam zahájení procesu
+
+→ záznam počtu vstupních řádků
+
+→ záznam výsledků validace
+
+→ záznam počtu zpracovaných řádků
+
+→ záznam vytvořeného výstupu
+
+→ záznam případné chyby
+
+→ výpočet délky procesu
+
+→ záznam úspěšného dokončení
+```
+
+---
+
+## 136. Hlavní poznatky Lekce 6
+
+- `logging` vytváří trvalý záznam o průběhu skriptu;
+- `print()` slouží především pro okamžitý výpis do terminálu;
+- `basicConfig()` nastavuje způsob logování;
+- timestamp označuje datum a čas konkrétní události;
+- délka procesu určuje dobu celého zpracování;
+- `INFO` označuje běžnou provozní informaci;
+- `WARNING` označuje nekritický problém;
+- `ERROR` označuje chybu;
+- do logu zapisujeme počty řádků, výsledky validace a vytvořené výstupy;
+- `time.perf_counter()` lze použít jako stopky;
+- log umožňuje zpětně zkontrolovat automatický běh procesu;
+- jednoduchý monitoring znamená pravidelnou kontrolu úspěchu, chyb a délky zpracování.
+
+---

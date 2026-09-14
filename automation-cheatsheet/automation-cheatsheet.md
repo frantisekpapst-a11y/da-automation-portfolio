@@ -3362,3 +3362,387 @@ vytvoření souboru .env
 - `python-dotenv` je externí balíček a patří do `requirements.txt`.
 
 ---
+
+## 156. Úloha Windows Task Scheduleru
+
+Windows Task Scheduler neboli Plánovač úloh určuje, **kdy** se má automatizovaný proces spustit.
+
+Může proces spustit například:
+
+- každý den v určený čas;
+- při přihlášení uživatele;
+- při spuštění počítače;
+- ručně pomocí volby **Spustit**.
+
+---
+
+## 157. Datový tok naplánovaného procesu
+
+```text
+Windows Task Scheduler
+→ run_pipeline.bat
+→ Python z .venv
+→ Python skript
+→ SQL Server LocalDB
+→ Excel
+→ log
+→ návratový kód
+```
+
+---
+
+## 158. Úloha BAT souboru
+
+BAT soubor je dávkový soubor pro Windows. V našem procesu:
+
+- nastaví pracovní složku;
+- spustí správný Python interpreter;
+- spustí zvolený Python skript;
+- předá jeho návratový kód systému Windows.
+
+---
+
+## 159. Finální BAT soubor
+
+```bat
+@echo off
+cd /d "%~dp0..\.."
+
+".venv\Scripts\python.exe" "automation-lessons\06-logging-monitoring\src\validate_github_issues.py"
+
+exit /b %ERRORLEVEL%
+```
+
+---
+
+## 160. Příkaz `@echo off`
+
+```bat
+@echo off
+```
+
+Omezí zobrazování prováděných BAT příkazů v příkazovém okně.
+
+- `echo off` vypne jejich vypisování;
+- `@` skryje také samotný příkaz `echo off`.
+
+Chybové zprávy Pythonu zůstávají viditelné.
+
+---
+
+## 161. Význam `%~dp0`
+
+```bat
+%~dp0
+```
+
+Vrací cestu ke složce, ve které leží spuštěný BAT soubor.
+
+Díky tomu BAT soubor nemusí záviset na složce, ze které ho Windows spustil.
+
+---
+
+## 162. Přechod do nadřazené složky
+
+```text
+..
+```
+
+znamená přechod o jednu složku výše.
+
+```text
+..\..
+```
+
+znamená přechod o dvě složky výše.
+
+V našem projektu:
+
+```text
+08-windows-task-scheduler-bat
+→ automation-lessons
+→ da-automation-portfolio
+```
+
+---
+
+## 163. Nastavení pracovní složky
+
+```bat
+cd /d "%~dp0..\.."
+```
+
+- `cd` změní pracovní složku;
+- `/d` dovolí změnit zároveň také disk;
+- `%~dp0` vychází ze složky BAT souboru;
+- `..\..` přejde o dvě úrovně výše.
+
+Výsledkem je nastavení kořenové složky repozitáře jako pracovní složky.
+
+---
+
+## 164. Proč je pracovní složka důležitá
+
+Relativní cesty se vyhodnocují od aktuální pracovní složky.
+
+Plánovač úloh může proces spustit z jiné složky než VS Code nebo PowerShell. Proto pracovní složku nastavujeme přímo v BAT souboru.
+
+---
+
+## 165. Přímé spuštění Pythonu z `.venv`
+
+```bat
+".venv\Scripts\python.exe" "cesta\ke\skriptu.py"
+```
+
+Tím zajistíme použití:
+
+- správné verze Pythonu;
+- správného virtuálního prostředí;
+- knihoven nainstalovaných v projektovém `.venv`.
+
+---
+
+## 166. Aktivace `.venv` není nutná
+
+Při přímém použití:
+
+```bat
+.venv\Scripts\python.exe
+```
+
+nemusíme předem spouštět:
+
+```bat
+call .venv\Scripts\activate.bat
+```
+
+Přímá cesta k interpreteru je pro automatické spuštění jednoduchá a jednoznačná.
+
+---
+
+## 167. Uvozovky kolem cest
+
+```bat
+"cesta\k\souboru"
+```
+
+Uvozovky chrání celou cestu, pokud obsahuje mezery. Je vhodné je používat i tehdy, když současná cesta mezery neobsahuje.
+
+---
+
+## 168. Návratový kód Python procesu
+
+Python skript používá běžnou konvenci:
+
+```text
+0
+→ proces skončil úspěšně
+
+nenulová hodnota
+→ proces skončil chybou
+```
+
+Například `return 1` ve funkci `main()` označuje neúspěšné dokončení.
+
+---
+
+## 169. Předání návratového kódu z BAT souboru
+
+```bat
+exit /b %ERRORLEVEL%
+```
+
+- `%ERRORLEVEL%` obsahuje návratový kód posledního spuštěného programu;
+- `exit /b` ukončí BAT soubor;
+- návratový kód se předá systému Windows a Plánovači úloh.
+
+---
+
+## 170. Výsledek `0x0`
+
+V Plánovači úloh obvykle znamená:
+
+```text
+Výsledek posledního spuštění: 0x0
+→ úloha byla úspěšně dokončena
+```
+
+Jde o jiný zápis návratového kódu `0`.
+
+---
+
+## 171. Dočasné použití příkazu `pause`
+
+```bat
+pause
+```
+
+Příkaz ponechá okno otevřené a čeká na stisknutí klávesy. Hodí se při ručním hledání chyby.
+
+Ve finálním BAT souboru pro automatické spuštění ho nepoužíváme, protože by úloha čekala na ruční zásah.
+
+---
+
+## 172. Trigger neboli spouštěč
+
+Trigger určuje, **kdy** se úloha spustí.
+
+Příklady:
+
+- denně v určitou hodinu;
+- týdně;
+- při přihlášení uživatele;
+- při spuštění počítače.
+
+Pro náš proces jsme použili denní spouštěč.
+
+---
+
+## 173. Akce úlohy
+
+Akce určuje, **co** se má při aktivaci úlohy provést.
+
+V našem případě:
+
+```text
+Akce
+→ Spustit program
+→ run_pipeline.bat
+```
+
+---
+
+## 174. Ruční test naplánované úlohy
+
+V Plánovači úloh lze označit úlohu a vybrat **Spustit**.
+
+Tím ověříme:
+
+- správnou cestu k BAT souboru;
+- spuštění Pythonu z `.venv`;
+- dostupnost vstupů a databáze;
+- vytvoření výstupu a logu;
+- správný návratový kód.
+
+---
+
+## 175. Historie spuštění
+
+Historie Plánovače úloh ukazuje například:
+
+- čas spuštění;
+- zahájení úlohy;
+- dokončení úlohy;
+- případné chyby Plánovače.
+
+Pokud je vypnutá, lze použít volbu **Povolit historii všech úloh**.
+
+---
+
+## 176. Spuštění po zmeškaném termínu
+
+Užitečné nastavení:
+
+```text
+Spustit úlohu co nejdříve po zmeškání naplánovaného spuštění
+```
+
+Pokud byl počítač v plánovaném čase vypnutý, může se úloha spustit později, jakmile je to možné.
+
+---
+
+## 177. Spuštění při přihlášení
+
+Spouštěč **Při přihlášení** zahájí úlohu při přihlášení uživatele do Windows.
+
+Pro pravidelný denní report je obvykle vhodnější časový spouštěč. Spuštění při přihlášení se hodí pro procesy, které mají proběhnout po zahájení práce uživatele.
+
+---
+
+## 178. Ruční a plánované spuštění
+
+```text
+ruční spuštění
+→ proces spustí uživatel
+→ výsledek může ihned sledovat
+
+plánované spuštění
+→ proces spustí Windows automaticky
+→ výsledek se kontroluje pomocí stavu, logu a výstupu
+```
+
+Stejný skript se může chovat rozdílně kvůli jiné pracovní složce, uživatelskému účtu nebo prostředí.
+
+---
+
+## 179. Kontrola úspěšného běhu
+
+Úspěch nekontrolujeme pouze podle existence souboru.
+
+Spolehlivější kontrola kombinuje:
+
+```text
+Výsledek posledního spuštění 0x0
++ nový úspěšný záznam v logu
++ aktualizovaný Excel
+= potvrzený úspěšný běh
+```
+
+Poslední přístup k souboru může znamenat pouze jeho otevření, nikoliv vytvoření nové verze.
+
+---
+
+## 180. Časté příčiny rozdílu mezi ručním a plánovaným během
+
+- nesprávná pracovní složka;
+- nesprávná cesta ke skriptu;
+- použití jiného Python interpreteru;
+- chybějící knihovny v použitém prostředí;
+- jiné oprávnění nebo uživatelský účet;
+- nedostupný vstupní soubor;
+- nedostupná databáze;
+- čekání na ruční vstup, například kvůli příkazu `pause`.
+
+---
+
+## 181. LocalDB a uživatelský účet
+
+SQL Server LocalDB je navázaný na uživatelské prostředí Windows.
+
+Plánovanou úlohu je proto vhodné spouštět pod stejným uživatelským účtem, pod kterým byla instance LocalDB vytvořena a otestována.
+
+---
+
+## 182. Základní tok řešení chyby
+
+```text
+úloha nevytvořila nový výstup
+→ zkontrolovat Výsledek posledního spuštění
+→ zkontrolovat log
+→ dočasně přidat pause do BAT souboru
+→ spustit BAT ručně
+→ přečíst konkrétní chybu
+→ chybu opravit
+→ pause odstranit
+→ úlohu znovu otestovat
+```
+
+---
+
+## 183. Hlavní poznatky Lekce 8
+
+- Windows Task Scheduler určuje, kdy se proces spustí;
+- BAT soubor propojuje Plánovač úloh s Python skriptem;
+- pracovní složku nastavujeme přímo v BAT souboru;
+- `%~dp0` vrací složku BAT souboru;
+- přímá cesta k `.venv\Scripts\python.exe` zajistí správné prostředí;
+- aktivace `.venv` není při přímém volání interpreteru nutná;
+- `pause` používáme pouze při ručním hledání chyby;
+- `exit /b %ERRORLEVEL%` předá výsledek procesu systému Windows;
+- `0x0` označuje úspěšné dokončení úlohy;
+- automatický běh kontrolujeme pomocí výsledku úlohy, logu a výstupního souboru;
+- VS Code není pro spuštění automatizace potřeba;
+- plánovaná úloha musí mít dostupné všechny soubory, databázi a správné uživatelské prostředí.
+
+---

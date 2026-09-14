@@ -700,3 +700,153 @@ Co znamená monitoring v rozsahu této lekce?
 Jednoduchý monitoring znamená kontrolovat podle logu stav a výsledek automatizovaného procesu.
 
 ---
+
+## Otázka 44
+
+Proč citlivé údaje, například API klíč, nemají být zapsané přímo v Python kódu?
+
+- A) Python neumí pracovat s API klíči
+- B) Mohly by se zveřejnit spolu s kódem
+- C) API klíč musí být vždy uložený v SQL Serveru
+- D) Citlivé údaje zpomalují Python
+
+**Správná odpověď:** B
+
+Citlivý údaj zapsaný v kódu by se mohl dostat do repozitáře a být zneužit.
+
+---
+
+## Otázka 45
+
+Jaký je účel lokálního souboru `.env`?
+
+- A) Uchovávat lokální konfigurační a citlivé hodnoty mimo kód
+- B) Uchovávat výsledný Excelový report
+- C) Zaznamenávat historii spuštění procesu
+- D) Instalovat externí Python balíčky
+
+**Správná odpověď:** A
+
+Soubor `.env` odděluje místní konfiguraci a citlivé hodnoty od zdrojového kódu.
+
+---
+
+## Otázka 46
+
+Co má obsahovat soubor `.env.example`?
+
+- A) Skutečná hesla a přístupové tokeny
+- B) Kompletní kopii Python skriptu
+- C) Názvy proměnných bez skutečných citlivých hodnot
+- D) Pouze seznam nainstalovaných knihoven
+
+**Správná odpověď:** C
+
+Soubor `.env.example` ukazuje požadované proměnné, ale neobsahuje jejich skutečné citlivé hodnoty.
+
+---
+
+## Otázka 47
+
+K čemu slouží zápis `.env` v souboru `.gitignore`?
+
+- A) Automaticky smaže soubor `.env` z počítače
+- B) Zašifruje hodnoty v souboru `.env`
+- C) Načte hodnoty z `.env` do Pythonu
+- D) Zabrání Gitu sledovat soubor `.env`
+
+**Správná odpověď:** D
+
+Pravidlo v `.gitignore` zabrání běžnému přidání souboru `.env` do repozitáře.
+
+---
+
+## Otázka 48
+
+Co standardně vrátí `os.getenv("DATABASE_NAME")`, pokud proměnná neexistuje?
+
+- A) Prázdný DataFrame
+- B) `None`
+- C) Číslo `0`
+- D) Návratový kód `1`
+
+**Správná odpověď:** B
+
+Pokud proměnná není dostupná a neurčíme výchozí hodnotu, `os.getenv()` vrátí `None`.
+
+---
+
+## Otázka 49
+
+Co provede `load_dotenv(env_file)`?
+
+- A) Načte hodnoty z `.env` do proměnných prostředí procesu
+- B) Nahraje soubor `.env` na GitHub
+- C) Vytvoří databázi v SQL Serveru
+- D) Zapíše hodnoty do Excelu
+
+**Správná odpověď:** A
+
+Funkce `load_dotenv()` přečte soubor a zpřístupní jeho hodnoty běžícímu Python procesu.
+
+---
+
+## Otázka 50
+
+Co je connection string?
+
+- A) Aktivní databázové spojení
+- B) SQL dotaz pro výběr řádků
+- C) Text s parametry potřebnými pro připojení k databázi
+- D) Soubor se seznamem Python knihoven
+
+**Správná odpověď:** C
+
+Connection string obsahuje například driver, server, databázi a způsob přihlášení.
+
+---
+
+## Otázka 51
+
+Proč náš connection string neobsahuje databázové heslo?
+
+- A) LocalDB žádná hesla nikdy nepodporuje
+- B) Heslo automaticky poskytuje soubor `requirements.txt`
+- C) Heslo je automaticky uložené v souboru `.env.example`
+- D) Používáme přihlášení pomocí účtu Windows
+
+**Správná odpověď:** D
+
+Nastavení `Trusted_Connection=yes` používá ověření aktuálního uživatele Windows.
+
+---
+
+## Otázka 52
+
+K čemu slouží GitHub Secrets?
+
+- A) K bezpečnému uložení citlivých hodnot pro GitHub Actions
+- B) K ukládání veřejných screenshotů projektu
+- C) K nahrazení všech souborů `.gitignore`
+- D) K automatickému čištění CSV souborů
+
+**Správná odpověď:** A
+
+GitHub Secrets umožňují předat citlivé hodnoty workflow bez jejich zapsání do repozitáře.
+
+---
+
+## Otázka 53
+
+Proč jsme do `requirements.txt` přidali `python-dotenv`, ale nepřidali `os` ani `sys`?
+
+- A) `os` a `sys` se nikdy nesmějí importovat
+- B) `python-dotenv` je součástí SQL Serveru
+- C) `python-dotenv` je externí balíček, zatímco `os` a `sys` jsou součástí Pythonu
+- D) `requirements.txt` může obsahovat pouze jeden import
+
+**Správná odpověď:** C
+
+Do `requirements.txt` zapisujeme externí závislosti instalované přes `pip`, nikoliv standardní moduly Pythonu.
+
+---

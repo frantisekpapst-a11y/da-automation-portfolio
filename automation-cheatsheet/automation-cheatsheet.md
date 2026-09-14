@@ -2607,8 +2607,6 @@ kontrola existence vstupu
 
 ---
 
-# Lekce 6 – Logging a monitoring
-
 ## 115. K čemu slouží logging
 
 Modul `logging` vytváří trvalé záznamy o průběhu skriptu.
@@ -3046,5 +3044,321 @@ spuštění skriptu
 - `time.perf_counter()` lze použít jako stopky;
 - log umožňuje zpětně zkontrolovat automatický běh procesu;
 - jednoduchý monitoring znamená pravidelnou kontrolu úspěchu, chyb a délky zpracování.
+
+---
+
+## 137. Proč citlivé údaje nepatří do kódu
+
+Citlivé nebo lokální hodnoty nemají být zapsané přímo v Python kódu, protože by se mohly dostat do repozitáře.
+
+Mezi citlivé údaje patří například:
+
+- API klíče;
+- hesla;
+- přístupové tokeny;
+- connection stringy obsahující přihlašovací údaje.
+
+Konfigurační hodnoty, například název databáze, nemusí být tajné, ale mohou se lišit podle počítače nebo prostředí.
+
+---
+
+## 138. Environment variable
+
+Environment variable neboli proměnná prostředí je pojmenovaná hodnota dostupná běžícímu programu.
+
+Příklad názvů:
+
+```text
+DATABASE_SERVER
+DATABASE_NAME
+API_KEY
+```
+
+Python je může načíst bez toho, aby byly zapsané přímo ve zdrojovém kódu.
+
+---
+
+## 139. Soubor `.env`
+
+Soubor `.env` obsahuje skutečné lokální hodnoty:
+
+```dotenv
+DATABASE_SERVER=(localdb)\DataAnalyticsLocalDB
+DATABASE_NAME=automation_lesson_04
+```
+
+Soubor `.env`:
+
+- používáme pouze lokálně;
+- nesmí obsahovat mezery kolem znaku `=`;
+- neukládáme na GitHub;
+- chráníme pomocí `.gitignore`.
+
+---
+
+## 140. Soubor `.env.example`
+
+Soubor `.env.example` obsahuje pouze názvy požadovaných proměnných:
+
+```dotenv
+DATABASE_SERVER=
+DATABASE_NAME=
+```
+
+Tento soubor neobsahuje skutečné citlivé hodnoty a může být uložený na GitHub.
+
+Slouží jako návod, které proměnné musí uživatel projektu nastavit.
+
+---
+
+## 141. Ochrana `.env` pomocí `.gitignore`
+
+Do hlavního souboru `.gitignore` přidáme:
+
+```gitignore
+.env
+!.env.example
+```
+
+- `.env` zabrání Gitu sledovat skutečný konfigurační soubor;
+- `!.env.example` výslovně povolí sledování ukázkové šablony.
+
+Kontrola:
+
+```powershell
+git status --short
+```
+
+Soubor `.env` se ve výpisu nesmí objevit.
+
+---
+
+## 142. Instalace `python-dotenv`
+
+```powershell
+python -m pip install python-dotenv
+```
+
+Import v Pythonu:
+
+```python
+from dotenv import load_dotenv
+```
+
+`python-dotenv` je externí balíček, a proto patří do `requirements.txt`.
+
+---
+
+## 143. Určení cesty k `.env`
+
+```python
+base_dir = Path(__file__).resolve().parent.parent
+env_file = base_dir / ".env"
+```
+
+První `.parent` vrátí složku se skriptem a druhý `.parent` kořen lekce.
+
+Python nehledá složku podle názvu `src`. Pouze postupuje od skutečného umístění spuštěného souboru.
+
+---
+
+## 144. Kontrola existence `.env`
+
+```python
+if not env_file.exists():
+    print("Soubor .env neexistuje.")
+    return 1
+```
+
+Pokud `.env` neexistuje, proces se řízeně ukončí návratovým kódem `1`.
+
+---
+
+## 145. Načtení souboru `.env`
+
+```python
+load_dotenv(env_file)
+```
+
+Funkce `load_dotenv()` načte dvojice `název=hodnota` ze souboru `.env` a zpřístupní je Python procesu jako proměnné prostředí.
+
+---
+
+## 146. Načtení konkrétní proměnné
+
+```python
+database_server = os.getenv("DATABASE_SERVER")
+database_name = os.getenv("DATABASE_NAME")
+```
+
+`os.getenv()` vyhledá proměnnou prostředí podle jejího názvu.
+
+Pokud proměnná neexistuje a neurčíme výchozí hodnotu, vrátí `None`.
+
+---
+
+## 147. Kontrola požadovaných proměnných
+
+```python
+if not database_server:
+    print("Chybí proměnná DATABASE_SERVER.")
+    return 1
+
+if not database_name:
+    print("Chybí proměnná DATABASE_NAME.")
+    return 1
+```
+
+Chybějící konfigurace zastaví proces dříve, než se program pokusí připojit k databázi.
+
+---
+
+## 148. Connection string
+
+Connection string je text obsahující parametry potřebné pro připojení k databázi.
+
+Může obsahovat:
+
+- použitý databázový driver;
+- adresu serveru;
+- název databáze;
+- způsob přihlášení;
+- uživatelské jméno a heslo.
+
+Connection string pouze popisuje připojení. Skutečné spojení vytvoří například `pyodbc.connect()`.
+
+---
+
+## 149. Sestavení connection stringu z proměnných
+
+```python
+connection_string = (
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    f"SERVER={database_server};"
+    f"DATABASE={database_name};"
+    "Trusted_Connection=yes;"
+    "TrustServerCertificate=yes;"
+)
+```
+
+F-string vloží načtenou hodnotu proměnné do textu:
+
+```python
+f"SERVER={database_server};"
+```
+
+Celý connection string nevypisujeme, protože by v jiném projektu mohl obsahovat citlivé údaje.
+
+---
+
+## 150. Trusted Connection
+
+```text
+Trusted_Connection=yes
+```
+
+Toto nastavení používá přihlášení pomocí aktuálního účtu Windows.
+
+Náš connection string proto neobsahuje databázové uživatelské jméno ani heslo.
+
+---
+
+## 151. GitHub Secrets
+
+GitHub Secrets slouží k bezpečnému uložení citlivých hodnot používaných v GitHub Actions.
+
+Příklad předání secretu workflow:
+
+```yaml
+env:
+  API_KEY: ${{ secrets.API_KEY }}
+```
+
+Python následně hodnotu načte běžným způsobem:
+
+```python
+api_key = os.getenv("API_KEY")
+```
+
+Praktické nastavení GitHub Secrets provedeme až v lekci o GitHub Actions.
+
+---
+
+## 152. Lokální spuštění a GitHub Actions
+
+```text
+lokální spuštění
+→ skutečné hodnoty v .env
+→ load_dotenv()
+→ os.getenv()
+
+GitHub Actions
+→ skutečné hodnoty v GitHub Secrets
+→ předání jako environment variables
+→ os.getenv()
+```
+
+Python může v obou prostředích používat stejný příkaz `os.getenv()`.
+
+---
+
+## 153. Aktualizace `requirements.txt`
+
+Nainstalovanou verzi zjistíme:
+
+```powershell
+python -m pip freeze | findstr python-dotenv
+```
+
+Výsledný řádek přidáme do `requirements.txt`:
+
+```text
+python-dotenv==nainstalovaná_verze
+```
+
+Moduly `os`, `sys` a `pathlib` do `requirements.txt` nepřidáváme, protože jsou součástí Pythonu.
+
+---
+
+## 154. Základní tok práce s `.env`
+
+```text
+vytvoření souboru .env
+
+→ přidání .env do .gitignore
+
+→ vytvoření veřejné šablony .env.example
+
+→ určení cesty k .env
+
+→ kontrola existence souboru
+
+→ načtení pomocí load_dotenv()
+
+→ získání hodnot pomocí os.getenv()
+
+→ kontrola požadovaných hodnot
+
+→ použití hodnot v connection stringu
+
+→ řízené ukončení při chybě
+```
+
+---
+
+## 155. Hlavní poznatky Lekce 7
+
+- citlivé a lokální hodnoty nepatří přímo do zdrojového kódu;
+- `.env` obsahuje skutečné lokální hodnoty a neukládá se na GitHub;
+- `.env.example` obsahuje pouze názvy proměnných a na GitHub patří;
+- `.gitignore` zabraňuje běžnému sledování souboru `.env`;
+- `load_dotenv()` načte hodnoty ze souboru `.env`;
+- `os.getenv()` získá konkrétní proměnnou prostředí;
+- chybějící povinná konfigurace má proces řízeně zastavit;
+- connection string obsahuje parametry databázového připojení;
+- celý connection string nevypisujeme, protože může obsahovat citlivé údaje;
+- `Trusted_Connection=yes` používá přihlášení pomocí účtu Windows;
+- GitHub Secrets představují bezpečné uložení hodnot pro GitHub Actions;
+- `python-dotenv` je externí balíček a patří do `requirements.txt`.
 
 ---

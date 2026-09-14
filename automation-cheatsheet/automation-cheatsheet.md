@@ -3746,3 +3746,510 @@ Plánovanou úlohu je proto vhodné spouštět pod stejným uživatelským účt
 - plánovaná úloha musí mít dostupné všechny soubory, databázi a správné uživatelské prostředí.
 
 ---
+
+## 184. Ăšloha GitHub Actions
+
+GitHub Actions umoĹľĹuje automaticky spouĹˇtÄ›t procesy uloĹľenĂ© v GitHub repozitĂˇĹ™i.
+
+Workflow lze spustit napĹ™Ă­klad:
+
+- ruÄŤnÄ›;
+- v pravidelnĂ©m ÄŤase;
+- pĹ™i odeslĂˇnĂ­ zmÄ›n do repozitĂˇĹ™e;
+- pĹ™i vytvoĹ™enĂ­ pull requestu.
+
+---
+
+## 185. UmĂ­stÄ›nĂ­ workflow souboru
+
+Workflow musĂ­ bĂ˝t uloĹľen v repozitĂˇĹ™i ve sloĹľce:
+
+```text
+.github
+â””â”€â”€ workflows
+    â””â”€â”€ api_automation.yml
+```
+
+GitHub automaticky vyhledĂˇvĂˇ workflow soubory prĂˇvÄ› v `.github/workflows`.
+
+---
+
+## 186. YAML
+
+Workflow se zapisuje ve formĂˇtu YAML s pĹ™Ă­ponou `.yml` nebo `.yaml`.
+
+YAML pouĹľĂ­vĂˇ:
+
+- dvojteÄŤku pro oddÄ›lenĂ­ vlastnosti a hodnoty;
+- pomlÄŤku pro poloĹľku seznamu;
+- odsazenĂ­ pro vyjĂˇdĹ™enĂ­ hierarchie.
+
+Odsazujeme mezerami, nikoliv tabulĂˇtorem.
+
+---
+
+## 187. ZĂˇkladnĂ­ pojmy GitHub Actions
+
+```text
+workflow
+â†’ celĂ˝ automatizovanĂ˝ proces
+
+job
+â†’ vÄ›tĹˇĂ­ ÄŤĂˇst procesu spuĹˇtÄ›nĂˇ na jednom runneru
+
+step
+â†’ jeden konkrĂ©tnĂ­ krok jobu
+
+runner
+â†’ poÄŤĂ­taÄŤ, na kterĂ©m job bÄ›ĹľĂ­
+```
+
+Jeden workflow mĹŻĹľe obsahovat vĂ­ce jobs a kaĹľdĂ˝ job mĹŻĹľe obsahovat vĂ­ce steps.
+
+---
+
+## 188. FinĂˇlnĂ­ workflow Lekce 9
+
+```yaml
+name: API Automation
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 6 * * *"
+      timezone: "Europe/Prague"
+
+jobs:
+  download-api-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: StaĹľenĂ­ repozitĂˇĹ™e
+        uses: actions/checkout@v4
+
+      - name: NastavenĂ­ Pythonu
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Instalace knihoven
+        run: python -m pip install -r requirements.txt
+
+      - name: VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+        run: |
+          rm -f automation-lessons/03-api-automation/data/output/*.csv
+          rm -f automation-lessons/03-api-automation/data/raw/*.json
+
+      - name: StaĹľenĂ­ a validace API dat
+        run: python automation-lessons/03-api-automation/src/api_download.py
+
+      - name: UloĹľenĂ­ vĂ˝stupnĂ­ch souborĹŻ
+        uses: actions/upload-artifact@v6
+        with:
+          name: api-data
+          path: |
+            automation-lessons/03-api-automation/data/output/*.csv
+            automation-lessons/03-api-automation/data/raw/*.json
+          if-no-files-found: error
+```
+
+---
+
+## 189. NĂˇzev workflow
+
+```yaml
+name: API Automation
+```
+
+`name` urÄŤuje nĂˇzev, kterĂ˝ se zobrazuje na kartÄ› **Actions**.
+
+---
+
+## 190. SpouĹˇtÄ›ÄŤe workflow
+
+```yaml
+on:
+```
+
+Sekce `on` urÄŤuje, pĹ™i jakĂ© udĂˇlosti se workflow spustĂ­.
+
+Workflow mĹŻĹľe mĂ­t souÄŤasnÄ› vĂ­ce spouĹˇtÄ›ÄŤĹŻ.
+
+---
+
+## 191. RuÄŤnĂ­ spuĹˇtÄ›nĂ­
+
+```yaml
+on:
+  workflow_dispatch:
+```
+
+`workflow_dispatch` umoĹľĹuje spustit workflow ruÄŤnÄ› pomocĂ­ tlaÄŤĂ­tka **Run workflow**.
+
+HodĂ­ se pro:
+
+- prvnĂ­ test;
+- kontrolu opravy;
+- mimoĹ™ĂˇdnĂ© spuĹˇtÄ›nĂ­ procesu.
+
+---
+
+## 192. PlĂˇnovanĂ© spuĹˇtÄ›nĂ­
+
+```yaml
+schedule:
+  - cron: "0 6 * * *"
+```
+
+`schedule` spouĹˇtĂ­ workflow podle ÄŤasovĂ©ho plĂˇnu.
+
+Cron zĂˇpis:
+
+```text
+0 6 * * *
+â”‚ â”‚ â”‚ â”‚ â”‚
+â”‚ â”‚ â”‚ â”‚ â””â”€ den v tĂ˝dnu
+â”‚ â”‚ â”‚ â””â”€â”€â”€ mÄ›sĂ­c
+â”‚ â”‚ â””â”€â”€â”€â”€â”€ den v mÄ›sĂ­ci
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€ hodina
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€ minuta
+```
+
+`0 6 * * *` znamenĂˇ kaĹľdĂ˝ den v 06:00.
+
+---
+
+## 193. ÄŚasovĂ© pĂˇsmo
+
+```yaml
+timezone: "Europe/Prague"
+```
+
+NastavenĂ­ urÄŤuje ÄŤeskĂ© ÄŤasovĂ© pĂˇsmo a zohledĹuje zmÄ›nu letnĂ­ho a zimnĂ­ho ÄŤasu.
+
+---
+
+## 194. Definice jobu
+
+```yaml
+jobs:
+  download-api-data:
+```
+
+- `jobs` obsahuje vĹˇechny jobs danĂ©ho workflow;
+- `download-api-data` je nĂˇĹˇ vlastnĂ­ identifikĂˇtor jednoho jobu.
+
+---
+
+## 195. GitHub-hosted runner
+
+```yaml
+runs-on: ubuntu-latest
+```
+
+Job pobÄ›ĹľĂ­ na doÄŤasnĂ©m virtuĂˇlnĂ­m poÄŤĂ­taÄŤi s Linuxem Ubuntu, kterĂ˝ poskytne GitHub.
+
+Runner nenĂ­ nĂˇĹˇ lokĂˇlnĂ­ poÄŤĂ­taÄŤ. ZaÄŤĂ­nĂˇ jako samostatnĂ© ÄŤistĂ© prostĹ™edĂ­ a po dokonÄŤenĂ­ jobu zanikne.
+
+---
+
+## 196. JednotlivĂ© kroky jobu
+
+```yaml
+steps:
+  - name: NĂˇzev kroku
+```
+
+- `steps` obsahuje kroky jobu;
+- pomlÄŤka `-` oznaÄŤuje jednu poloĹľku seznamu;
+- `name` je nĂˇzev kroku zobrazenĂ˝ v detailu bÄ›hu.
+
+Kroky se standardnÄ› provĂˇdÄ›jĂ­ postupnÄ› shora dolĹŻ.
+
+---
+
+## 197. RozdĂ­l mezi `uses` a `run`
+
+```text
+uses
+â†’ pouĹľije jiĹľ pĹ™ipravenou GitHub Action
+
+run
+â†’ spustĂ­ bÄ›ĹľnĂ˝ pĹ™Ă­kaz v terminĂˇlu runneru
+```
+
+PĹ™Ă­klad:
+
+```yaml
+uses: actions/checkout@v4
+```
+
+```yaml
+run: python -m pip install -r requirements.txt
+```
+
+---
+
+## 198. StaĹľenĂ­ repozitĂˇĹ™e
+
+```yaml
+- name: StaĹľenĂ­ repozitĂˇĹ™e
+  uses: actions/checkout@v4
+```
+
+Runner na zaÄŤĂˇtku neobsahuje naĹˇe projektovĂ© soubory. Akce `checkout` do nÄ›j stĂˇhne obsah repozitĂˇĹ™e.
+
+---
+
+## 199. NastavenĂ­ Pythonu
+
+```yaml
+- name: NastavenĂ­ Pythonu
+  uses: actions/setup-python@v7
+  with:
+    python-version: "3.14"
+```
+
+- `setup-python` pĹ™ipravĂ­ Python na runneru;
+- `with` pĹ™edĂˇvĂˇ akci jejĂ­ nastavenĂ­;
+- `python-version` urÄŤuje poĹľadovanou verzi Pythonu.
+
+ÄŚĂ­slo verze zapisujeme jako text v uvozovkĂˇch.
+
+---
+
+## 200. Instalace knihoven
+
+```yaml
+- name: Instalace knihoven
+  run: python -m pip install -r requirements.txt
+```
+
+Runner nepouĹľĂ­vĂˇ naĹˇe lokĂˇlnĂ­ `.venv`. PotĹ™ebnĂ© knihovny nainstaluje podle souboru `requirements.txt`.
+
+KaĹľdĂ˝ novĂ˝ GitHub-hosted runner si pĹ™ipravuje vlastnĂ­ prostĹ™edĂ­.
+
+---
+
+## 201. VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+
+```yaml
+- name: VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+  run: |
+    rm -f cesta/*.csv
+    rm -f cesta/*.json
+```
+
+- `rm` odstranĂ­ soubory;
+- `-f` nezpĹŻsobĂ­ chybu, pokud ĹľĂˇdnĂ˝ odpovĂ­dajĂ­cĂ­ soubor neexistuje;
+- `*` zastupuje libovolnou ÄŤĂˇst nĂˇzvu souboru;
+- `|` umoĹľĹuje zapsat vĂ­ce pĹ™Ă­kazĹŻ na samostatnĂ© Ĺ™Ăˇdky.
+
+MazĂˇnĂ­ probĂ­hĂˇ pouze na doÄŤasnĂ©m runneru. NemÄ›nĂ­ soubory na naĹˇem poÄŤĂ­taÄŤi ani historii repozitĂˇĹ™e.
+
+---
+
+## 202. SpuĹˇtÄ›nĂ­ Python skriptu
+
+```yaml
+- name: StaĹľenĂ­ a validace API dat
+  run: python automation-lessons/03-api-automation/src/api_download.py
+```
+
+Runner spustĂ­ API skript z Lekce 3. Skript stĂˇhne data, provede validaci a vytvoĹ™Ă­ CSV a raw JSON.
+
+Na runneru s Ubuntu pouĹľĂ­vĂˇme v cestĂˇch dopĹ™ednĂˇ lomĂ­tka `/`.
+
+---
+
+## 203. Workflow artifact
+
+Artifact je soubor nebo balĂ­ÄŤek souborĹŻ vytvoĹ™enĂ˝ bÄ›hem workflow a uloĹľenĂ˝ u konkrĂ©tnĂ­ho bÄ›hu.
+
+```text
+runner vytvoĹ™Ă­ vĂ˝stupy
+â†’ upload-artifact je uloĹľĂ­
+â†’ uĹľivatel je stĂˇhne z detailu bÄ›hu
+```
+
+Artifact se automaticky nepĹ™idĂˇvĂˇ do Git repozitĂˇĹ™e.
+
+---
+
+## 204. UloĹľenĂ­ artifactu
+
+```yaml
+- name: UloĹľenĂ­ vĂ˝stupnĂ­ch souborĹŻ
+  uses: actions/upload-artifact@v6
+  with:
+    name: api-data
+```
+
+- `upload-artifact` uloĹľĂ­ vytvoĹ™enĂ© soubory;
+- `name` urÄŤuje nĂˇzev artifactu zobrazenĂ˝ u dokonÄŤenĂ©ho bÄ›hu.
+
+---
+
+## 205. VĂ˝bÄ›r souborĹŻ artifactu
+
+```yaml
+path: |
+  cesta/*.csv
+  cesta/*.json
+```
+
+- `path` urÄŤuje soubory urÄŤenĂ© k uloĹľenĂ­;
+- `*.csv` vybere vĹˇechny CSV soubory v danĂ© sloĹľce;
+- `*.json` vybere vĹˇechny JSON soubory v danĂ© sloĹľce;
+- `|` umoĹľĹuje uvĂ©st vĂ­ce cest.
+
+---
+
+## 206. ChybÄ›jĂ­cĂ­ vĂ˝stupnĂ­ soubory
+
+```yaml
+if-no-files-found: error
+```
+
+Pokud se nenajde ĹľĂˇdnĂ˝ soubor odpovĂ­dajĂ­cĂ­ zadanĂ˝m cestĂˇm, krok skonÄŤĂ­ chybou.
+
+TĂ­m zabrĂˇnĂ­me tomu, aby workflow pĹŻsobilo ĂşspÄ›ĹˇnÄ›, pĹ™estoĹľe nevytvoĹ™ilo oÄŤekĂˇvanĂ˝ vĂ˝stup.
+
+---
+
+## 207. NĂˇvratovĂ˝ kĂłd Python skriptu
+
+```text
+Python vrĂˇtĂ­ 0
+â†’ krok uspÄ›je
+â†’ workflow pokraÄŤuje
+
+Python vrĂˇtĂ­ nenulovĂ˝ kĂłd
+â†’ krok selĹľe
+â†’ workflow se oznaÄŤĂ­ jako neĂşspÄ›ĹˇnĂ©
+```
+
+NĂˇvratovĂ© kĂłdy umoĹľĹujĂ­ GitHub Actions rozpoznat vĂ˝sledek Python procesu.
+
+---
+
+## 208. Kontrola ĂşspÄ›chu a chyby
+
+```text
+zelenĂˇ fajfka
+â†’ krok nebo workflow uspÄ›lo
+
+ÄŤervenĂ˝ kĹ™Ă­Ĺľek
+â†’ krok nebo workflow selhalo
+```
+
+V detailu jobu lze rozbalit kaĹľdĂ˝ krok a pĹ™eÄŤĂ­st jeho vĂ˝stup.
+
+---
+
+## 209. Logy GitHub Actions
+
+GitHub Actions automaticky zaznamenĂˇvĂˇ:
+
+- spuĹˇtÄ›nĂ© kroky;
+- pĹ™Ă­kazy provedenĂ© na runneru;
+- vĂ˝stupy Python skriptu;
+- chybovĂ© zprĂˇvy;
+- dĂ©lku jednotlivĂ˝ch krokĹŻ;
+- celkovĂ˝ stav jobu.
+
+```text
+Python logging
+â†’ log vytvĂˇĹ™Ă­ nĂˇĹˇ skript
+
+GitHub Actions log
+â†’ GitHub zaznamenĂˇvĂˇ celĂ˝ prĹŻbÄ›h workflow
+```
+
+---
+
+## 210. GitHub Secrets
+
+GitHub Secrets slouĹľĂ­ k bezpeÄŤnĂ©mu uloĹľenĂ­ citlivĂ˝ch hodnot, napĹ™Ă­klad:
+
+- API klĂ­ÄŤe;
+- pĹ™Ă­stupovĂ©ho tokenu;
+- hesla;
+- connection stringu.
+
+PĹ™Ă­klad pĹ™edĂˇnĂ­ secretu:
+
+```yaml
+env:
+  API_KEY: ${{ secrets.API_KEY }}
+```
+
+Python mĹŻĹľe hodnotu naÄŤĂ­st:
+
+```python
+import os
+
+api_key = os.getenv("API_KEY")
+```
+
+V naĹˇem workflow secret nepouĹľĂ­vĂˇme, protoĹľe zvolenĂ© veĹ™ejnĂ© API ho nevyĹľaduje.
+
+---
+
+## 211. GitHub runner a lokĂˇlnĂ­ poÄŤĂ­taÄŤ
+
+GitHub-hosted runner nemĂˇ automatickĂ˝ pĹ™Ă­stup k:
+
+- souborĹŻm na naĹˇem poÄŤĂ­taÄŤi;
+- lokĂˇlnĂ­ `.venv`;
+- SQL Server LocalDB na naĹˇem poÄŤĂ­taÄŤi;
+- lokĂˇlnĂ­m cestĂˇm, napĹ™Ă­klad `C:\Users\...`.
+
+Proto jsme GitHub Actions pouĹľili pouze pro API automatizaci.
+
+---
+
+## 212. GitHub Actions a Windows Task Scheduler
+
+```text
+GitHub Actions
+â†’ vzdĂˇlenĂ˝ runner
+â†’ veĹ™ejnĂ© API
+â†’ Python
+â†’ CSV nebo JSON
+â†’ artifact
+```
+
+```text
+Windows Task Scheduler
+â†’ lokĂˇlnĂ­ poÄŤĂ­taÄŤ
+â†’ Python z .venv
+â†’ lokĂˇlnĂ­ soubory a LocalDB
+â†’ Excel a log
+```
+
+Volba nĂˇstroje zĂˇvisĂ­ na tom, kde jsou dostupnĂ© vstupy, vĂ˝stupy a dalĹˇĂ­ sluĹľby.
+
+---
+
+## 213. HlavnĂ­ poznatky Lekce 9
+
+- GitHub Actions automatizuje procesy uloĹľenĂ© v repozitĂˇĹ™i;
+- workflow se uklĂˇdĂˇ do `.github/workflows`;
+- workflow obsahuje spouĹˇtÄ›ÄŤe, jobs a steps;
+- runner je poÄŤĂ­taÄŤ, na kterĂ©m job bÄ›ĹľĂ­;
+- `workflow_dispatch` umoĹľĹuje ruÄŤnĂ­ spuĹˇtÄ›nĂ­;
+- `schedule` umoĹľĹuje pravidelnĂ© ÄŤasovĂ© spuĹˇtÄ›nĂ­;
+- `uses` pouĹľĂ­vĂˇ pĹ™ipravenou akci;
+- `run` provĂˇdĂ­ bÄ›ĹľnĂ˝ pĹ™Ă­kaz;
+- runner musĂ­ stĂˇhnout repozitĂˇĹ™ a pĹ™ipravit Python;
+- knihovny se instalujĂ­ z `requirements.txt`;
+- nĂˇvratovĂ˝ kĂłd Pythonu urÄŤuje ĂşspÄ›ch nebo chybu kroku;
+- artifact uchovĂˇvĂˇ vĂ˝stupy vytvoĹ™enĂ© na runneru;
+- GitHub Actions poskytuje vlastnĂ­ logy jednotlivĂ˝ch krokĹŻ;
+- citlivĂ© Ăşdaje patĹ™Ă­ do GitHub Secrets;
+- GitHub-hosted runner nenĂ­ pĹ™Ă­mo propojenĂ˝ s lokĂˇlnĂ­ LocalDB;
+- pro lokĂˇlnĂ­ zdroje pouĹľĂ­vĂˇme Windows Task Scheduler, pro API lze pouĹľĂ­t GitHub Actions.
+
+---

@@ -218,6 +218,3 @@ GitHub Actions workflow;
 README;
 Automation cheatsheet;
 minitesty.
-Časový odhad bloku
-
-Přibližně 14–19 hodin.

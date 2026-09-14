@@ -1,0 +1,32 @@
+name: API Automation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-api-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stažení repozitáře
+        uses: actions/checkout@v4
+
+      - name: Nastavení Pythonu
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Instalace knihoven
+        run: python -m pip install -r requirements.txt
+
+      - name: Stažení a validace API dat
+        run: python automation-lessons/03-api-automation/src/api_download.py
+
+      - name: Uložení výstupních souborů
+        uses: actions/upload-artifact@v6
+        with:
+          name: api-data
+          path: |
+            automation-lessons/03-api-automation/data/output/*.csv
+            automation-lessons/03-api-automation/data/raw/*.json
+          if-no-files-found: error

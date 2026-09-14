@@ -3747,104 +3747,97 @@ Plánovanou úlohu je proto vhodné spouštět pod stejným uživatelským účt
 
 ---
 
-## 184. Ăšloha GitHub Actions
+## 184. Úloha GitHub Actions
 
-GitHub Actions umoĹľĹuje automaticky spouĹˇtÄ›t procesy uloĹľenĂ© v GitHub repozitĂˇĹ™i.
+GitHub Actions umožňuje automaticky spouštět procesy uložené v repozitáři GitHubu.
 
-Workflow lze spustit napĹ™Ă­klad:
+Workflow lze spustit například:
 
-- ruÄŤnÄ›;
-- v pravidelnĂ©m ÄŤase;
-- pĹ™i odeslĂˇnĂ­ zmÄ›n do repozitĂˇĹ™e;
-- pĹ™i vytvoĹ™enĂ­ pull requestu.
+- ručně;
+
+- v pravidelném čase;
+
+- při odeslání změn do repozitáře;
+
+- při vytvoření pull requestu.
 
 ---
 
-## 185. UmĂ­stÄ›nĂ­ workflow souboru
+## 185. Umístění workflow souboru
 
-Workflow musĂ­ bĂ˝t uloĹľen v repozitĂˇĹ™i ve sloĹľce:
+Workflow musí být uložen v repozitáři ve složce:
 
 ```text
 .github
-â””â”€â”€ workflows
-    â””â”€â”€ api_automation.yml
+└── workflows
+    └── api_automation.yml
 ```
 
-GitHub automaticky vyhledĂˇvĂˇ workflow soubory prĂˇvÄ› v `.github/workflows`.
+GitHub automaticky vyhledává workflow soubory právě v `.github/workflows`.
 
 ---
 
 ## 186. YAML
 
-Workflow se zapisuje ve formĂˇtu YAML s pĹ™Ă­ponou `.yml` nebo `.yaml`.
+Workflow se zapisuje ve formátu YAML s příponou `.yml` nebo `.yaml`.
 
-YAML pouĹľĂ­vĂˇ:
+YAML používá:
 
-- dvojteÄŤku pro oddÄ›lenĂ­ vlastnosti a hodnoty;
-- pomlÄŤku pro poloĹľku seznamu;
-- odsazenĂ­ pro vyjĂˇdĹ™enĂ­ hierarchie.
+- dvojtečku pro oddělení vlastnosti a hodnoty;
 
-Odsazujeme mezerami, nikoliv tabulĂˇtorem.
+- pomlčku pro položku seznamu;
+
+- odsazení pro vyjádření hierarchie.
+
+Odsazujeme mezerami, nikoliv tabulátorem.
 
 ---
 
-## 187. ZĂˇkladnĂ­ pojmy GitHub Actions
+## 187. Základní pojmy GitHub Actions
 
 ```text
 workflow
-â†’ celĂ˝ automatizovanĂ˝ proces
-
+→ celý automatizovaný proces
 job
-â†’ vÄ›tĹˇĂ­ ÄŤĂˇst procesu spuĹˇtÄ›nĂˇ na jednom runneru
-
+→ větší část procesu spuštěná na jednom runneru
 step
-â†’ jeden konkrĂ©tnĂ­ krok jobu
-
+→ jeden konkrétní krok jobu
 runner
-â†’ poÄŤĂ­taÄŤ, na kterĂ©m job bÄ›ĹľĂ­
+→ počítač, na kterém job běží
 ```
 
-Jeden workflow mĹŻĹľe obsahovat vĂ­ce jobs a kaĹľdĂ˝ job mĹŻĹľe obsahovat vĂ­ce steps.
+Jeden workflow může obsahovat více jobů a každý job více kroků.
 
 ---
 
-## 188. FinĂˇlnĂ­ workflow Lekce 9
+## 188. Finální workflow Lekce 9
 
 ```yaml
 name: API Automation
-
 on:
   workflow_dispatch:
-
   schedule:
     - cron: "0 6 * * *"
       timezone: "Europe/Prague"
-
 jobs:
   download-api-data:
     runs-on: ubuntu-latest
-
     steps:
-      - name: StaĹľenĂ­ repozitĂˇĹ™e
+      - name: Stažení repozitáře
         uses: actions/checkout@v4
-
-      - name: NastavenĂ­ Pythonu
+      - name: Nastavení Pythonu
         uses: actions/setup-python@v7
         with:
           python-version: "3.14"
-
       - name: Instalace knihoven
         run: python -m pip install -r requirements.txt
-
-      - name: VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+      - name: Vyčištění starých výstupů
         run: |
           rm -f automation-lessons/03-api-automation/data/output/*.csv
           rm -f automation-lessons/03-api-automation/data/raw/*.json
-
-      - name: StaĹľenĂ­ a validace API dat
+      - name: Stažení a validace API dat
         run: python automation-lessons/03-api-automation/src/api_download.py
-
-      - name: UloĹľenĂ­ vĂ˝stupnĂ­ch souborĹŻ
+      - name: Uložení výstupních souborů
         uses: actions/upload-artifact@v6
         with:
           name: api-data
@@ -3856,77 +3849,79 @@ jobs:
 
 ---
 
-## 189. NĂˇzev workflow
+## 189. Název workflow
 
 ```yaml
 name: API Automation
 ```
 
-`name` urÄŤuje nĂˇzev, kterĂ˝ se zobrazuje na kartÄ› **Actions**.
+`name` určuje název, který se zobrazuje na kartě **Actions**.
 
 ---
 
-## 190. SpouĹˇtÄ›ÄŤe workflow
+## 190. Spouštěče workflow
 
 ```yaml
 on:
 ```
 
-Sekce `on` urÄŤuje, pĹ™i jakĂ© udĂˇlosti se workflow spustĂ­.
+Sekce `on` určuje, při jaké události se workflow spustí.
 
-Workflow mĹŻĹľe mĂ­t souÄŤasnÄ› vĂ­ce spouĹˇtÄ›ÄŤĹŻ.
+Workflow může mít současně více spouštěčů.
 
 ---
 
-## 191. RuÄŤnĂ­ spuĹˇtÄ›nĂ­
+## 191. Ruční spuštění
 
 ```yaml
 on:
   workflow_dispatch:
 ```
 
-`workflow_dispatch` umoĹľĹuje spustit workflow ruÄŤnÄ› pomocĂ­ tlaÄŤĂ­tka **Run workflow**.
+`workflow_dispatch` umožňuje spustit workflow ručně pomocí tlačítka **Run workflow**.
 
-HodĂ­ se pro:
+Hodí se pro:
 
-- prvnĂ­ test;
+- první test;
+
 - kontrolu opravy;
-- mimoĹ™ĂˇdnĂ© spuĹˇtÄ›nĂ­ procesu.
+
+- mimořádné spuštění procesu.
 
 ---
 
-## 192. PlĂˇnovanĂ© spuĹˇtÄ›nĂ­
+## 192. Plánované spuštění
 
 ```yaml
 schedule:
   - cron: "0 6 * * *"
 ```
 
-`schedule` spouĹˇtĂ­ workflow podle ÄŤasovĂ©ho plĂˇnu.
+`schedule` spouští workflow podle časového plánu.
 
-Cron zĂˇpis:
+Cron zápis:
 
 ```text
 0 6 * * *
-â”‚ â”‚ â”‚ â”‚ â”‚
-â”‚ â”‚ â”‚ â”‚ â””â”€ den v tĂ˝dnu
-â”‚ â”‚ â”‚ â””â”€â”€â”€ mÄ›sĂ­c
-â”‚ â”‚ â””â”€â”€â”€â”€â”€ den v mÄ›sĂ­ci
-â”‚ â””â”€â”€â”€â”€â”€â”€â”€ hodina
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€ minuta
+│ │ │ │ │
+│ │ │ │ └─ den v týdnu
+│ │ │ └─── měsíc
+│ │ └───── den v měsíci
+│ └─────── hodina
+└───────── minuta
 ```
 
-`0 6 * * *` znamenĂˇ kaĹľdĂ˝ den v 06:00.
+`0 6 * * *` znamená každý den v 06:00.
 
 ---
 
-## 193. ÄŚasovĂ© pĂˇsmo
+## 193. Časové pásmo
 
 ```yaml
 timezone: "Europe/Prague"
 ```
 
-NastavenĂ­ urÄŤuje ÄŤeskĂ© ÄŤasovĂ© pĂˇsmo a zohledĹuje zmÄ›nu letnĂ­ho a zimnĂ­ho ÄŤasu.
+Nastavení určuje české časové pásmo a zohledňuje změnu letního a zimního času.
 
 ---
 
@@ -3937,8 +3932,9 @@ jobs:
   download-api-data:
 ```
 
-- `jobs` obsahuje vĹˇechny jobs danĂ©ho workflow;
-- `download-api-data` je nĂˇĹˇ vlastnĂ­ identifikĂˇtor jednoho jobu.
+- `jobs` obsahuje všechny joby daného workflow;
+
+- `download-api-data` je náš vlastní identifikátor jednoho jobu.
 
 ---
 
@@ -3948,38 +3944,39 @@ jobs:
 runs-on: ubuntu-latest
 ```
 
-Job pobÄ›ĹľĂ­ na doÄŤasnĂ©m virtuĂˇlnĂ­m poÄŤĂ­taÄŤi s Linuxem Ubuntu, kterĂ˝ poskytne GitHub.
+Job poběží na dočasném virtuálním počítači s operačním systémem Ubuntu, který poskytne GitHub.
 
-Runner nenĂ­ nĂˇĹˇ lokĂˇlnĂ­ poÄŤĂ­taÄŤ. ZaÄŤĂ­nĂˇ jako samostatnĂ© ÄŤistĂ© prostĹ™edĂ­ a po dokonÄŤenĂ­ jobu zanikne.
+Runner není náš lokální počítač. Začíná jako samostatné čisté prostředí a po dokončení jobu zanikne.
 
 ---
 
-## 196. JednotlivĂ© kroky jobu
+## 196. Jednotlivé kroky jobu
 
 ```yaml
 steps:
-  - name: NĂˇzev kroku
+  - name: Název kroku
 ```
 
 - `steps` obsahuje kroky jobu;
-- pomlÄŤka `-` oznaÄŤuje jednu poloĹľku seznamu;
-- `name` je nĂˇzev kroku zobrazenĂ˝ v detailu bÄ›hu.
 
-Kroky se standardnÄ› provĂˇdÄ›jĂ­ postupnÄ› shora dolĹŻ.
+- pomlčka `-` označuje jednu položku seznamu;
+
+- `name` je název kroku zobrazený v detailu běhu.
+
+Kroky se standardně provádějí postupně shora dolů.
 
 ---
 
-## 197. RozdĂ­l mezi `uses` a `run`
+## 197. Rozdíl mezi `uses` a `run`
 
 ```text
 uses
-â†’ pouĹľije jiĹľ pĹ™ipravenou GitHub Action
-
+→ použije již připravenou GitHub Action
 run
-â†’ spustĂ­ bÄ›ĹľnĂ˝ pĹ™Ă­kaz v terminĂˇlu runneru
+→ spustí běžný příkaz v terminálu runneru
 ```
 
-PĹ™Ă­klad:
+Příklad:
 
 ```yaml
 uses: actions/checkout@v4
@@ -3991,31 +3988,33 @@ run: python -m pip install -r requirements.txt
 
 ---
 
-## 198. StaĹľenĂ­ repozitĂˇĹ™e
+## 198. Stažení repozitáře
 
 ```yaml
-- name: StaĹľenĂ­ repozitĂˇĹ™e
+- name: Stažení repozitáře
   uses: actions/checkout@v4
 ```
 
-Runner na zaÄŤĂˇtku neobsahuje naĹˇe projektovĂ© soubory. Akce `checkout` do nÄ›j stĂˇhne obsah repozitĂˇĹ™e.
+Runner na začátku neobsahuje naše projektové soubory. Akce `checkout` do něj načte obsah repozitáře.
 
 ---
 
-## 199. NastavenĂ­ Pythonu
+## 199. Nastavení Pythonu
 
 ```yaml
-- name: NastavenĂ­ Pythonu
+- name: Nastavení Pythonu
   uses: actions/setup-python@v7
   with:
     python-version: "3.14"
 ```
 
-- `setup-python` pĹ™ipravĂ­ Python na runneru;
-- `with` pĹ™edĂˇvĂˇ akci jejĂ­ nastavenĂ­;
-- `python-version` urÄŤuje poĹľadovanou verzi Pythonu.
+- `setup-python` připraví Python na runneru;
 
-ÄŚĂ­slo verze zapisujeme jako text v uvozovkĂˇch.
+- `with` předává akci její nastavení;
+
+- `python-version` určuje požadovanou verzi Pythonu.
+
+Číslo verze zapisujeme jako text v uvozovkách.
 
 ---
 
@@ -4026,72 +4025,76 @@ Runner na zaÄŤĂˇtku neobsahuje naĹˇe projektovĂ© soubory. Akce `checkout
   run: python -m pip install -r requirements.txt
 ```
 
-Runner nepouĹľĂ­vĂˇ naĹˇe lokĂˇlnĂ­ `.venv`. PotĹ™ebnĂ© knihovny nainstaluje podle souboru `requirements.txt`.
+Runner nepoužívá naše lokální `.venv`. Potřebné knihovny nainstaluje podle souboru `requirements.txt`.
 
-KaĹľdĂ˝ novĂ˝ GitHub-hosted runner si pĹ™ipravuje vlastnĂ­ prostĹ™edĂ­.
+Každý nový GitHub-hosted runner si připravuje vlastní prostředí.
 
 ---
 
-## 201. VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+## 201. Vyčištění starých výstupů
 
 ```yaml
-- name: VyÄŤiĹˇtÄ›nĂ­ starĂ˝ch vĂ˝stupĹŻ
+- name: Vyčištění starých výstupů
   run: |
     rm -f cesta/*.csv
     rm -f cesta/*.json
 ```
 
-- `rm` odstranĂ­ soubory;
-- `-f` nezpĹŻsobĂ­ chybu, pokud ĹľĂˇdnĂ˝ odpovĂ­dajĂ­cĂ­ soubor neexistuje;
-- `*` zastupuje libovolnou ÄŤĂˇst nĂˇzvu souboru;
-- `|` umoĹľĹuje zapsat vĂ­ce pĹ™Ă­kazĹŻ na samostatnĂ© Ĺ™Ăˇdky.
+- `rm` odstraní soubory;
 
-MazĂˇnĂ­ probĂ­hĂˇ pouze na doÄŤasnĂ©m runneru. NemÄ›nĂ­ soubory na naĹˇem poÄŤĂ­taÄŤi ani historii repozitĂˇĹ™e.
+- `-f` nezpůsobí chybu, pokud žádný odpovídající soubor neexistuje;
+
+- `*` zastupuje libovolnou část názvu souboru;
+
+- `|` umožňuje zapsat více příkazů na samostatné řádky.
+
+Mazání probíhá pouze na dočasném runneru. Nemění soubory na našem počítači ani historii repozitáře.
 
 ---
 
-## 202. SpuĹˇtÄ›nĂ­ Python skriptu
+## 202. Spuštění Python skriptu
 
 ```yaml
-- name: StaĹľenĂ­ a validace API dat
+- name: Stažení a validace API dat
   run: python automation-lessons/03-api-automation/src/api_download.py
 ```
 
-Runner spustĂ­ API skript z Lekce 3. Skript stĂˇhne data, provede validaci a vytvoĹ™Ă­ CSV a raw JSON.
+Runner spustí API skript z Lekce 3. Skript stáhne data, provede validaci a vytvoří CSV a původní (raw) JSON.
 
-Na runneru s Ubuntu pouĹľĂ­vĂˇme v cestĂˇch dopĹ™ednĂˇ lomĂ­tka `/`.
+Na runneru s Ubuntu používáme v cestách dopředná lomítka `/`.
 
 ---
 
 ## 203. Workflow artifact
 
-Artifact je soubor nebo balĂ­ÄŤek souborĹŻ vytvoĹ™enĂ˝ bÄ›hem workflow a uloĹľenĂ˝ u konkrĂ©tnĂ­ho bÄ›hu.
+Workflow artifact (artefakt) je soubor nebo balíček souborů vytvořený během workflow a uložený u konkrétního běhu.
 
 ```text
-runner vytvoĹ™Ă­ vĂ˝stupy
-â†’ upload-artifact je uloĹľĂ­
-â†’ uĹľivatel je stĂˇhne z detailu bÄ›hu
+runner vytvoří výstupy
+→ upload-artifact je uloží
+→ uživatel je stáhne z detailu běhu
 ```
 
-Artifact se automaticky nepĹ™idĂˇvĂˇ do Git repozitĂˇĹ™e.
+Artefakt se automaticky nepřidává do Git repozitáře.
 
 ---
 
-## 204. UloĹľenĂ­ artifactu
+## 204. Uložení artefaktu
 
 ```yaml
-- name: UloĹľenĂ­ vĂ˝stupnĂ­ch souborĹŻ
+- name: Uložení výstupních souborů
   uses: actions/upload-artifact@v6
   with:
     name: api-data
 ```
 
-- `upload-artifact` uloĹľĂ­ vytvoĹ™enĂ© soubory;
-- `name` urÄŤuje nĂˇzev artifactu zobrazenĂ˝ u dokonÄŤenĂ©ho bÄ›hu.
+- `upload-artifact` uloží vytvořené soubory;
+
+- `name` určuje název artefaktu zobrazený u dokončeného běhu.
 
 ---
 
-## 205. VĂ˝bÄ›r souborĹŻ artifactu
+## 205. Výběr souborů artefaktu
 
 ```yaml
 path: |
@@ -4099,114 +4102,124 @@ path: |
   cesta/*.json
 ```
 
-- `path` urÄŤuje soubory urÄŤenĂ© k uloĹľenĂ­;
-- `*.csv` vybere vĹˇechny CSV soubory v danĂ© sloĹľce;
-- `*.json` vybere vĹˇechny JSON soubory v danĂ© sloĹľce;
-- `|` umoĹľĹuje uvĂ©st vĂ­ce cest.
+- `path` určuje soubory určené k uložení;
+
+- `*.csv` vybere všechny CSV soubory v dané složce;
+
+- `*.json` vybere všechny JSON soubory v dané složce;
+
+- `|` umožňuje uvést více cest.
 
 ---
 
-## 206. ChybÄ›jĂ­cĂ­ vĂ˝stupnĂ­ soubory
+## 206. Chybějící výstupní soubory
 
 ```yaml
 if-no-files-found: error
 ```
 
-Pokud se nenajde ĹľĂˇdnĂ˝ soubor odpovĂ­dajĂ­cĂ­ zadanĂ˝m cestĂˇm, krok skonÄŤĂ­ chybou.
+Pokud se nenajde žádný soubor odpovídající zadaným cestám, krok skončí chybou.
 
-TĂ­m zabrĂˇnĂ­me tomu, aby workflow pĹŻsobilo ĂşspÄ›ĹˇnÄ›, pĹ™estoĹľe nevytvoĹ™ilo oÄŤekĂˇvanĂ˝ vĂ˝stup.
-
----
-
-## 207. NĂˇvratovĂ˝ kĂłd Python skriptu
-
-```text
-Python vrĂˇtĂ­ 0
-â†’ krok uspÄ›je
-â†’ workflow pokraÄŤuje
-
-Python vrĂˇtĂ­ nenulovĂ˝ kĂłd
-â†’ krok selĹľe
-â†’ workflow se oznaÄŤĂ­ jako neĂşspÄ›ĹˇnĂ©
-```
-
-NĂˇvratovĂ© kĂłdy umoĹľĹujĂ­ GitHub Actions rozpoznat vĂ˝sledek Python procesu.
+Tím zabráníme tomu, aby workflow působilo úspěšně, přestože nevytvořilo očekávaný výstup.
 
 ---
 
-## 208. Kontrola ĂşspÄ›chu a chyby
+## 207. Návratový kód Python skriptu
 
 ```text
-zelenĂˇ fajfka
-â†’ krok nebo workflow uspÄ›lo
-
-ÄŤervenĂ˝ kĹ™Ă­Ĺľek
-â†’ krok nebo workflow selhalo
+Python vrátí 0
+→ krok uspěje
+→ workflow pokračuje
+Python vrátí nenulový kód
+→ krok selže
+→ workflow se označí jako neúspěšné
 ```
 
-V detailu jobu lze rozbalit kaĹľdĂ˝ krok a pĹ™eÄŤĂ­st jeho vĂ˝stup.
+Návratové kódy umožňují GitHub Actions rozpoznat výsledek Pythonového procesu.
+
+---
+
+## 208. Kontrola úspěchu a chyby
+
+```text
+zelená fajfka
+→ krok nebo workflow uspělo
+červený křížek
+→ krok nebo workflow selhalo
+```
+
+V detailu jobu lze rozbalit každý krok a přečíst jeho výstup.
 
 ---
 
 ## 209. Logy GitHub Actions
 
-GitHub Actions automaticky zaznamenĂˇvĂˇ:
+GitHub Actions automaticky zaznamenává:
 
-- spuĹˇtÄ›nĂ© kroky;
-- pĹ™Ă­kazy provedenĂ© na runneru;
-- vĂ˝stupy Python skriptu;
-- chybovĂ© zprĂˇvy;
-- dĂ©lku jednotlivĂ˝ch krokĹŻ;
-- celkovĂ˝ stav jobu.
+- spuštěné kroky;
+
+- příkazy provedené na runneru;
+
+- výstupy Python skriptu;
+
+- chybové zprávy;
+
+- délku jednotlivých kroků;
+
+- celkový stav jobu.
 
 ```text
 Python logging
-â†’ log vytvĂˇĹ™Ă­ nĂˇĹˇ skript
-
+→ log vytváří náš skript
 GitHub Actions log
-â†’ GitHub zaznamenĂˇvĂˇ celĂ˝ prĹŻbÄ›h workflow
+→ GitHub zaznamenává celý průběh workflow
 ```
 
 ---
 
 ## 210. GitHub Secrets
 
-GitHub Secrets slouĹľĂ­ k bezpeÄŤnĂ©mu uloĹľenĂ­ citlivĂ˝ch hodnot, napĹ™Ă­klad:
+GitHub Secrets slouží k bezpečnému uložení citlivých hodnot, například:
 
-- API klĂ­ÄŤe;
-- pĹ™Ă­stupovĂ©ho tokenu;
-- hesla;
-- connection stringu.
+- API klíčů;
 
-PĹ™Ă­klad pĹ™edĂˇnĂ­ secretu:
+- přístupových tokenů;
+
+- hesel;
+
+- connection stringů.
+
+Příklad předání tajné hodnoty (secretu):
 
 ```yaml
 env:
   API_KEY: ${{ secrets.API_KEY }}
 ```
 
-Python mĹŻĹľe hodnotu naÄŤĂ­st:
+Python může hodnotu načíst:
 
 ```python
 import os
-
 api_key = os.getenv("API_KEY")
 ```
 
-V naĹˇem workflow secret nepouĹľĂ­vĂˇme, protoĹľe zvolenĂ© veĹ™ejnĂ© API ho nevyĹľaduje.
+V našem workflow žádný secret nepoužíváme, protože zvolené veřejné API ho nevyžaduje.
 
 ---
 
-## 211. GitHub runner a lokĂˇlnĂ­ poÄŤĂ­taÄŤ
+## 211. GitHub runner a lokální počítač
 
-GitHub-hosted runner nemĂˇ automatickĂ˝ pĹ™Ă­stup k:
+GitHub-hosted runner nemá automatický přístup k:
 
-- souborĹŻm na naĹˇem poÄŤĂ­taÄŤi;
-- lokĂˇlnĂ­ `.venv`;
-- SQL Server LocalDB na naĹˇem poÄŤĂ­taÄŤi;
-- lokĂˇlnĂ­m cestĂˇm, napĹ™Ă­klad `C:\Users\...`.
+- souborům na našem počítači;
 
-Proto jsme GitHub Actions pouĹľili pouze pro API automatizaci.
+- lokálnímu prostředí `.venv`;
+
+- SQL Server LocalDB na našem počítači;
+
+- lokálním cestám, například `C:\Users\...`.
+
+Proto jsme GitHub Actions použili pouze pro API automatizaci.
 
 ---
 
@@ -4214,42 +4227,389 @@ Proto jsme GitHub Actions pouĹľili pouze pro API automatizaci.
 
 ```text
 GitHub Actions
-â†’ vzdĂˇlenĂ˝ runner
-â†’ veĹ™ejnĂ© API
-â†’ Python
-â†’ CSV nebo JSON
-â†’ artifact
+→ vzdálený runner
+→ veřejné API
+→ Python
+→ CSV nebo JSON
+→ artifact
 ```
 
 ```text
 Windows Task Scheduler
-â†’ lokĂˇlnĂ­ poÄŤĂ­taÄŤ
-â†’ Python z .venv
-â†’ lokĂˇlnĂ­ soubory a LocalDB
-â†’ Excel a log
+→ lokální počítač
+→ Python z .venv
+→ lokální soubory a LocalDB
+→ Excel a log
 ```
 
-Volba nĂˇstroje zĂˇvisĂ­ na tom, kde jsou dostupnĂ© vstupy, vĂ˝stupy a dalĹˇĂ­ sluĹľby.
+Volba nástroje závisí na tom, kde jsou dostupné vstupy, výstupy a další služby.
 
 ---
 
-## 213. HlavnĂ­ poznatky Lekce 9
+## 213. Hlavní poznatky Lekce 9
 
-- GitHub Actions automatizuje procesy uloĹľenĂ© v repozitĂˇĹ™i;
-- workflow se uklĂˇdĂˇ do `.github/workflows`;
-- workflow obsahuje spouĹˇtÄ›ÄŤe, jobs a steps;
-- runner je poÄŤĂ­taÄŤ, na kterĂ©m job bÄ›ĹľĂ­;
-- `workflow_dispatch` umoĹľĹuje ruÄŤnĂ­ spuĹˇtÄ›nĂ­;
-- `schedule` umoĹľĹuje pravidelnĂ© ÄŤasovĂ© spuĹˇtÄ›nĂ­;
-- `uses` pouĹľĂ­vĂˇ pĹ™ipravenou akci;
-- `run` provĂˇdĂ­ bÄ›ĹľnĂ˝ pĹ™Ă­kaz;
-- runner musĂ­ stĂˇhnout repozitĂˇĹ™ a pĹ™ipravit Python;
-- knihovny se instalujĂ­ z `requirements.txt`;
-- nĂˇvratovĂ˝ kĂłd Pythonu urÄŤuje ĂşspÄ›ch nebo chybu kroku;
-- artifact uchovĂˇvĂˇ vĂ˝stupy vytvoĹ™enĂ© na runneru;
-- GitHub Actions poskytuje vlastnĂ­ logy jednotlivĂ˝ch krokĹŻ;
-- citlivĂ© Ăşdaje patĹ™Ă­ do GitHub Secrets;
-- GitHub-hosted runner nenĂ­ pĹ™Ă­mo propojenĂ˝ s lokĂˇlnĂ­ LocalDB;
-- pro lokĂˇlnĂ­ zdroje pouĹľĂ­vĂˇme Windows Task Scheduler, pro API lze pouĹľĂ­t GitHub Actions.
+- GitHub Actions automatizuje procesy uložené v repozitáři;
+
+- workflow se ukládá do `.github/workflows`;
+
+- workflow obsahuje spouštěče, joby a kroky;
+
+- runner je počítač, na kterém job běží;
+
+- `workflow_dispatch` umožňuje ruční spuštění;
+
+- `schedule` umožňuje pravidelné časové spuštění;
+
+- `uses` používá připravenou akci;
+
+- `run` provádí běžný příkaz;
+
+- runner musí stáhnout repozitář a připravit Python;
+
+- knihovny se instalují z `requirements.txt`;
+
+- návratový kód Pythonu určuje úspěch nebo chybu kroku;
+
+- artefakt uchovává výstupy vytvořené na runneru;
+
+- GitHub Actions poskytuje vlastní logy jednotlivých kroků;
+
+- citlivé údaje patří do GitHub Secrets;
+
+- GitHub-hosted runner není přímo propojený s lokální LocalDB;
+
+- pro lokální zdroje používáme Windows Task Scheduler, pro API lze použít GitHub Actions.
+
+---
+
+## 214. SQL scheduling
+
+SQL scheduling znamená automatické spouštění databázových úloh v určeném čase nebo intervalu.
+
+Příklady:
+
+- noční přepočet souhrnné tabulky;
+- pravidelná kontrola dat;
+- spuštění uložené procedury;
+- archivace starších záznamů.
+
+---
+
+## 215. SQL Server Agent
+
+SQL Server Agent je služba určená k plánování a spouštění úloh v podporovaných edicích SQL Serveru.
+
+```text
+SQL Server Agent
+→ spustí job
+→ provede jednotlivé kroky
+→ uloží výsledek do historie
+```
+
+---
+
+## 216. Job
+
+Job představuje celou automaticky spouštěnou úlohu.
+
+Příklady jobů:
+
+- denní aktualizace souhrnné tabulky;
+- noční kontrola kvality dat;
+- pravidelné spuštění uložené procedury.
+
+---
+
+## 217. Job step
+
+Job step je jeden konkrétní krok uvnitř jobu.
+
+Jeden job může obsahovat více kroků:
+
+```text
+Job
+→ krok 1: kontrola vstupních dat
+→ krok 2: spuštění transformace
+→ krok 3: zápis výsledku
+```
+
+---
+
+## 218. Schedule
+
+Schedule určuje, kdy a jak často se job spustí.
+
+Příklady:
+
+- každý den v 06:00;
+- každé pondělí;
+- jednou za hodinu;
+- první den v měsíci.
+
+---
+
+## 219. Historie spuštění
+
+Historie ukazuje například:
+
+- čas spuštění;
+- výsledek jobu;
+- úspěšné a neúspěšné kroky;
+- chybovou zprávu;
+- délku zpracování.
+
+Pomáhá určit, zda job uspěl a ve kterém kroku případně selhal.
+
+---
+
+## 220. Job Activity Monitor
+
+Job Activity Monitor v SQL Server Management Studiu slouží ke sledování jobů.
+
+Umožňuje například:
+
+- zobrazit jejich stav;
+- zkontrolovat poslední spuštění;
+- zobrazit historii;
+- job ručně spustit nebo zastavit.
+
+---
+
+## 221. Omezení SQL Server LocalDB
+
+SQL Server LocalDB neobsahuje SQL Server Agent.
+
+Proto v LocalDB nelze vytvořit a plánovat job stejným způsobem jako v plném SQL Serveru.
+
+Pro plánování použijeme externí nástroj, například Windows Task Scheduler.
+
+---
+
+## 222. Automatizace SQL úlohy v LocalDB
+
+SQL úlohu v LocalDB lze spouštět například tímto tokem:
+
+```text
+Windows Task Scheduler
+→ BAT soubor
+→ sqlcmd
+→ SQL LocalDB
+→ SQL skript nebo uložená procedura
+```
+
+---
+
+## 223. Role BAT souboru
+
+BAT soubor databázi přímo neovládá. Spouští program, který se k databázi připojí.
+
+```text
+BAT
+→ sqlcmd
+→ SQL Server
+```
+
+nebo:
+
+```text
+BAT
+→ Python
+→ pyodbc
+→ SQL Server
+```
+
+---
+
+## 224. `sqllocaldb` versus `sqlcmd`
+
+```text
+sqllocaldb
+→ spravuje instanci LocalDB
+→ například ji spustí nebo zastaví
+
+sqlcmd
+→ připojí se k SQL Serveru
+→ provede SQL příkaz nebo SQL soubor
+```
+
+Spuštění instance:
+
+```bat
+sqllocaldb start DataAnalyticsLocalDB
+```
+
+---
+
+## 225. Spuštění SQL souboru pomocí `sqlcmd`
+
+```bat
+sqlcmd -S "(localdb)\DataAnalyticsLocalDB" ^
+       -d "sales_database" ^
+       -E ^
+       -i "C:\automation\update_sales_summary.sql"
+```
+
+- `-S` určuje server nebo instanci;
+- `-d` určuje databázi;
+- `-E` používá přihlášení Windows;
+- `-i` určuje vstupní SQL soubor.
+
+---
+
+## 226. SQL skript
+
+SQL skript je samostatný soubor s příponou `.sql`.
+
+Může obsahovat například:
+
+- vytvoření nebo úpravu tabulky;
+- přepočet dat;
+- kontrolní dotazy;
+- spuštění uložené procedury.
+
+Skript lze spustit ručně nebo automaticky pomocí `sqlcmd`.
+
+---
+
+## 227. Uložená procedura
+
+Uložená procedura je pojmenovaný SQL program uložený přímo v databázi.
+
+```sql
+EXEC dbo.update_sales_summary;
+```
+
+Je vhodná pro opakovanou databázovou operaci, kterou lze volat z SQL Server Agentu, `sqlcmd`, Pythonu nebo jiného klienta.
+
+---
+
+## 228. SQL skript versus uložená procedura
+
+| SQL skript | Uložená procedura |
+|---|---|
+| Je uložený jako `.sql` soubor | Je uložená v databázi |
+| Pomocí `sqlcmd` se spouští přes `-i` | Spouští se příkazem `EXEC` |
+| Verzi lze spravovat v Git repozitáři | Spravuje se jako databázový objekt |
+
+---
+
+## 229. Přímé spuštění SQL příkazu
+
+Parametr `-Q` předá nástroji `sqlcmd` přímo zadaný SQL příkaz.
+
+```bat
+sqlcmd -S "(localdb)\DataAnalyticsLocalDB" ^
+       -d "sales_database" ^
+       -E ^
+       -Q "EXEC dbo.update_sales_summary;"
+```
+
+---
+
+## 230. Chyba a návratový kód `sqlcmd`
+
+Parametr `-b` zajistí, že při závažné SQL chybě vrátí `sqlcmd` nenulový návratový kód.
+
+```bat
+sqlcmd -S "(localdb)\DataAnalyticsLocalDB" ^
+       -d "sales_database" ^
+       -E ^
+       -b ^
+       -Q "EXEC dbo.update_sales_summary;"
+```
+
+```text
+0
+→ úspěch
+
+nenulový návratový kód
+→ chyba
+```
+
+---
+
+## 231. Kdy plánovat proces v SQL Serveru
+
+SQL plánování je vhodné, když:
+
+- celý proces zůstává v databázi;
+- transformaci lze provést SQL příkazy nebo procedurou;
+- výstup zůstává v databázi;
+- nejsou potřeba API ani soubory;
+- databázový tým spravuje joby.
+
+---
+
+## 232. Kdy použít Python
+
+Python je vhodnější, když:
+
+- získáváme data z API;
+- pracujeme s CSV, JSON nebo Excelem;
+- kombinujeme různé zdroje;
+- provádíme souborovou validaci a čištění;
+- vytváříme souborové výstupy;
+- Python řídí logování a celý datový tok.
+
+---
+
+## 233. Kdy použít orchestrační platformu
+
+Orchestrační platforma je vhodná, když potřebujeme řídit více navazujících úloh a systémů.
+
+Může řídit:
+
+- pořadí úloh;
+- závislosti mezi nimi;
+- opakování neúspěšných kroků;
+- monitoring;
+- upozornění na chyby.
+
+Příklady jsou Azure Data Factory, Airflow nebo Databricks Workflows.
+
+---
+
+## 234. Volba řešení podle scénáře
+
+| Scénář | Vhodné řešení |
+|---|---|
+| Proces probíhá pouze v plném SQL Serveru | SQL Server Agent |
+| SQL proces používá LocalDB | Task Scheduler → BAT → `sqlcmd` |
+| Proces kombinuje API, soubory a databázi | Python a vhodný plánovač |
+| API automatizace běží na GitHubu | GitHub Actions |
+| Proces propojuje více systémů a závislostí | Orchestrační platforma |
+
+---
+
+## 235. Základní rozhodovací logika
+
+```text
+Pouze databáze
+→ SQL plánování
+
+API nebo soubory
+→ Python
+
+Více navazujících systémů a procesů
+→ orchestrace
+```
+
+---
+
+## 236. Hlavní poznatky Lekce 10
+
+- SQL Server Agent plánuje databázové joby;
+- job představuje celou úlohu;
+- job step představuje jeden krok;
+- schedule určuje čas a opakování;
+- historie pomáhá kontrolovat úspěch a chyby;
+- LocalDB SQL Server Agent neobsahuje;
+- `sqlcmd` umožňuje spouštět SQL bez otevřeného SSMS;
+- BAT soubor spouští `sqlcmd` nebo Python, databázi přímo neovládá;
+- SQL skript je soubor, uložená procedura je databázový objekt;
+- parametr `-b` pomáhá předat chybu plánovači;
+- databázové procesy je vhodné plánovat v SQL prostředí;
+- API a souborové procesy je obvykle vhodnější řídit Pythonem;
+- rozsáhlejší navazující procesy může řídit orchestrační platforma.
 
 ---

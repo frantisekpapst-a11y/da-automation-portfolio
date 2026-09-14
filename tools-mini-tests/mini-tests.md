@@ -1150,4 +1150,153 @@ Proč náš GitHub Actions workflow nezapisuje přímo do LocalDB na osobním po
 GitHub-hosted runner je oddělený virtuální počítač bez automatického přístupu k lokální LocalDB.
 
 ---
-    
+
+## Otázka 74
+
+Jaká je hlavní úloha SQL Server Agentu?
+
+- A) Vytvářet Excelové reporty
+- B) Plánovat a spouštět databázové úlohy
+- C) Nahrazovat databázový server
+- D) Čistit soubory CSV
+
+**Správná odpověď:** B
+
+SQL Server Agent řídí automatické spouštění databázových jobů podle nastaveného plánu.
+
+---
+
+## Otázka 75
+
+Co představuje job v SQL Server Agentu?
+
+- A) Celou automaticky spouštěnou úlohu
+- B) Jeden sloupec databázové tabulky
+- C) Samostatnou databázi
+- D) Přihlašovací účet uživatele
+
+**Správná odpověď:** A
+
+Job představuje celou naplánovanou úlohu a může obsahovat jeden nebo více kroků.
+
+---
+
+## Otázka 76
+
+Co určuje job step?
+
+- A) Čas spuštění celého jobu
+- B) Historii předchozích spuštění
+- C) Konkrétní činnost uvnitř jobu
+- D) Název databázového serveru
+
+**Správná odpověď:** C
+
+Job step může například spustit SQL příkaz nebo uloženou proceduru.
+
+---
+
+## Otázka 77
+
+Co určuje schedule?
+
+- A) Obsah SQL příkazu
+- B) Strukturu databázové tabulky
+- C) Přístupová práva uživatele
+- D) Kdy a jak často se job spustí
+
+**Správná odpověď:** D
+
+Schedule stanovuje čas a opakování automatického spuštění.
+
+---
+
+## Otázka 78
+
+Proč nemůžeme v LocalDB používat SQL Server Agent?
+
+- A) LocalDB nepodporuje SQL dotazy
+- B) LocalDB službu SQL Server Agent neobsahuje
+- C) LocalDB neumí ukládat tabulky
+- D) LocalDB funguje pouze s Excelem
+
+**Správná odpověď:** B
+
+LocalDB nemá SQL Server Agent, a proto potřebuje externí plánovač.
+
+---
+
+## Otázka 79
+
+Jak lze automaticky spustit SQL soubor v LocalDB bez použití Pythonu?
+
+- A) Task Scheduler → BAT → `sqlcmd`
+- B) SQL Server Agent → Excel → LocalDB
+- C) Power BI → Git → SQL Server Agent
+- D) SSMS → CSV → Task Scheduler
+
+**Správná odpověď:** A
+
+Task Scheduler spustí BAT soubor a `sqlcmd` provede SQL soubor v LocalDB.
+
+---
+
+## Otázka 80
+
+Jaký je rozdíl mezi SQL skriptem a uloženou procedurou?
+
+- A) SQL skript pracuje s daty, procedura nikoliv
+- B) Proceduru lze spustit pouze z Pythonu
+- C) Skript je soubor, procedura je uložená v databázi
+- D) Mezi nimi není žádný rozdíl
+
+**Správná odpověď:** C
+
+SQL skript existuje jako soubor, zatímco uložená procedura je databázový objekt.
+
+---
+
+## Otázka 81
+
+Kdy je zpravidla vhodnější řídit proces Pythonem?
+
+- A) Když pouze přepočítáváme SQL tabulku
+- B) Když kombinujeme API, soubory a databázi
+- C) Když pouze vytváříme primární klíč
+- D) Když pouze spouštíme uloženou proceduru
+
+**Správná odpověď:** B
+
+Python je vhodný pro řízení procesu napříč API, soubory a databázemi.
+
+---
+
+## Otázka 82
+
+Kdy dává smysl použít orchestrační platformu?
+
+- A) Při jednorázovém otevření CSV
+- B) Při vytvoření jedné SQL tabulky
+- C) Při ruční kontrole jednoho Excelu
+- D) Při řízení navazujících úloh ve více systémech
+
+**Správná odpověď:** D
+
+Orchestrace koordinuje pořadí, závislosti, monitoring a chyby napříč systémy.
+
+---
+
+## Otázka 83
+
+Proč se při volání `sqlcmd` používá parametr `-b`?
+
+- A) Aby při SQL chybě vznikl nenulový návratový kód
+- B) Aby se vytvořila záloha databáze
+- C) Aby se otevřelo SSMS
+- D) Aby se výsledek uložil do Excelu
+
+**Správná odpověď:** A
+
+Parametr `-b` umožní předat selhání SQL úlohy BAT souboru a plánovači.
+
+---

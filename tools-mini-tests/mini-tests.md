@@ -1,6 +1,6 @@
 # Minitesty – automatizace datového procesu
 
-Minitesty shrnují základy automatizace, strukturu Python skriptu a získávání dat z API.
+Minitesty shrnují celý výukový blok automatizace datového procesu.
 
 ---
 
@@ -10,12 +10,7 @@ Minitesty shrnují základy automatizace, strukturu Python skriptu a získáván
 
 Jaký je správný tok vytvořené automatizace?
 
-- A) Python → Windows Task Scheduler → BAT → log
-- B) Windows Task Scheduler → BAT → Python → CSV a databáze → log
-- C) BAT → databáze → Windows Task Scheduler → Python
-- D) SQL Server → Python → Windows Task Scheduler → BAT
-
-**Správná odpověď:** B
+**Správná odpověď:** Windows Task Scheduler → BAT → Python → CSV a databáze → log
 
 Task Scheduler určí čas spuštění, BAT spustí Python a Python zpracuje data.
 
@@ -25,12 +20,7 @@ Task Scheduler určí čas spuštění, BAT spustí Python a Python zpracuje dat
 
 Jaká je hlavní úloha Windows Task Scheduleru?
 
-- A) Určit, kdy se proces automaticky spustí
-- B) Provést validaci CSV souborů
-- C) Spojit data pomocí pandas
-- D) Vytvořit databázovou tabulku
-
-**Správná odpověď:** A
+**Správná odpověď:** Určit, kdy se proces automaticky spustí
 
 Task Scheduler zajišťuje časové nebo událostní spuštění procesu.
 
@@ -40,12 +30,7 @@ Task Scheduler zajišťuje časové nebo událostní spuštění procesu.
 
 Jaká je hlavní úloha BAT souboru?
 
-- A) Nahradit Python skript
-- B) Spustit správný Python interpreter a Python skript
-- C) Uložit data přímo do SQL Serveru
-- D) Vytvořit log bez použití Pythonu
-
-**Správná odpověď:** B
+**Správná odpověď:** Spustit správný Python interpreter a Python skript
 
 BAT soubor spouští správné prostředí a předává řízení Python skriptu.
 
@@ -55,12 +40,7 @@ BAT soubor spouští správné prostředí a předává řízení Python skriptu
 
 Co znamená `NaT` v pandas?
 
-- A) Nulovou hodnotu v číselném sloupci
-- B) Neplatnou nebo chybějící hodnotu data a času
-- C) Duplicitní řádek
-- D) Nenalezený text
-
-**Správná odpověď:** B
+**Správná odpověď:** Neplatnou nebo chybějící hodnotu data a času
 
 `NaT` je časová obdoba chybějící hodnoty `NaN`.
 
@@ -70,12 +50,7 @@ Co znamená `NaT` v pandas?
 
 Co znamená idempotentní proces?
 
-- A) Proces lze bezpečně opakovat se stejnými vstupy bez vzniku dalších duplicit
-- B) Proces může být spuštěn pouze jednou
-- C) Proces nepotřebuje validaci
-- D) Proces vždy smaže celou databázi
-
-**Správná odpověď:** A
+**Správná odpověď:** Proces lze bezpečně opakovat se stejnými vstupy bez vzniku dalších duplicit
 
 Opakované spuštění se stejnými vstupy vytvoří stejný výsledný stav.
 
@@ -85,12 +60,7 @@ Opakované spuštění se stejnými vstupy vytvoří stejný výsledný stav.
 
 Proč se před vložením dat odstraní z databáze záznamy za stejný den?
 
-- A) Aby opakované spuštění nevytvořilo duplicitní řádky
-- B) Aby se odstranily všechny historické záznamy
-- C) Aby nebylo nutné použít SQL
-- D) Aby se změnil formát data
-
-**Správná odpověď:** A
+**Správná odpověď:** Aby opakované spuštění nevytvořilo duplicitní řádky
 
 Odstranění stejného dne umožňuje bezpečně zopakovat načtení dat.
 
@@ -100,12 +70,7 @@ Odstranění stejného dne umožňuje bezpečně zopakovat načtení dat.
 
 Co znamená návratový kód `0`?
 
-- A) Proces skončil úspěšně
-- B) Proces skončil chybou
-- C) Nebyl nalezen žádný soubor
-- D) Databáze byla odstraněna
-
-**Správná odpověď:** A
+**Správná odpověď:** Proces skončil úspěšně
 
 Návratový kód `0` podle běžné konvence označuje úspěch.
 
@@ -115,12 +80,7 @@ Návratový kód `0` podle běžné konvence označuje úspěch.
 
 Co obvykle znamená nenulový návratový kód, například `1`?
 
-- A) Proces skončil chybou
-- B) Proces skončil úspěšně
-- C) Byla načtena právě jedna pobočka
-- D) Windows Task Scheduler je vypnutý
-
-**Správná odpověď:** A
+**Správná odpověď:** Proces skončil chybou
 
 Nenulový návratový kód informuje operační systém o chybě procesu.
 
@@ -133,14 +93,12 @@ Nenulový návratový kód informuje operační systém o chybě procesu.
 Co získáme tímto zápisem?
 
 ```python
+
 script_dir = Path(__file__).resolve().parent
+
 ```
 
-- A) Aktuální pracovní složku
-- B) Absolutní cestu ke složce, ve které leží Python skript
-- C) Cestu ke vstupnímu souboru
-
-**Správná odpověď:** B
+**Správná odpověď:** Absolutní cestu ke složce, ve které leží Python skript
 
 `resolve()` vytvoří absolutní cestu a `parent` vybere složku skriptu.
 
@@ -150,11 +108,7 @@ script_dir = Path(__file__).resolve().parent
 
 Proč při automatizaci odvozujeme cesty od `__file__` místo pouze od `Path.cwd()`?
 
-- A) Protože `Path.cwd()` neumí pracovat ve Windows
-- B) Protože pracovní složka se může měnit podle způsobu spuštění skriptu
-- C) Protože `__file__` automaticky vytváří chybějící složky
-
-**Správná odpověď:** B
+**Správná odpověď:** Protože pracovní složka se může měnit podle způsobu spuštění skriptu
 
 Umístění skriptu zůstává stejné, ale pracovní složka se může měnit.
 
@@ -164,28 +118,15 @@ Umístění skriptu zůstává stejné, ale pracovní složka se může měnit.
 
 Který zápis správně zkontroluje chybějící vstupní složku?
 
-- A)
+**Správná odpověď:**
 
 ```python
+
 if not input_dir.exists():
-    return 1
+
+    return 1
+
 ```
-
-- B)
-
-```python
-if input_dir.exists():
-    return 1
-```
-
-- C)
-
-```python
-if not input_dir:
-    return 0
-```
-
-**Správná odpověď:** A
 
 `.exists()` ověří existenci a `not` zachytí záporný výsledek.
 
@@ -196,15 +137,14 @@ if not input_dir:
 K čemu slouží tato podmínka?
 
 ```python
+
 if __name__ == "__main__":
-    result = main()
+
+    result = main()
+
 ```
 
-- A) Kontroluje, zda existuje funkce `main()`
-- B) Spustí hlavní proces pouze při přímém spuštění souboru
-- C) Zabrání ukončení Python programu
-
-**Správná odpověď:** B
+**Správná odpověď:** Spustí hlavní proces pouze při přímém spuštění souboru
 
 Podmínka zabrání automatickému spuštění `main()` při importu modulu.
 
@@ -214,11 +154,7 @@ Podmínka zabrání automatickému spuštění `main()` při importu modulu.
 
 Které tvrzení o `return` a `sys.exit()` je správné?
 
-- A) Oba příkazy pouze vypíšou výsledek do terminálu
-- B) `return 1` znamená úspěch a `return 0` znamená chybu
-- C) `return` vrátí hodnotu z funkce a `sys.exit()` ji předá operačnímu systému
-
-**Správná odpověď:** C
+**Správná odpověď:** `return` vrátí hodnotu z funkce a `sys.exit()` ji předá operačnímu systému
 
 `return` ukončí funkci, zatímco `sys.exit()` ukončí celý proces.
 
@@ -230,11 +166,7 @@ Které tvrzení o `return` a `sys.exit()` je správné?
 
 Co provádí `requests.get()`?
 
-- A) Vytváří lokální JSON soubor
-- B) Odesílá HTTP požadavek pro získání dat
-- C) Normalizuje JSON do tabulky
-
-**Správná odpověď:** B
+**Správná odpověď:** Odesílá HTTP požadavek pro získání dat
 
 Metoda `GET` slouží k načtení dat ze zvoleného endpointu.
 
@@ -244,11 +176,7 @@ Metoda `GET` slouží k načtení dat ze zvoleného endpointu.
 
 Co znamená HTTP status `200`?
 
-- A) Požadavek byl úspěšně zpracován
-- B) Požadovaný zdroj nebyl nalezen
-- C) Byl překročen rate limit
-
-**Správná odpověď:** A
+**Správná odpověď:** Požadavek byl úspěšně zpracován
 
 Status `200` potvrzuje úspěšné zpracování HTTP požadavku.
 
@@ -258,11 +186,7 @@ Status `200` potvrzuje úspěšné zpracování HTTP požadavku.
 
 Proč u API požadavku používáme `timeout`?
 
-- A) Aby API vrátilo méně záznamů
-- B) Aby se JSON automaticky uložil
-- C) Aby skript nečekal na odpověď neomezeně dlouho
-
-**Správná odpověď:** C
+**Správná odpověď:** Aby skript nečekal na odpověď neomezeně dlouho
 
 Timeout stanovuje maximální dobu čekání na odpověď API.
 
@@ -273,18 +197,20 @@ Timeout stanovuje maximální dobu čekání na odpověď API.
 Který parametr určuje číslo požadované stránky?
 
 ```python
+
 params = {
-    "state": "all",
-    "per_page": 10,
-    "page": 2
+
+    "state": "all",
+
+    "per_page": 10,
+
+    "page": 2
+
 }
+
 ```
 
-- A) `state`
-- B) `per_page`
-- C) `page`
-
-**Správná odpověď:** C
+**Správná odpověď:** `page`
 
 Parametr `page` určuje konkrétní stránku stránkované odpovědi.
 
@@ -295,14 +221,12 @@ Parametr `page` určuje konkrétní stránku stránkované odpovědi.
 Co provede tento příkaz?
 
 ```python
+
 all_records.extend(page_data)
+
 ```
 
-- A) Přidá jednotlivé záznamy aktuální stránky do společného seznamu
-- B) Nahradí všechny předchozí záznamy aktuální stránkou
-- C) Odstraní duplicitní záznamy
-
-**Správná odpověď:** A
+**Správná odpověď:** Přidá jednotlivé záznamy aktuální stránky do společného seznamu
 
 `.extend()` rozšíří existující seznam o jednotlivé položky dalšího seznamu.
 
@@ -312,11 +236,7 @@ all_records.extend(page_data)
 
 Co vyjadřuje rate limit?
 
-- A) Maximální velikost jednoho JSON souboru
-- B) Omezení počtu požadavků na API
-- C) Počet sloupců ve výsledné tabulce
-
-**Správná odpověď:** B
+**Správná odpověď:** Omezení počtu požadavků na API
 
 Rate limit chrání API omezením počtu požadavků v určitém období.
 
@@ -326,11 +246,7 @@ Rate limit chrání API omezením počtu požadavků v určitém období.
 
 Jaký je rozdíl mezi `response.text` a `response.json()`?
 
-- A) Žádný, obě hodnoty jsou vždy slovník
-- B) `response.text` obsahuje původní text a `response.json()` ho převádí na Python objekty
-- C) `response.text` vytváří DataFrame a `response.json()` vytváří CSV
-
-**Správná odpověď:** B
+**Správná odpověď:** `response.text` obsahuje původní text a `response.json()` ho převádí na Python objekty
 
 Raw odpověď ukládáme jako text a pro zpracování ji převádíme na Python objekty.
 
@@ -341,14 +257,12 @@ Raw odpověď ukládáme jako text a pro zpracování ji převádíme na Python 
 Co zjistí tento zápis?
 
 ```python
+
 missing_keys = REQUIRED_KEYS - set(record.keys())
+
 ```
 
-- A) Které povinné klíče v záznamu chybějí
-- B) Kolik stránek ještě můžeme stáhnout
-- C) Které záznamy jsou duplicitní
-
-**Správná odpověď:** A
+**Správná odpověď:** Které povinné klíče v záznamu chybějí
 
 Rozdíl množin vrátí očekávané klíče, které záznam neobsahuje.
 
@@ -359,14 +273,12 @@ Rozdíl množin vrátí očekávané klíče, které záznam neobsahuje.
 K čemu slouží následující příkaz?
 
 ```python
+
 normalized_df = pd.json_normalize(all_records)
+
 ```
 
-- A) K odeslání dat zpět do API
-- B) K převedení JSON struktury na tabulku
-- C) K vytvoření timestampu
-
-**Správná odpověď:** B
+**Správná odpověď:** K převedení JSON struktury na tabulku
 
 `json_normalize()` převede záznamy JSON do tabulkového DataFrame.
 
@@ -376,26 +288,19 @@ normalized_df = pd.json_normalize(all_records)
 
 Co znamená, když funkce `main()` vrátí hodnotu `1`?
 
-- A) Proces skončil úspěšně
-- B) Byla stažena pouze jedna stránka
-- C) Proces skončil chybou
-
-**Správná odpověď:** C
+**Správná odpověď:** Proces skončil chybou
 
 Nenulový návratový kód signalizuje neúspěšné dokončení procesu.
 
 ---
 
+# Lekce 5 – Validace a error handling
+
 ## Otázka 24
 
 Jaký je hlavní účel funkce `validate_structure()`?
 
-- A) Uložit data do SQL Serveru
-- B) Ověřit povinné sloupce a neprázdný dataset
-- C) Odstranit duplicitní řádky
-- D) Vytvořit výsledný Excel
-
-**Správná odpověď:** B
+**Správná odpověď:** Ověřit povinné sloupce a neprázdný dataset
 
 Funkce ověřuje, zda lze se vstupními daty bezpečně začít pracovat.
 
@@ -405,12 +310,7 @@ Funkce ověřuje, zda lze se vstupními daty bezpečně začít pracovat.
 
 Proč voláme `validate_structure()` před `clean_data()`?
 
-- A) Aby se vytvořilo databázové spojení
-- B) Aby se změnil návratový kód na `0`
-- C) Aby cleaning pracoval s očekávanými sloupci
-- D) Aby se odstranily všechny hodnoty `NULL`
-
-**Správná odpověď:** C
+**Správná odpověď:** Aby cleaning pracoval s očekávanými sloupci
 
 Pokud by potřebný sloupec chyběl, cleaning by při jeho použití skončil chybou.
 
@@ -420,12 +320,7 @@ Pokud by potřebný sloupec chyběl, cleaning by při jeho použití skončil ch
 
 Co vrací funkce `clean_data()`?
 
-- A) Vyčištěný DataFrame
-- B) Návratový kód procesu
-- C) Databázové spojení
-- D) Cestu k Excel souboru
-
-**Správná odpověď:** A
+**Správná odpověď:** Vyčištěný DataFrame
 
 Funkce vrací pracovní kopii DataFrame po provedeném čištění.
 
@@ -435,12 +330,7 @@ Funkce vrací pracovní kopii DataFrame po provedeném čištění.
 
 Co způsobí `errors="coerce"` při převodu neplatné číselné hodnoty?
 
-- A) Odstraní celý řádek
-- B) Nahradí hodnotu nulou
-- C) Okamžitě ukončí Python
-- D) Převede hodnotu na `NaN`
-
-**Správná odpověď:** D
+**Správná odpověď:** Převede hodnotu na `NaN`
 
 Neplatná číselná hodnota se změní na `NaN`, kterou následně zachytí validace.
 
@@ -450,12 +340,7 @@ Neplatná číselná hodnota se změní na `NaN`, kterou následně zachytí val
 
 Jak má proces reagovat na chybějící hodnotu `issue_id`?
 
-- A) Doplnit hodnotu `unknown`
-- B) Zastavit proces jako chybný
-- C) Nahradit hodnotu nulou
-- D) Pokračovat bez upozornění
-
-**Správná odpověď:** B
+**Správná odpověď:** Zastavit proces jako chybný
 
 `issue_id` je primární klíč, a proto nesmí být prázdný.
 
@@ -465,12 +350,7 @@ Jak má proces reagovat na chybějící hodnotu `issue_id`?
 
 Jaký je rozdíl mezi `drop_duplicates()` a kontrolou `duplicated()` ve sloupci `issue_id`?
 
-- A) Obě kontroly vždy dělají totéž
-- B) Obě kontroly pouze vypisují varování
-- C) První odstraní stejné řádky, druhá kontroluje duplicitní klíč
-- D) První kontroluje klíč, druhá vytváří kopii
-
-**Správná odpověď:** C
+**Správná odpověď:** První odstraní stejné řádky, druhá kontroluje duplicitní klíč
 
 Úplné duplicity odstraníme při čištění, ale opakovaný primární klíč zastaví proces.
 
@@ -480,12 +360,7 @@ Jaký je rozdíl mezi `drop_duplicates()` a kontrolou `duplicated()` ve sloupci 
 
 Proč `validate_data()` vrací `False`, zatímco `main()` při stejné chybě vrací `1`?
 
-- A) Validace vrací stav dat a `main()` stav procesu
-- B) `False` a `1` vždy znamenají úspěch
-- C) `main()` nemůže vracet logickou hodnotu
-- D) `validate_data()` nemůže vracet číslo
-
-**Správná odpověď:** A
+**Správná odpověď:** Validace vrací stav dat a `main()` stav procesu
 
 `False` označuje neplatná data, zatímco návratový kód `1` oznamuje chybu celého procesu.
 
@@ -495,12 +370,7 @@ Proč `validate_data()` vrací `False`, zatímco `main()` při stejné chybě vr
 
 Co zajišťuje blok `finally` v našem skriptu?
 
-- A) Vždy vytvoří nový Excel
-- B) Vždy potvrdí databázové změny
-- C) Vždy vrátí návratový kód `0`
-- D) Uzavře existující databázové spojení
-
-**Správná odpověď:** D
+**Správná odpověď:** Uzavře existující databázové spojení
 
 `finally` se provede při úspěchu, chybě i předčasném ukončení funkce.
 
@@ -510,12 +380,7 @@ Co zajišťuje blok `finally` v našem skriptu?
 
 Proč je `connection.commit()` ve finálním skriptu až po vytvoření Excelu?
 
-- A) Aby byl SQL dotaz rychlejší
-- B) Aby bylo možné při chybě exportu vrátit databázové změny
-- C) Aby Pandas našel vstupní CSV
-- D) Aby se odstranily duplicity v Excelu
-
-**Správná odpověď:** B
+**Správná odpověď:** Aby bylo možné při chybě exportu vrátit databázové změny
 
 Pokud export selže před `commit()`, lze pomocí `rollback()` zachovat předchozí stav databáze.
 
@@ -525,27 +390,19 @@ Pokud export selže před `commit()`, lze pomocí `rollback()` zachovat předcho
 
 Která situace je v našem procesu pouze varováním, nikoliv kritickou chybou?
 
-- A) Chybějící sloupec `issue_id`
-- B) Duplicitní hodnota `issue_id`
-- C) Chybějící nepovinný `user_login`
-- D) Nedostupné databázové připojení
-
-**Správná odpověď:** C
+**Správná odpověď:** Chybějící nepovinný `user_login`
 
 `user_login` je nepovinný a chybějící hodnotu lze bezpečně ošetřit.
 
 ---
 
+# Lekce 6 – Logging a monitoring
+
 ## Otázka 34
 
 Jaký je hlavní účel modulu `logging`?
 
-- A) Čistit data v DataFrame
-- B) Vytvářet záznamy o průběhu programu
-- C) Připojovat Python k SQL Serveru
-- D) Vytvářet Excelové soubory
-
-**Správná odpověď:** B
+**Správná odpověď:** Vytvářet záznamy o průběhu programu
 
 Modul `logging` zaznamenává průběh, výsledky a případné chyby programu.
 
@@ -555,12 +412,7 @@ Modul `logging` zaznamenává průběh, výsledky a případné chyby programu.
 
 Jaký je hlavní rozdíl mezi `print()` a `logging`?
 
-- A) `print()` může zobrazit text, zatímco `logging` pracuje pouze s čísly
-- B) `logging` může ukládat strukturované záznamy do souboru
-- C) `print()` automaticky přidává datum a čas
-- D) Mezi nimi není žádný rozdíl
-
-**Správná odpověď:** B
+**Správná odpověď:** `logging` může ukládat strukturované záznamy do souboru
 
 `print()` vypíše zprávu do terminálu, zatímco `logging` ji může trvale uložit.
 
@@ -571,15 +423,12 @@ Jaký je hlavní rozdíl mezi `print()` a `logging`?
 Co nastavuje tento parametr?
 
 ```python
+
 level=logging.INFO
+
 ```
 
-- A) Název logovacího souboru
-- B) Formát data
-- C) Nejnižší zaznamenávanou úroveň logování
-- D) Maximální počet řádků v logu
-
-**Správná odpověď:** C
+**Správná odpověď:** Nejnižší zaznamenávanou úroveň logování
 
 Při nastavení `INFO` se zaznamenávají zprávy úrovní `INFO`, `WARNING` a `ERROR`.
 
@@ -589,12 +438,7 @@ Při nastavení `INFO` se zaznamenávají zprávy úrovní `INFO`, `WARNING` a `
 
 Která úroveň je vhodná pro běžnou informaci o správném průběhu procesu?
 
-- A) `INFO`
-- B) `WARNING`
-- C) `ERROR`
-- D) `STOP`
-
-**Správná odpověď:** A
+**Správná odpověď:** `INFO`
 
 `INFO` slouží pro běžné provozní informace, například zahájení procesu.
 
@@ -604,12 +448,7 @@ Která úroveň je vhodná pro běžnou informaci o správném průběhu procesu
 
 Která úroveň je vhodná pro nekritický problém, při kterém může proces pokračovat?
 
-- A) `INFO`
-- B) `WARNING`
-- C) `ERROR`
-- D) `SUCCESS`
-
-**Správná odpověď:** B
+**Správná odpověď:** `WARNING`
 
 `WARNING` upozorňuje na problém, který nemusí vyžadovat zastavení procesu.
 
@@ -619,12 +458,7 @@ Která úroveň je vhodná pro nekritický problém, při kterém může proces 
 
 Co znamená timestamp v logu?
 
-- A) Počet zpracovaných řádků
-- B) Celkovou délku procesu
-- C) Datum a čas konkrétní události
-- D) Návratový kód skriptu
-
-**Správná odpověď:** C
+**Správná odpověď:** Datum a čas konkrétní události
 
 Timestamp ukazuje, kdy přesně byl konkrétní záznam vytvořen.
 
@@ -635,15 +469,12 @@ Timestamp ukazuje, kdy přesně byl konkrétní záznam vytvořen.
 K čemu používáme následující příkaz?
 
 ```python
+
 start_time = time.perf_counter()
+
 ```
 
-- A) K získání aktuálního kalendářního data
-- B) K zahájení měření délky procesu
-- C) K vytvoření timestampu v logu
-- D) K zastavení skriptu
-
-**Správná odpověď:** B
+**Správná odpověď:** K zahájení měření délky procesu
 
 `time.perf_counter()` použijeme jako přesné stopky pro měření délky zpracování.
 
@@ -654,18 +485,18 @@ start_time = time.perf_counter()
 Co představuje `%s` v tomto zápisu?
 
 ```python
+
 logging.info(
-    "Počet řádků: %s",
-    len(dataframe)
+
+    "Počet řádků: %s",
+
+    len(dataframe)
+
 )
+
 ```
 
-- A) Zástupné místo pro předanou hodnotu
-- B) Název logovacího souboru
-- C) Chybový návratový kód
-- D) Formát aktuálního času
-
-**Správná odpověď:** A
+**Správná odpověď:** Zástupné místo pro předanou hodnotu
 
 Na místo `%s` se při vytvoření záznamu vloží hodnota `len(dataframe)`.
 
@@ -675,12 +506,7 @@ Na místo `%s` se při vytvoření záznamu vloží hodnota `len(dataframe)`.
 
 Proč zapisujeme informaci o vytvoření Excelu až po dokončení bloku `ExcelWriter`?
 
-- A) Aby log nepotvrdil vytvoření souboru, který ve skutečnosti nevznikl
-- B) Protože `logging` nelze použít uvnitř funkce `main()`
-- C) Aby se automaticky vytvořila databázová tabulka
-- D) Protože logování funguje pouze po příkazu `return`
-
-**Správná odpověď:** A
+**Správná odpověď:** Aby log nepotvrdil vytvoření souboru, který ve skutečnosti nevznikl
 
 Úspěšné vytvoření výstupu zaznamenáme až ve chvíli, kdy byl soubor skutečně uložen.
 
@@ -690,27 +516,19 @@ Proč zapisujeme informaci o vytvoření Excelu až po dokončení bloku `ExcelW
 
 Co znamená monitoring v rozsahu této lekce?
 
-- A) Automatickou opravu všech chyb
-- B) Vytvoření samostatného Power BI dashboardu
-- C) Kontrolu logu, úspěchu procesu, počtů řádků, chyb a délky zpracování
-- D) Pravidelné mazání vstupních dat
-
-**Správná odpověď:** C
+**Správná odpověď:** Kontrolu logu, úspěchu procesu, počtů řádků, chyb a délky zpracování
 
 Jednoduchý monitoring znamená kontrolovat podle logu stav a výsledek automatizovaného procesu.
 
 ---
 
+# Lekce 7 – Secrets a environment variables
+
 ## Otázka 44
 
 Proč citlivé údaje, například API klíč, nemají být zapsané přímo v Python kódu?
 
-- A) Python neumí pracovat s API klíči
-- B) Mohly by se zveřejnit spolu s kódem
-- C) API klíč musí být vždy uložený v SQL Serveru
-- D) Citlivé údaje zpomalují Python
-
-**Správná odpověď:** B
+**Správná odpověď:** Mohly by se zveřejnit spolu s kódem
 
 Citlivý údaj zapsaný v kódu by se mohl dostat do repozitáře a být zneužit.
 
@@ -720,12 +538,7 @@ Citlivý údaj zapsaný v kódu by se mohl dostat do repozitáře a být zneuži
 
 Jaký je účel lokálního souboru `.env`?
 
-- A) Uchovávat lokální konfigurační a citlivé hodnoty mimo kód
-- B) Uchovávat výsledný Excelový report
-- C) Zaznamenávat historii spuštění procesu
-- D) Instalovat externí Python balíčky
-
-**Správná odpověď:** A
+**Správná odpověď:** Uchovávat lokální konfigurační a citlivé hodnoty mimo kód
 
 Soubor `.env` odděluje místní konfiguraci a citlivé hodnoty od zdrojového kódu.
 
@@ -735,12 +548,7 @@ Soubor `.env` odděluje místní konfiguraci a citlivé hodnoty od zdrojového k
 
 Co má obsahovat soubor `.env.example`?
 
-- A) Skutečná hesla a přístupové tokeny
-- B) Kompletní kopii Python skriptu
-- C) Názvy proměnných bez skutečných citlivých hodnot
-- D) Pouze seznam nainstalovaných knihoven
-
-**Správná odpověď:** C
+**Správná odpověď:** Názvy proměnných bez skutečných citlivých hodnot
 
 Soubor `.env.example` ukazuje požadované proměnné, ale neobsahuje jejich skutečné citlivé hodnoty.
 
@@ -750,12 +558,7 @@ Soubor `.env.example` ukazuje požadované proměnné, ale neobsahuje jejich sku
 
 K čemu slouží zápis `.env` v souboru `.gitignore`?
 
-- A) Automaticky smaže soubor `.env` z počítače
-- B) Zašifruje hodnoty v souboru `.env`
-- C) Načte hodnoty z `.env` do Pythonu
-- D) Zabrání Gitu sledovat soubor `.env`
-
-**Správná odpověď:** D
+**Správná odpověď:** Zabrání Gitu sledovat soubor `.env`
 
 Pravidlo v `.gitignore` zabrání běžnému přidání souboru `.env` do repozitáře.
 
@@ -765,12 +568,7 @@ Pravidlo v `.gitignore` zabrání běžnému přidání souboru `.env` do repozi
 
 Co standardně vrátí `os.getenv("DATABASE_NAME")`, pokud proměnná neexistuje?
 
-- A) Prázdný DataFrame
-- B) `None`
-- C) Číslo `0`
-- D) Návratový kód `1`
-
-**Správná odpověď:** B
+**Správná odpověď:** `None`
 
 Pokud proměnná není dostupná a neurčíme výchozí hodnotu, `os.getenv()` vrátí `None`.
 
@@ -780,12 +578,7 @@ Pokud proměnná není dostupná a neurčíme výchozí hodnotu, `os.getenv()` v
 
 Co provede `load_dotenv(env_file)`?
 
-- A) Načte hodnoty z `.env` do proměnných prostředí procesu
-- B) Nahraje soubor `.env` na GitHub
-- C) Vytvoří databázi v SQL Serveru
-- D) Zapíše hodnoty do Excelu
-
-**Správná odpověď:** A
+**Správná odpověď:** Načte hodnoty z `.env` do proměnných prostředí procesu
 
 Funkce `load_dotenv()` přečte soubor a zpřístupní jeho hodnoty běžícímu Python procesu.
 
@@ -795,12 +588,7 @@ Funkce `load_dotenv()` přečte soubor a zpřístupní jeho hodnoty běžícímu
 
 Co je connection string?
 
-- A) Aktivní databázové spojení
-- B) SQL dotaz pro výběr řádků
-- C) Text s parametry potřebnými pro připojení k databázi
-- D) Soubor se seznamem Python knihoven
-
-**Správná odpověď:** C
+**Správná odpověď:** Text s parametry potřebnými pro připojení k databázi
 
 Connection string obsahuje například driver, server, databázi a způsob přihlášení.
 
@@ -810,12 +598,7 @@ Connection string obsahuje například driver, server, databázi a způsob přih
 
 Proč náš connection string neobsahuje databázové heslo?
 
-- A) LocalDB žádná hesla nikdy nepodporuje
-- B) Heslo automaticky poskytuje soubor `requirements.txt`
-- C) Heslo je automaticky uložené v souboru `.env.example`
-- D) Používáme přihlášení pomocí účtu Windows
-
-**Správná odpověď:** D
+**Správná odpověď:** Používáme přihlášení pomocí účtu Windows
 
 Nastavení `Trusted_Connection=yes` používá ověření aktuálního uživatele Windows.
 
@@ -825,12 +608,7 @@ Nastavení `Trusted_Connection=yes` používá ověření aktuálního uživatel
 
 K čemu slouží GitHub Secrets?
 
-- A) K bezpečnému uložení citlivých hodnot pro GitHub Actions
-- B) K ukládání veřejných screenshotů projektu
-- C) K nahrazení všech souborů `.gitignore`
-- D) K automatickému čištění CSV souborů
-
-**Správná odpověď:** A
+**Správná odpověď:** K bezpečnému uložení citlivých hodnot pro GitHub Actions
 
 GitHub Secrets umožňují předat citlivé hodnoty workflow bez jejich zapsání do repozitáře.
 
@@ -840,27 +618,19 @@ GitHub Secrets umožňují předat citlivé hodnoty workflow bez jejich zapsán�
 
 Proč jsme do `requirements.txt` přidali `python-dotenv`, ale nepřidali `os` ani `sys`?
 
-- A) `os` a `sys` se nikdy nesmějí importovat
-- B) `python-dotenv` je součástí SQL Serveru
-- C) `python-dotenv` je externí balíček, zatímco `os` a `sys` jsou součástí Pythonu
-- D) `requirements.txt` může obsahovat pouze jeden import
-
-**Správná odpověď:** C
+**Správná odpověď:** `python-dotenv` je externí balíček, zatímco `os` a `sys` jsou součástí Pythonu
 
 Do `requirements.txt` zapisujeme externí závislosti instalované přes `pip`, nikoliv standardní moduly Pythonu.
 
 ---
 
+# Lekce 8 – Windows Task Scheduler a BAT
+
 ## Otázka 54
 
 Jaká je hlavní úloha souboru `run_pipeline.bat` v našem procesu?
 
-- A) Provádět transformace v pandas
-- B) Spustit správný Python interpreter a Python skript
-- C) Vytvořit databázové tabulky
-- D) Nahradit Windows Task Scheduler
-
-**Správná odpověď:** B
+**Správná odpověď:** Spustit správný Python interpreter a Python skript
 
 BAT soubor spustí Python z projektového virtuálního prostředí a předá mu cestu ke skriptu.
 
@@ -870,12 +640,7 @@ BAT soubor spustí Python z projektového virtuálního prostředí a předá mu
 
 Co způsobí příkaz `@echo off` na začátku BAT souboru?
 
-- A) Skryje vypisování prováděných BAT příkazů
-- B) Vypne všechny chybové zprávy
-- C) Ukončí otevřený terminál
-- D) Aktivuje virtuální prostředí
-
-**Správná odpověď:** A
+**Správná odpověď:** Skryje vypisování prováděných BAT příkazů
 
 Příkaz omezí technické výpisy BAT příkazů, ale chyby Pythonu zůstávají viditelné.
 
@@ -883,14 +648,9 @@ Příkaz omezí technické výpisy BAT příkazů, ale chyby Pythonu zůstávaj�
 
 ## Otázka 56
 
-Co v BAT souboru označuje zápis `%~dp0`?
+Co v BAT souboru označuje zápis `%\~dp0`?
 
-- A) Složku Python interpreteru
-- B) Aktuální uživatelský profil
-- C) Složku, ve které leží spuštěný BAT soubor
-- D) Složku výstupního Excelu
-
-**Správná odpověď:** C
+**Správná odpověď:** Složku, ve které leží spuštěný BAT soubor
 
 Zápis vrací cestu ke složce aktuálního BAT souboru.
 
@@ -900,12 +660,7 @@ Zápis vrací cestu ke složce aktuálního BAT souboru.
 
 Proč před spuštěním Python skriptu používáme příkaz `cd /d`?
 
-- A) Aby se vytvořila databáze
-- B) Aby se aktivoval Python balíček
-- C) Aby se vymazal předchozí výstup
-- D) Aby se nastavila správná pracovní složka a případně změnil disk
-
-**Správná odpověď:** D
+**Správná odpověď:** Aby se nastavila správná pracovní složka a případně změnil disk
 
 `cd` změní pracovní složku a přepínač `/d` dovolí současně změnit také disk.
 
@@ -915,12 +670,7 @@ Proč před spuštěním Python skriptu používáme příkaz `cd /d`?
 
 Proč v BAT souboru voláme přímo `.venv\Scripts\python.exe`?
 
-- A) Aby nebyl potřeba Python skript
-- B) Aby se použil Python a knihovny ze správného virtuálního prostředí
-- C) Aby se automaticky vytvořilo `.venv`
-- D) Aby se otevřel VS Code
-
-**Správná odpověď:** B
+**Správná odpověď:** Aby se použil Python a knihovny ze správného virtuálního prostředí
 
 Přímá cesta zaručí použití Pythonu a nainstalovaných knihoven z projektového `.venv`.
 
@@ -930,12 +680,7 @@ Přímá cesta zaručí použití Pythonu a nainstalovaných knihoven z projekto
 
 K čemu jsme při testování dočasně použili příkaz `pause`?
 
-- A) K ponechání okna otevřeného, abychom mohli přečíst výstup
-- B) K pozastavení denního plánu
-- C) K vrácení návratového kódu `0`
-- D) K uzavření databázového spojení
-
-**Správná odpověď:** A
+**Správná odpověď:** K ponechání okna otevřeného, abychom mohli přečíst výstup
 
 `pause` čeká na stisknutí klávesy, takže se příkazové okno ihned nezavře.
 
@@ -945,12 +690,7 @@ K čemu jsme při testování dočasně použili příkaz `pause`?
 
 Proč nemá příkaz `pause` zůstat ve finálním BAT souboru pro plánované spuštění?
 
-- A) Protože odstraní vytvořený Excel
-- B) Protože změní pracovní složku
-- C) Protože by automatická úloha čekala na stisknutí klávesy
-- D) Protože vypne virtuální prostředí
-
-**Správná odpověď:** C
+**Správná odpověď:** Protože by automatická úloha čekala na stisknutí klávesy
 
 Plánovaný proces by zůstal čekat na ruční zásah a řádně by se nedokončil.
 
@@ -960,12 +700,7 @@ Plánovaný proces by zůstal čekat na ruční zásah a řádně by se nedokon�
 
 Co dělá příkaz `exit /b %ERRORLEVEL%` na konci BAT souboru?
 
-- A) Spustí Python podruhé
-- B) Ukončí BAT soubor a předá návratový kód systému Windows
-- C) Vymaže předchozí log
-- D) Otevře výsledný Excel
-
-**Správná odpověď:** B
+**Správná odpověď:** Ukončí BAT soubor a předá návratový kód systému Windows
 
 BAT soubor předá Windows informaci, zda Python proces skončil úspěchem, nebo chybou.
 
@@ -975,12 +710,7 @@ BAT soubor předá Windows informaci, zda Python proces skončil úspěchem, neb
 
 Co v našem případě znamená výsledek posledního spuštění `0x0`?
 
-- A) Úloha byla úspěšně dokončena
-- B) Úloha ještě nebyla spuštěna
-- C) Vstupní soubor nebyl nalezen
-- D) Proces vytvořil nula řádků
-
-**Správná odpověď:** A
+**Správná odpověď:** Úloha byla úspěšně dokončena
 
 Hodnota `0x0` odpovídá návratovému kódu `0`, který označuje úspěšné dokončení.
 
@@ -990,27 +720,19 @@ Hodnota `0x0` odpovídá návratovému kódu `0`, který označuje úspěšné d
 
 Jak nejlépe ověříme úspěch automaticky spuštěného procesu?
 
-- A) Pouze otevřením VS Code
-- B) Pouze existencí BAT souboru
-- C) Kontrolou výsledku `0x0`, nového záznamu v logu a aktualizovaného výstupu
-- D) Kontrolou posledního přístupu k Excelu
-
-**Správná odpověď:** C
+**Správná odpověď:** Kontrolou výsledku `0x0`, nového záznamu v logu a aktualizovaného výstupu
 
 Návratový kód, log a skutečně aktualizovaný Excel společně potvrzují úspěšný běh.
 
 ---
 
+# Lekce 9 – GitHub Actions
+
 ## Otázka 64
 
 Ve které složce repozitáře musí být uložen soubor GitHub Actions workflow?
 
-- A) `automation-lessons/workflows`
-- B) `.github/workflows`
-- C) `.venv/actions`
-- D) `src/github`
-
-**Správná odpověď:** B
+**Správná odpověď:** `.github/workflows`
 
 GitHub automaticky načítá workflow soubory uložené ve složce `.github/workflows`.
 
@@ -1020,12 +742,7 @@ GitHub automaticky načítá workflow soubory uložené ve složce `.github/work
 
 Co je runner v GitHub Actions?
 
-- A) Soubor s výsledným CSV
-- B) Seznam kroků workflow
-- C) Počítač, na kterém běží job
-- D) Tajná proměnná repozitáře
-
-**Správná odpověď:** C
+**Správná odpověď:** Počítač, na kterém běží job
 
 Runner poskytuje operační systém a prostředí potřebné k provedení jobu.
 
@@ -1035,12 +752,7 @@ Runner poskytuje operační systém a prostředí potřebné k provedení jobu.
 
 K čemu slouží `workflow_dispatch`?
 
-- A) K ručnímu spuštění workflow
-- B) K instalaci Python knihoven
-- C) K uložení workflow artifactu
-- D) K připojení k LocalDB
-
-**Správná odpověď:** A
+**Správná odpověď:** K ručnímu spuštění workflow
 
 `workflow_dispatch` zpřístupní na kartě Actions tlačítko **Run workflow**.
 
@@ -1050,12 +762,7 @@ K čemu slouží `workflow_dispatch`?
 
 Co znamená cron zápis `0 6 * * *` v našem workflow?
 
-- A) Každých šest minut
-- B) Každou hodinu v šesté minutě
-- C) Každý šestý den v měsíci
-- D) Každý den v 06:00
-
-**Správná odpověď:** D
+**Správná odpověď:** Každý den v 06:00
 
 První hodnota určuje minutu `0`, druhá hodinu `6` a hvězdičky povolují každý den.
 
@@ -1065,12 +772,7 @@ První hodnota určuje minutu `0`, druhá hodinu `6` a hvězdičky povolují ka�
 
 Co provede `actions/checkout` v prvním kroku jobu?
 
-- A) Vytvoří nový GitHub repozitář
-- B) Stáhne obsah repozitáře na runner
-- C) Nainstaluje všechny Python knihovny
-- D) Nahraje výsledné soubory jako artifact
-
-**Správná odpověď:** B
+**Správná odpověď:** Stáhne obsah repozitáře na runner
 
 Akce zpřístupní runneru Python skripty, `requirements.txt` a další projektové soubory.
 
@@ -1080,12 +782,7 @@ Akce zpřístupní runneru Python skripty, `requirements.txt` a další projekto
 
 Proč workflow používá `actions/setup-python`?
 
-- A) Aby vytvořilo vstupní JSON
-- B) Aby nastavilo databázi LocalDB
-- C) Aby připravilo požadovanou verzi Pythonu
-- D) Aby odeslalo změny přes `git push`
-
-**Správná odpověď:** C
+**Správná odpověď:** Aby připravilo požadovanou verzi Pythonu
 
 Akce připraví na runneru verzi Pythonu uvedenou v nastavení `python-version`.
 
@@ -1095,12 +792,7 @@ Akce připraví na runneru verzi Pythonu uvedenou v nastavení `python-version`.
 
 Proč se knihovny na runneru instalují ze souboru `requirements.txt`?
 
-- A) Runner nepoužívá naše lokální `.venv`
-- B) GitHub zakazuje používat pandas lokálně
-- C) `requirements.txt` vytváří časový plán
-- D) `requirements.txt` ukládá GitHub Secrets
-
-**Správná odpověď:** A
+**Správná odpověď:** Runner nepoužívá naše lokální `.venv`
 
 Nový runner si připravuje vlastní prostředí a potřebné knihovny musí nainstalovat znovu.
 
@@ -1110,12 +802,7 @@ Nový runner si připravuje vlastní prostředí a potřebné knihovny musí nai
 
 Co je workflow artifact?
 
-- A) Trvalý virtuální počítač GitHubu
-- B) Automatický commit do repozitáře
-- C) Náhrada za `requirements.txt`
-- D) Balíček výstupů vytvořených během konkrétního běhu
-
-**Správná odpověď:** D
+**Správná odpověď:** Balíček výstupů vytvořených během konkrétního běhu
 
 Artifact umožňuje po dokončení workflow stáhnout soubory vytvořené na runneru.
 
@@ -1125,12 +812,7 @@ Artifact umožňuje po dokončení workflow stáhnout soubory vytvořené na run
 
 Co se stane, když Python skript ve workflow vrátí nenulový návratový kód?
 
-- A) Krok se označí jako úspěšný
-- B) Krok se označí jako neúspěšný
-- C) Workflow automaticky vytvoří prázdný artifact
-- D) GitHub spustí LocalDB
-
-**Správná odpověď:** B
+**Správná odpověď:** Krok se označí jako neúspěšný
 
 Nenulový návratový kód signalizuje chybu a workflow se standardně zastaví.
 
@@ -1140,27 +822,19 @@ Nenulový návratový kód signalizuje chybu a workflow se standardně zastaví.
 
 Proč náš GitHub Actions workflow nezapisuje přímo do LocalDB na osobním počítači?
 
-- A) GitHub Actions neumí spouštět Python
-- B) LocalDB nepodporuje SQL dotazy
-- C) Vzdálený runner nemá přímý přístup k lokálnímu počítači
-- D) Workflow používá formát YAML
-
-**Správná odpověď:** C
+**Správná odpověď:** Vzdálený runner nemá přímý přístup k lokálnímu počítači
 
 GitHub-hosted runner je oddělený virtuální počítač bez automatického přístupu k lokální LocalDB.
 
 ---
 
+# Lekce 10 – SQL scheduling
+
 ## Otázka 74
 
 Jaká je hlavní úloha SQL Server Agentu?
 
-- A) Vytvářet Excelové reporty
-- B) Plánovat a spouštět databázové úlohy
-- C) Nahrazovat databázový server
-- D) Čistit soubory CSV
-
-**Správná odpověď:** B
+**Správná odpověď:** Plánovat a spouštět databázové úlohy
 
 SQL Server Agent řídí automatické spouštění databázových jobů podle nastaveného plánu.
 
@@ -1170,12 +844,7 @@ SQL Server Agent řídí automatické spouštění databázových jobů podle na
 
 Co představuje job v SQL Server Agentu?
 
-- A) Celou automaticky spouštěnou úlohu
-- B) Jeden sloupec databázové tabulky
-- C) Samostatnou databázi
-- D) Přihlašovací účet uživatele
-
-**Správná odpověď:** A
+**Správná odpověď:** Celou automaticky spouštěnou úlohu
 
 Job představuje celou naplánovanou úlohu a může obsahovat jeden nebo více kroků.
 
@@ -1185,12 +854,7 @@ Job představuje celou naplánovanou úlohu a může obsahovat jeden nebo více 
 
 Co určuje job step?
 
-- A) Čas spuštění celého jobu
-- B) Historii předchozích spuštění
-- C) Konkrétní činnost uvnitř jobu
-- D) Název databázového serveru
-
-**Správná odpověď:** C
+**Správná odpověď:** Konkrétní činnost uvnitř jobu
 
 Job step může například spustit SQL příkaz nebo uloženou proceduru.
 
@@ -1200,12 +864,7 @@ Job step může například spustit SQL příkaz nebo uloženou proceduru.
 
 Co určuje schedule?
 
-- A) Obsah SQL příkazu
-- B) Strukturu databázové tabulky
-- C) Přístupová práva uživatele
-- D) Kdy a jak často se job spustí
-
-**Správná odpověď:** D
+**Správná odpověď:** Kdy a jak často se job spustí
 
 Schedule stanovuje čas a opakování automatického spuštění.
 
@@ -1215,12 +874,7 @@ Schedule stanovuje čas a opakování automatického spuštění.
 
 Proč nemůžeme v LocalDB používat SQL Server Agent?
 
-- A) LocalDB nepodporuje SQL dotazy
-- B) LocalDB službu SQL Server Agent neobsahuje
-- C) LocalDB neumí ukládat tabulky
-- D) LocalDB funguje pouze s Excelem
-
-**Správná odpověď:** B
+**Správná odpověď:** LocalDB službu SQL Server Agent neobsahuje
 
 LocalDB nemá SQL Server Agent, a proto potřebuje externí plánovač.
 
@@ -1230,12 +884,7 @@ LocalDB nemá SQL Server Agent, a proto potřebuje externí plánovač.
 
 Jak lze automaticky spustit SQL soubor v LocalDB bez použití Pythonu?
 
-- A) Task Scheduler → BAT → `sqlcmd`
-- B) SQL Server Agent → Excel → LocalDB
-- C) Power BI → Git → SQL Server Agent
-- D) SSMS → CSV → Task Scheduler
-
-**Správná odpověď:** A
+**Správná odpověď:** Task Scheduler → BAT → `sqlcmd`
 
 Task Scheduler spustí BAT soubor a `sqlcmd` provede SQL soubor v LocalDB.
 
@@ -1245,12 +894,7 @@ Task Scheduler spustí BAT soubor a `sqlcmd` provede SQL soubor v LocalDB.
 
 Jaký je rozdíl mezi SQL skriptem a uloženou procedurou?
 
-- A) SQL skript pracuje s daty, procedura nikoliv
-- B) Proceduru lze spustit pouze z Pythonu
-- C) Skript je soubor, procedura je uložená v databázi
-- D) Mezi nimi není žádný rozdíl
-
-**Správná odpověď:** C
+**Správná odpověď:** Skript je soubor, procedura je uložená v databázi
 
 SQL skript existuje jako soubor, zatímco uložená procedura je databázový objekt.
 
@@ -1260,12 +904,7 @@ SQL skript existuje jako soubor, zatímco uložená procedura je databázový ob
 
 Kdy je zpravidla vhodnější řídit proces Pythonem?
 
-- A) Když pouze přepočítáváme SQL tabulku
-- B) Když kombinujeme API, soubory a databázi
-- C) Když pouze vytváříme primární klíč
-- D) Když pouze spouštíme uloženou proceduru
-
-**Správná odpověď:** B
+**Správná odpověď:** Když kombinujeme API, soubory a databázi
 
 Python je vhodný pro řízení procesu napříč API, soubory a databázemi.
 
@@ -1275,12 +914,7 @@ Python je vhodný pro řízení procesu napříč API, soubory a databázemi.
 
 Kdy dává smysl použít orchestrační platformu?
 
-- A) Při jednorázovém otevření CSV
-- B) Při vytvoření jedné SQL tabulky
-- C) Při ruční kontrole jednoho Excelu
-- D) Při řízení navazujících úloh ve více systémech
-
-**Správná odpověď:** D
+**Správná odpověď:** Při řízení navazujících úloh ve více systémech
 
 Orchestrace koordinuje pořadí, závislosti, monitoring a chyby napříč systémy.
 
@@ -1290,13 +924,108 @@ Orchestrace koordinuje pořadí, závislosti, monitoring a chyby napříč syst�
 
 Proč se při volání `sqlcmd` používá parametr `-b`?
 
-- A) Aby při SQL chybě vznikl nenulový návratový kód
-- B) Aby se vytvořila záloha databáze
-- C) Aby se otevřelo SSMS
-- D) Aby se výsledek uložil do Excelu
-
-**Správná odpověď:** A
+**Správná odpověď:** Aby při SQL chybě vznikl nenulový návratový kód
 
 Parametr `-b` umožní předat selhání SQL úlohy BAT souboru a plánovači.
 
 ---
+
+# Lekce 11 – Power Query a Power BI refresh
+
+## Otázka 84
+
+Co v našem procesu primárně určuje Power Query?
+
+**Správná odpověď:** Způsob načtení a transformace dat
+
+Power Query ukládá připojení ke zdroji a jednotlivé transformační kroky.
+
+---
+
+## Otázka 85
+
+Co bychom měli po načtení dat do Power Query vždy rychle zkontrolovat?
+
+**Správná odpověď:** Názvy, datové typy, počet řádků, prázdné a konkrétní hodnoty
+
+Tato kontrola pomáhá rychle odhalit chybnou strukturu, datové typy i nekvalitní hodnoty.
+
+---
+
+## Otázka 86
+
+Proč se datum z Excelu může v Power Query zobrazit jako číslo `46278,78365`?
+
+**Správná odpověď:** Excel ukládá datum a čas jako pořadové číslo
+
+Celá část čísla představuje datum a desetinná část čas.
+
+---
+
+## Otázka 87
+
+Která funkce Power Query nejrychleji ukáže prázdné a chybné hodnoty ve všech sloupcích?
+
+**Správná odpověď:** Kvalita sloupce
+
+Kvalita sloupce zobrazuje podíly platných, chybných a prázdných hodnot.
+
+---
+
+## Otázka 88
+
+Proč lze profilaci Power Query přepnout na celou datovou sadu?
+
+**Správná odpověď:** Aby kontrola zahrnula i řádky mimo první tisícovku
+
+Výchozí profilace může vyhodnocovat pouze prvních 1 000 řádků.
+
+---
+
+## Otázka 89
+
+Co provede tlačítko **Aktualizovat** v Power BI Desktop?
+
+**Správná odpověď:** Znovu načte zdroj a provede kroky Power Query
+
+Výsledek dotazů se znovu načte do datového modelu a vizualizace se přepočítají.
+
+---
+
+## Otázka 90
+
+Proč může Power BI úspěšně dokončit aktualizaci, ale přesto zobrazovat stará data?
+
+**Správná odpověď:** Zdrojový soubor byl dostupný, ale obsahoval stará data
+
+Technicky úspěšná aktualizace nezaručuje aktuální obsah zdroje, proto kontrolujeme také datový timestamp.
+
+---
+
+## Otázka 91
+
+Co znamená **scheduled refresh** v Power BI Service?
+
+**Správná odpověď:** Plánovanou aktualizaci sémantického modelu
+
+Power BI Service se podle plánu připojí ke zdroji a znovu provede uložené dotazy.
+
+---
+
+## Otázka 92
+
+K čemu slouží **on-premises data gateway**?
+
+**Správná odpověď:** K propojení Power BI Service s lokálním zdrojem
+
+Gateway zprostředkuje cloudové službě přístup k lokálním souborům nebo databázím.
+
+---
+
+## Otázka 93
+
+Které tvrzení o zpřístupnění Power BI reportu je správné?
+
+**Správná odpověď:** Power BI Service umožňuje webové sdílení řízené oprávněními
+
+Power BI Service slouží k publikování, zabezpečenému sdílení a používání reportů v internetovém prohlížeči.

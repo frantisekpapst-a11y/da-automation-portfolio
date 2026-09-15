@@ -4613,3 +4613,561 @@ Více navazujících systémů a procesů
 - rozsáhlejší navazující procesy může řídit orchestrační platforma.
 
 ---
+
+## 237. Úloha Power Query
+
+Power Query definuje:
+
+- připojení ke zdroji;
+- načtení dat;
+- transformační kroky;
+- výsledná data předaná do datového modelu.
+
+Power Query určuje, **jak** se mají data načíst a upravit.
+
+---
+
+## 238. Power Query a prostředí obnovy
+
+```text
+Power Query
+→ jak data načíst a transformovat
+
+Power BI Desktop nebo Power BI Service
+→ kdy a kde aktualizaci spustit
+```
+
+---
+
+## 239. Připojení Power BI k Excelu
+
+V Power BI Desktop:
+
+```text
+Domů
+→ Získat data
+→ Excelový sešit
+→ výběr souboru
+→ výběr listů nebo tabulek
+→ Transformovat data
+```
+
+Volba **Transformovat data** otevře Editor Power Query před načtením dat do modelu.
+
+---
+
+## 240. Navigátor
+
+Navigátor zobrazuje dostupné objekty zdroje, například:
+
+- listy Excelu;
+- excelové tabulky;
+- databázové tabulky;
+- databázové pohledy.
+
+Vybereme pouze objekty, které chceme načíst.
+
+---
+
+## 241. Použitý postup
+
+Panel **Použitý postup** obsahuje uložené transformační kroky dotazu.
+
+Příklady:
+
+```text
+Zdroj
+→ Navigace
+→ Záhlaví se zvýšenou úrovní
+→ Změněný typ
+```
+
+Při aktualizaci Power Query provede kroky znovu ve stejném pořadí.
+
+---
+
+## 242. Kontrola datových typů
+
+Po načtení dat vždy zkontrolujeme datové typy sloupců.
+
+- `ABC` → text;
+- `123` → celé číslo;
+- `1.2` → desetinné číslo;
+- ikona kalendáře → datum;
+- ikona kalendáře s hodinami → datum a čas;
+- `ABC 123` → neurčený typ.
+
+Automatické rozpoznání datového typu nemusí být vždy správné.
+
+---
+
+## 243. Datum uložené v Excelu jako číslo
+
+Excel interně ukládá datum a čas jako pořadové číslo.
+
+```text
+46278,78365
+
+celá část
+→ datum
+
+desetinná část
+→ čas
+```
+
+Pokud Power Query hodnotu načte jako desetinné číslo, nastavíme typ **Datum a čas**.
+
+---
+
+## 244. Rychlá kontrola načtených dat
+
+Po načtení dat zkontrolujeme:
+
+1. názvy sloupců;
+2. datové typy;
+3. počet řádků;
+4. prázdné hodnoty a chyby;
+5. několik konkrétních hodnot.
+
+---
+
+## 245. Kvalita sloupce
+
+V Editoru Power Query zapneme:
+
+```text
+Zobrazení
+→ Kvalita sloupce
+```
+
+Pod každým sloupcem se zobrazí podíl:
+
+- platných hodnot;
+- chyb;
+- prázdných hodnot.
+
+Tím lze rychle prověřit všechny sloupce bez otevírání jednotlivých filtrů.
+
+---
+
+## 246. Profilace celé datové sady
+
+Power Query může ve výchozím nastavení profilovat pouze prvních 1 000 řádků.
+
+Pro úplnou kontrolu přepneme dole v editoru na:
+
+```text
+Profilace sloupce založená na celé datové sadě
+```
+
+---
+
+## 247. Distribuce a profil sloupce
+
+- **Distribuce sloupce** ukazuje četnost, jedinečnost a rozdílné hodnoty.
+- **Profil sloupce** zobrazuje podrobnosti o vybraném sloupci.
+- **Kvalita sloupce** rychle ukazuje platné, chybné a prázdné hodnoty.
+
+---
+
+## 248. Zavřít a použít
+
+Volba **Zavřít a použít**:
+
+1. uloží kroky Power Query;
+2. provede transformace;
+3. načte výsledek do datového modelu Power BI.
+
+---
+
+## 249. Ruční aktualizace v Power BI Desktop
+
+```text
+Domů
+→ Aktualizovat
+```
+
+Power BI znovu:
+
+- přistoupí ke zdroji;
+- provede kroky Power Query;
+- aktualizuje datový model;
+- přepočítá vizualizace.
+
+---
+
+## 250. Aktualizace neznamená automaticky nová data
+
+```text
+úspěšná aktualizace Power BI
+≠
+zdroj obsahuje aktuální data
+```
+
+Power BI může úspěšně načíst starý soubor. Proto kontrolujeme také timestamp uložený přímo v datech.
+
+---
+
+## 251. Timestamp ve zdrojových datech
+
+Pole například `downloaded_at` říká, kdy byla data skutečně získána.
+
+V Power BI lze vytvořit kartu s nejvyšší hodnotou:
+
+```text
+downloaded_at
+→ agregace Maximum nebo Nejnovější
+```
+
+Tato hodnota se liší od času aktualizace Power BI.
+
+---
+
+## 252. Nově vytvořený soubor versus nová data
+
+Skript může vytvořit nový Excel, ale pokud načítá stále stejné CSV, obsahuje Excel stále stejná zdrojová data.
+
+```text
+staré CSV
+→ nové spuštění Pythonu
+→ nový Excel se stejnými daty
+```
+
+Datum změny souboru proto není totéž jako aktuálnost dat.
+
+---
+
+## 253. Kdy Power Query stačí
+
+Power Query obvykle stačí, pokud:
+
+- je zdroj přímo dostupný;
+- má proces málo zdrojů;
+- transformace jsou jednoduché;
+- nejsou složité závislosti;
+- není potřeba pokročilé logování;
+- chyba nevyžaduje zvláštní reakci.
+
+Příklad:
+
+```text
+Excel na OneDrive
+→ Power Query
+→ Power BI
+```
+
+---
+
+## 254. Kdy je potřeba další automatizace
+
+Další automatizaci potřebujeme, pokud:
+
+- se nejprve stahují data z API;
+- musí proběhnout Python;
+- publikace závisí na validaci;
+- zdroje jsou dostupné v různých časech;
+- potřebujeme detailní logování;
+- chyba musí zastavit navazující kroky.
+
+---
+
+## 255. Rozdělení odpovědností
+
+```text
+Python
+→ získání, validace, čištění a příprava dat
+
+Power Query
+→ načtení připraveného zdroje a transformace pro model
+
+Power BI
+→ datový model a vizualizace
+
+Task Scheduler nebo Power BI Service
+→ plánování spuštění
+```
+
+---
+
+## 256. Power BI Desktop
+
+Power BI Desktop je lokální program používaný hlavně pro:
+
+- načtení a transformaci dat;
+- vytvoření datového modelu;
+- tvorbu DAX měr;
+- tvorbu reportu;
+- uložení projektu jako souboru `.pbix`;
+- ruční aktualizaci při vývoji a kontrole.
+
+Desktop sám neposkytuje běžný webový report pro uživatele.
+
+---
+
+## 257. Power BI Service
+
+Power BI Service je cloudová služba používaná pro:
+
+- publikování reportů na web;
+- řízení přístupových oprávnění;
+- sdílení reportů;
+- plánovanou aktualizaci;
+- kontrolu historie aktualizací;
+- používání reportu v internetovém prohlížeči.
+
+---
+
+## 258. Publikování reportu
+
+```text
+Power BI Desktop
+→ Publikovat
+→ Power BI Service
+→ interaktivní webový report
+```
+
+Uživatel reportu potom nemusí mít nainstalovaný Power BI Desktop.
+
+---
+
+## 259. Scheduled refresh
+
+**Scheduled refresh** je plánovaná aktualizace sémantického modelu v Power BI Service.
+
+```text
+Power BI Service
+→ připojení ke zdroji
+→ provedení kroků Power Query
+→ aktualizace modelu
+→ aktualizace reportu
+```
+
+Scheduled refresh sám nespouští náš lokální Python skript.
+
+---
+
+## 260. Správné pořadí plánovaných procesů
+
+Jednotlivým procesům necháme časovou rezervu.
+
+```text
+6:00 → Task Scheduler spustí Python
+6:05 → Python dokončí Excel a OneDrive ho synchronizuje
+6:15 → Power BI Service aktualizuje model
+```
+
+Pokud se Power BI spustí příliš brzy, může načíst starý zdroj.
+
+---
+
+## 261. Data source credentials
+
+**Data source credentials** jsou přihlašovací údaje, pomocí kterých Power BI přistupuje ke zdroji.
+
+Může jít například o:
+
+- účet Microsoft;
+- databázový účet a heslo;
+- přihlášení Windows;
+- API klíč nebo token;
+- anonymní přístup.
+
+Funkční připojení v Desktopu automaticky nezaručuje funkční připojení v Power BI Service.
+
+---
+
+## 262. Refresh history
+
+**Refresh history** v Power BI Service ukazuje například:
+
+- čas zahájení aktualizace;
+- čas dokončení;
+- délku zpracování;
+- úspěch nebo selhání;
+- chybovou zprávu.
+
+Je to provozní historie aktualizací sémantického modelu.
+
+---
+
+## 263. Python log a Power BI refresh history
+
+| Kontrola | Co sleduje |
+|---|---|
+| Python log | Stažení, validaci, čištění, SQL a vytvoření výstupu |
+| Power BI refresh history | Načtení zdroje do sémantického modelu |
+| `downloaded_at` | Skutečné stáří dat uvnitř zdroje |
+
+Pro kontrolu celého procesu potřebujeme všechny tři informace.
+
+---
+
+## 264. Gateway
+
+**On-premises data gateway** propojuje Power BI Service s lokálním datovým zdrojem.
+
+```text
+Power BI Service
+↕
+gateway
+↕
+lokální soubor nebo databáze
+```
+
+Gateway data nevytváří a nespouští Python. Pouze umožňuje cloudové službě přístup k lokálnímu zdroji.
+
+---
+
+## 265. Podmínky fungování gateway
+
+Gateway musí být:
+
+- nainstalovaná a nakonfigurovaná;
+- spuštěná;
+- připojená k internetu;
+- schopná přistupovat ke zdroji;
+- nastavená se správnými oprávněními.
+
+Počítač s gateway musí být v době aktualizace dostupný.
+
+---
+
+## 266. Závislost na dostupnosti zdroje
+
+Aktualizace může proběhnout pouze tehdy, když:
+
+- zdroj existuje;
+- nezměnila se jeho cesta nebo adresa;
+- server nebo počítač běží;
+- síťové spojení funguje;
+- přihlašovací údaje jsou platné;
+- Power BI má potřebná oprávnění.
+
+---
+
+## 267. OneDrive jako cloudový zdroj
+
+Preferovaný budoucí scénář:
+
+```text
+Task Scheduler
+→ BAT
+→ Python
+→ Excel v synchronizované složce OneDrive
+→ synchronizace do cloudu
+→ Power BI Service
+```
+
+Power BI musí být připojený přes cloudový zdroj OneDrive nebo SharePoint, nikoliv pouze přes lokální cestu `C:\Users\...`.
+
+---
+
+## 268. Kdy gateway není potřeba
+
+Gateway obvykle není potřeba, pokud je zdroj dostupný přímo v podporované cloudové službě, například na OneDrive pro práci nebo školu či SharePointu Online.
+
+U lokálního souboru nebo lokální databáze ji Power BI Service zpravidla potřebuje.
+
+---
+
+## 269. Interní webové sdílení
+
+Standardní podniková varianta:
+
+- report je publikovaný v Power BI Service;
+- uživatelé se přihlašují;
+- přístup mají jen oprávněné osoby nebo skupiny;
+- report lze zpřístupnit také přes Teams nebo SharePoint;
+- přístup k datům lze omezit zabezpečením modelu.
+
+---
+
+## 270. Externí zabezpečené sdílení
+
+Report lze sdílet také s klientem nebo dodavatelem mimo organizaci.
+
+- externí sdílení musí organizace povolit;
+- příjemce se musí přihlásit;
+- obvykle je veden jako externí host;
+- platí licenční a bezpečnostní pravidla organizace.
+
+Nejde o veřejný report dostupný komukoliv.
+
+---
+
+## 271. Publish to web
+
+Funkce **Publish to web** vytvoří veřejný odkaz nebo kód pro vložení reportu na web.
+
+```text
+Publish to web
+→ přístup bez přihlášení
+→ report může zobrazit kdokoliv
+```
+
+Tuto možnost nikdy nepoužíváme pro interní, osobní, důvěrná nebo obchodně citlivá data.
+
+---
+
+## 272. Způsoby zpřístupnění Power BI reportu
+
+| Varianta | Prostředí | Přístup |
+|---|---|---|
+| Power BI Desktop | Lokální počítač | Uživatel se souborem `.pbix` |
+| Power BI Service – interní | Webový prohlížeč | Oprávnění uživatelé organizace |
+| Power BI Service – externí | Webový prohlížeč | Přihlášení externí hosté |
+| Publish to web | Veřejný internet | Kdokoliv bez přihlášení |
+
+---
+
+## 273. Základní tok Power BI refresh
+
+```text
+aktualizace zdrojových dat
+→ dostupný zdroj
+→ spuštění aktualizace Power BI
+→ provedení kroků Power Query
+→ aktualizace sémantického modelu
+→ přepočítání vizualizací
+→ kontrola refresh history
+→ kontrola timestampu ve zdrojových datech
+```
+
+---
+
+## 274. Budoucí plně automatizovaný tok
+
+```text
+Task Scheduler
+→ BAT
+→ Python
+→ API
+→ validace a čištění
+→ SQL Server
+→ Excel na OneDrive
+→ plánovaný refresh Power BI Service
+→ aktualizovaný webový report
+```
+
+Pokud cloudové propojení přes OneDrive nebude použitelné, lze jako záložní variantu vyzkoušet gateway.
+
+---
+
+## 275. Hlavní poznatky Lekce 11
+
+- Power Query určuje, jak se data načtou a transformují;
+- Power BI Desktop nebo Service určuje, kde a kdy obnova proběhne;
+- po načtení vždy kontrolujeme názvy sloupců, datové typy, počty, prázdné hodnoty, chyby a konkrétní hodnoty;
+- Power Query ukládá transformace jako postupné kroky;
+- ruční aktualizace v Desktopu znovu provede všechny kroky Power Query;
+- úspěšná aktualizace neznamená automaticky aktuální zdrojová data;
+- aktuálnost kontrolujeme pomocí timestampu uloženého v datech;
+- scheduled refresh aktualizuje sémantický model, ale nespouští automaticky lokální Python;
+- Power BI Service potřebuje platné přihlašovací údaje ke zdroji;
+- refresh history ukazuje průběh a výsledek aktualizací Power BI;
+- gateway zpřístupňuje cloudové službě lokální zdroj;
+- OneDrive nebo SharePoint mohou umožnit cloudovou obnovu bez gateway;
+- Power BI Desktop slouží hlavně k tvorbě reportu;
+- Power BI Service slouží k webovému publikování, sdílení a plánované obnově;
+- report lze sdílet interně, zabezpečeně externě nebo veřejně;
+- Publish to web je vhodné pouze pro skutečně veřejná data.

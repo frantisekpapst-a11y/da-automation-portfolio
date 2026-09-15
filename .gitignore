@@ -7,6 +7,8 @@ __pycache__/
 
 # Environment variables and.env
 .env.*
+.env
+!.env.example
 
 # Runtime logs
 *.log
@@ -14,6 +16,3 @@ __pycache__/
 # Operating system files
 Thumbs.db
 .DS_Store
-
-.env
-!.env.example

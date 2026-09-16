@@ -1,195 +1,360 @@
-Case Study 03 — Daily Purchase Price Control Automation
-Obchodní zadání
+# ⚙️ Data Automation Portfolio
 
-Firma nakupuje produkty v různých měnách. Každý pracovní den potřebuje:
+Portfolio zaměřené na **praktickou automatizaci datových procesů pro datovou analytiku a reporting**.
 
-získat aktuální měnové kurzy;
-přepočítat nákupní ceny do CZK;
-porovnat je se schválenými cenovými limity;
-označit produkty mimo limit;
-uložit výsledky do databáze;
-připravit Excel pro analytický tým;
-aktualizovat podklad pro Power BI;
-zaznamenat průběh do logu.
-Navržená architektura
+Repozitář obsahuje případové studie, technické moduly a referenční materiály pokrývající návrh a implementaci lokálních automatizovaných workflow — od zpracování souborů přes API, validaci a SQL databáze až po plánované spouštění, logování a návaznost na Power BI.
 
-Power BI tedy nebude číst Excel. Excel i Power BI budou dva rozdílné výstupy stejného procesu:
+Repozitář představuje lokální portfolio řešení zaměřená na automatizaci analytických procesů. Použité prostředí odpovídá dostupným technologiím a umožňuje prakticky demonstrovat návrh, implementaci a kontrolu celého workflow. Projekty tedy nejsou prezentovány jako produkční enterprise platforma.
 
-Python → SQL výsledky → Power BI Desktop
-       └→ Excel pro analytický tým
+Hlavní oblasti:
+- návrh automatizovaných datových procesů;
+- Python skripty pro opakovatelné zpracování dat;
+- práce s CSV, JSON, Excel a API;
+- datová validace a řízení chyb;
+- SQL Server LocalDB a databázové transakce;
+- idempotentní ukládání bez duplicit;
+- logování a provozní kontrola běhů;
+- konfigurace prostředí a práce s `.env`;
+- BAT soubory a Windows Task Scheduler;
+- příprava dat pro Power BI;
+- rozlišení mezi aktualizací zdrojových dat a refreshem reportu.
 
-Tím se vyhneme zbytečnému toku:
+---
 
-Python → SQL → Excel → Power BI
+# 📂 Struktura repozitáře
 
-Excel by se v takovém případě stal zbytečným a potenciálně problematickým mezikrokem.
+```text
+da-automation-portfolio/
+├── .github/
+├── automation-case-studies/
+│   ├── 01-daily-branch-report-automation.md
+│   ├── 02-daily-branch-report-task-scheduler/
+│   └── 03-daily-purchase-price-control-automation/
+├── automation-cheatsheet/
+│   └── automation-cheatsheet.md
+├── automation-lessons/
+│   ├── 02-python-script-basics/
+│   ├── 03-api-automation/
+│   ├── 04-sql-localdb-python/
+│   ├── 05-validation-error-handling/
+│   ├── 06-logging-monitoring/
+│   ├── 07-secrets-environment-variables/
+│   ├── 08-windows-task-scheduler-bat/
+│   └── 11-power-query-power-bi-refresh/
+├── tools-mini-tests/
+│   └── mini-tests.md
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
 
-Použité zdroje a formáty
-Oblast	Zdroj nebo formát	Proč
-Produkty a nákupní ceny	SQL LocalDB	Jde o strukturovaná firemní data
-Měnové kurzy	ČNB API – JSON	JSON je přirozený výstup API
-Cenové limity	Excel	Limity může udržovat nákupní nebo finanční tým
-Výsledky kontroly	SQL tabulka	Stabilní zdroj pro dotazy a Power BI
-Analytický výstup	Excel	Ad hoc kontrola a další práce analytiků
-Nezpracovaná API odpověď	JSON	Audit, dohledání chyb a opakovatelnost
-Provozní informace	LOG	Monitoring automatizace
+---
 
-Použijeme skutečné JSON API České národní banky, nikoliv uměle vytvořené kurzy.
+# 🎯 Zaměření portfolia
 
-CSV bych do hlavního procesu nepřidával. Použili bychom ho pouze tehdy, kdyby ho skutečně dodával některý systém nebo obchodní partner.
+Repozitář demonstruje automatizaci v kontextu běžného analytického workflow:
 
-SQL tabulky
+```text
+Business Requirement
+→ Data Source
+→ Trigger
+→ Ingestion
+→ Validation
+→ Transformation
+→ Database / Output
+→ Logging
+→ Reporting
+```
 
-Rozumný rozsah budou tři tabulky:
+Automatizace zde není pojatá pouze jako naplánované spuštění skriptu. Důraz je kladen také na:
+- jasně definovaný business účel;
+- kontrolu vstupních dat před zpracováním;
+- bezpečné a opakovatelné ukládání;
+- předvídatelné chování při chybě;
+- návratové kódy pro nadřazený spouštěcí nástroj;
+- dohledatelnost jednotlivých běhů;
+- oddělení datové pipeline od prezentační vrstvy.
 
-dbo.products
-dbo.exchange_rates
-dbo.pricing_control_results
+---
 
-Případně nad výslednou tabulkou vytvoříme pohled:
+# 📁 Case Studies
 
-dbo.vw_pricing_control_report
+Případové studie jsou prezentovány **od nejnovějšího a nejreprezentativnějšího projektu po starší a jednodušší řešení**.
 
-Na tento pohled se připojí Power BI.
+Na prvním místě je projekt, který nejlépe ukazuje aktuální rozsah mojí praktické práce s automatizací, Pythonem, API, SQL a Power BI. Původní číslování zůstává zachováno a zároveň dokumentuje vývoj od návrhu procesu k jeho implementaci a následně ke komplexnějšímu end-to-end řešení.
 
-Výsledná data mohou obsahovat například:
+---
 
-control_date
-product_id
-product_name
-purchase_currency
-purchase_price_original
-exchange_rate
-purchase_price_czk
-minimum_price_czk
-maximum_price_czk
-control_status
-processed_at
+## Case Study 03 — Daily Purchase Price Control Automation
 
-Stav kontroly:
+Nejkomplexnější projekt v repozitáři propojující externí API, Python, datovou validaci, SQL Server, Windows Task Scheduler a Power BI.
 
-BELOW_LIMIT
-OK
-ABOVE_LIMIT
-Důležitý detail přepočtu měn
+Hlavní workflow:
+```text
+Windows Task Scheduler
+→ BAT
+→ Python
+→ produkty v SQL + kurzovní lístek ČNB + cenové limity v Excelu
+→ validace a business pravidla
+→ raw JSON + SQL databáze + log
+→ Power BI dashboard
+```
 
-Kurz nemusí být vždy uveden pro jednu jednotku měny. Některá měna může být například uvedena pro 100 jednotek.
+Použité koncepty:
+- načtení produktů z SQL databáze;
+- získání kurzovního lístku z API České národní banky;
+- archivace původních JSON odpovědí;
+- načtení cenových limitů z Excelu;
+- validace struktury, povinných hodnot a duplicit;
+- propojení více datových zdrojů;
+- přepočet nákupních cen do CZK;
+- klasifikace `BELOW LIMIT`, `OK` a `ABOVE LIMIT`;
+- idempotentní zápis podle kontrolního data;
+- databázový reportingový pohled;
+- logování a předání návratového kódu;
+- automatické denní spuštění;
+- DAX míry a interaktivní manažerský dashboard.
 
-Proto použijeme:
+Projekt demonstruje rozdělení rolí mezi jednotlivé technologie:
+```text
+Python
+→ ingestion, validation, transformation a orchestrace procesu
 
-cena v CZK = nákupní cena / množství z kurzu × kurz v CZK
+SQL Server
+→ relační uložení, integrita a reportovací vrstva
 
-Pro CZK nastavíme:
-
-množství = 1
-kurz = 1
-
-Tohle je velmi dobrý reálný validační případ.
-
-Validace
-
-Proces před publikací ověří:
-
-dostupnost SQL databáze;
-dostupnost API;
-existenci Excelu s limity;
-povinné sloupce;
-neprázdná vstupní data;
-unikátní product_id;
-kladné nákupní ceny;
-kladné kurzy;
-dostupnost kurzu pro každou používanou měnu;
-existenci limitu pro každý produkt;
-že minimální limit není vyšší než maximální;
-aktuálnost kurzovního lístku;
-chybějící a neplatné hodnoty.
-
-U aktuálnosti nesmíme jednoduše vyžadovat dnešní datum. O víkendu nebo ve svátek bude správně použit poslední dostupný pracovní den.
-
-Denní lokální úlohu bychom spouštěli až odpoledne, například v 15:30, protože ČNB zveřejňuje kurzovní lístek během pracovního dne.
-
-Výstupy
-SQL
-
-dbo.pricing_control_results
-
-Výsledky jednoho běhu pro všechny produkty.
-
-Excel
-
-Například:
-
-pricing_control_report_20260915.xlsx
-
-Listy:
-
-All products
-Exceptions
-Run summary
-
-Excel bude určený pro analytiky, nikoliv jako zdroj Power BI.
+Windows Task Scheduler + BAT
+→ časové spuštění a řízení návratového kódu
 
 Power BI
+→ datový model, DAX, monitoring výsledků a reporting
+```
 
-Power BI Desktop se připojí na:
+![Power BI dashboard denní kontroly nákupních cen](automation-case-studies/03-daily-purchase-price-control-automation/screenshots/01_dashboard_overview.png)
 
-dbo.vw_pricing_control_report
+➡️ [Otevřít Case Study 03](automation-case-studies/03-daily-purchase-price-control-automation/)
 
-Základní report může obsahovat:
+---
 
-počet kontrolovaných produktů;
-počet produktů v limitu;
-počet produktů nad limitem;
-počet produktů pod limitem;
-podíl produktů mimo limit;
-tabulku výjimek;
-porovnání ceny s minimálním a maximálním limitem;
-filtr podle měny a výsledného stavu;
-datum posledního zpracování.
+## Case Study 02 — Daily Branch Report with Windows Task Scheduler
 
-Obnovu v Power BI Desktop zatím provedeme ručně. Automatickou obnovu prostřednictvím OneDrive, Power BI Service nebo gateway necháme na pozdější end-to-end projekt.
+Praktická implementace lokální automatizace denního reportu návštěvnosti poboček.
 
-Další technické výstupy
-data/raw/exchange_rates_YYYYMMDD_HHMMSS.json
-data/output/pricing_control_report_YYYYMMDD.xlsx
-logs/pricing_control.log
+Hlavní workflow:
+```text
+Windows Task Scheduler
+→ BAT
+→ Python
+→ denní CSV soubory
+→ validace a spojení dat
+→ dočasný výstup + databázová transakce
+→ výsledný CSV report + SQL tabulka + log
+```
 
-Do GitHubu bychom uložili pouze malé ukázkové soubory. Pravidelně vytvářená provozní data do repozitáře nepatří.
+Použité koncepty:
+- výběr vstupních souborů podle data;
+- kontrola povinných sloupců a datových typů;
+- validace chybějících hodnot a duplicit;
+- spojení dat z více poboček;
+- bezpečná publikace přes dočasný soubor;
+- databázová transakce s `COMMIT` a `ROLLBACK`;
+- opakované spuštění bez vzniku duplicit;
+- návratové kódy pro Windows Task Scheduler;
+- logování úspěšných běhů a chyb.
 
-Role GitHub Actions
+Projekt převádí navržený proces do funkční lokální varianty a ukazuje praktické propojení Pythonu, souborového systému, SQL databáze a plánovaného spouštění.
 
-GitHub Actions bych nepoužíval jako druhý produkční plánovač stejného procesu. Lokální pipeline totiž pracuje s LocalDB a lokálním Excelem, ke kterým GitHub runner nemá přístup.
+➡️ [Otevřít Case Study 02](automation-case-studies/02-daily-branch-report-task-scheduler/)
 
-GitHub Actions bude mít realističtější roli:
+---
 
-push nebo ruční spuštění
-→ instalace Pythonu
-→ instalace knihoven
-→ kontrola syntaxe
-→ test validačních funkcí
-→ test dostupnosti API
-→ vytvoření testovacího výstupu
-→ uložení testovacího reportu jako artifact
+## Case Study 01 — Daily Branch Report Automation
 
-Workflow artifact je výstup konkrétního běhu workflow, vhodný například pro testovací report, nikoliv jako hlavní provozní úložiště dat. GitHub Docs – workflow artifacts
+Koncepční návrh automatizovaného denního reportu návštěvnosti poboček.
 
-Upravený seznam výstupů case study
-funkční Python pipeline;
-SQL skripty pro vytvoření tabulek a pohledu;
-ukázková data produktů;
-Excel s cenovými limity;
-připojení na skutečné kurzovní API;
-ukládání raw JSON odpovědí;
-validace a čištění dat;
-transakční zápis do SQL;
-Excelový report;
-Power BI report připojený na SQL;
-logovací soubor;
-.bat soubor;
-.env.example;
-naplánovaná úloha ve Windows Task Scheduleru;
-GitHub Actions workflow pro kontrolu projektu;
-ukázkový workflow artifact;
-README s popisem architektury a spuštění.
+Case study se zaměřuje na převod business požadavku do návrhu řízeného procesu ještě před výběrem konkrétní implementace.
 
-Tento rozsah je velmi dobrý závěrečný projekt pro juniorního datového analytika: propojuje SQL, Python, API, Excel, Power BI, validaci, logging, plánování i GitHub Actions, ale zatím nevyžaduje cloudovou infrastrukturu ani gateway.
+Použité koncepty:
+- událostní a časový trigger;
+- závislosti mezi jednotlivými tasky;
+- práce s chybějícími a opožděnými vstupy;
+- zpracování opravených verzí souborů;
+- výběr poslední validní verze;
+- stavy `SUCCESS`, `WARNING` a `FAILED`;
+- idempotence;
+- bezpečné nahrazení výstupu;
+- ochrana posledního správného reportu;
+- návrh logování a provozních informací pro Power BI.
+
+Projekt ukazuje, že automatizace začíná správnou procesní a business logikou, nikoli až samotným kódem.
+
+➡️ [Otevřít Case Study 01](automation-case-studies/01-daily-branch-report-automation.md)
+
+---
+
+# 🧩 Data Automation Skills
+
+Portfolio pokrývá praktickou práci s automatizací od návrhu procesu až po lokálně provozované end-to-end řešení.
+
+Hlavní oblasti:
+- analýza ručního procesu a návrh cílového workflow;
+- časové a událostní spouštění;
+- rozdělení procesu na navazující tasky;
+- Python skripty a práce s cestami;
+- CSV, JSON a Excel;
+- veřejná API a HTTP komunikace;
+- pandas pro validaci a transformace;
+- SQL Server LocalDB;
+- `pyodbc` a Windows Authentication;
+- transakční zpracování;
+- idempotence a ochrana před duplicitami;
+- `try/except` a řízené ukončení procesu;
+- logging a provozní kontrola;
+- `.env` a oddělení konfigurace od zdrojového kódu;
+- BAT a Windows Task Scheduler;
+- Power Query, Power BI a DAX;
+- rozdíl mezi aktualizací zdroje, datového modelu a reportu.
+
+Důraz je kladen na tento princip:
+```text
+Reliable Input
+→ Validated Data
+→ Repeatable Processing
+→ Controlled Output
+→ Traceable Result
+```
+
+---
+
+# 🔄 Technologie v automatizovaném workflow
+
+## Python
+
+Python řídí hlavní proces a zajišťuje zejména:
+- načtení souborů, API a databázových dat;
+- validaci struktury a obsahu;
+- čištění a transformace;
+- propojení datových zdrojů;
+- business výpočty;
+- databázový zápis;
+- logování;
+- návratový kód procesu.
+
+---
+
+## SQL Server
+
+SQL Server LocalDB je v projektech použit pro:
+- relační uložení výsledků;
+- primární klíče a kontrolní omezení;
+- transakční zpracování;
+- ochranu před duplicitami;
+- kontrolní dotazy;
+- přípravu reportovací vrstvy pro Power BI.
+
+---
+
+## Windows Task Scheduler a BAT
+
+Lokální orchestrace používá následující princip:
+```text
+Windows Task Scheduler
+→ určí čas spuštění
+
+BAT
+→ nastaví pracovní složku a spustí správný Python interpreter
+
+Python
+→ provede datovou pipeline a vrátí exit code
+```
+
+Úspěšný proces vrací kód `0`; chyba vrací nenulový kód použitelný pro provozní kontrolu.
+
+---
+
+## Power BI
+
+Power BI navazuje na automatizované datové zdroje jako prezentační a analytická vrstva.
+
+```text
+automatizace zdrojových dat
+→ SQL / souborový výstup
+→ Power Query
+→ datový model
+→ DAX
+→ dashboard
+```
+
+Repozitář zároveň rozlišuje dvě samostatné činnosti:
+
+- **aktualizace zdrojových dat** — provádí ji Python pipeline;
+- **refresh Power BI** — znovu načte zdroj do datového modelu.
+
+V lokálních projektech používajících Power BI Desktop zůstává refresh `.pbix` souboru ruční. Automatický refresh Power BI Service není vydáván za implementovanou součást řešení.
+
+---
+
+# 📚 Technické materiály
+
+## Automation Cheatsheet
+
+Referenční dokument shrnující hlavní principy datové automatizace, spouštění, validace, logování, databázového ukládání a návaznosti na reporting.
+
+➡️ [Automation Cheatsheet](automation-cheatsheet/automation-cheatsheet.md)
+
+---
+
+## Technické moduly
+
+Složka `automation-lessons` obsahuje samostatné praktické implementace jednotlivých částí automatizovaného workflow:
+
+- [Python Script Basics](automation-lessons/02-python-script-basics/)
+- [API Automation](automation-lessons/03-api-automation/)
+- [SQL LocalDB + Python](automation-lessons/04-sql-localdb-python/)
+- [Validation & Error Handling](automation-lessons/05-validation-error-handling/)
+- [Logging & Monitoring](automation-lessons/06-logging-monitoring/)
+- [Secrets & Environment Variables](automation-lessons/07-secrets-environment-variables/)
+- [Windows Task Scheduler & BAT](automation-lessons/08-windows-task-scheduler-bat/)
+- [Power Query & Power BI Refresh](automation-lessons/11-power-query-power-bi-refresh/)
+
+Tyto moduly slouží jako technický základ pro komplexnější případové studie. Každý se soustředí na konkrétní část procesu, kterou lze samostatně ověřit a následně zapojit do většího workflow.
+
+---
+
+## Mini Tests
+
+Sada krátkých otázek a odpovědí pro ověření praktického porozumění automatizaci, validaci, logování, Task Scheduleru, SQL integraci a aktualizaci Power BI.
+
+➡️ [Automation Mini Tests](tools-mini-tests/mini-tests.md)
+
+---
+
+# 🛠 Technologie a koncepty
+
+```text
+Python
+pandas
+requests
+python-dotenv
+pyodbc
+CSV
+JSON
+Excel
+REST API
+SQL Server LocalDB
+SQL
+ODBC
+database transactions
+data validation
+error handling
+logging
+environment variables
+BAT
+Windows Task Scheduler
+Power Query
+Power BI
+DAX
+Git
+GitHub
+VS Code
+```

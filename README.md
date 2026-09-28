@@ -79,66 +79,33 @@ Automatizace zde není pojatá pouze jako naplánované spuštění skriptu. Dů
 
 # 📁 Case Studies
 
-Případové studie jsou prezentovány **od nejnovějšího a nejreprezentativnějšího projektu po starší a jednodušší řešení**.
+## Case Study 01 — Daily Branch Report Automation
 
-Na prvním místě je projekt, který nejlépe ukazuje aktuální rozsah mojí praktické práce s automatizací, Pythonem, API, SQL a Power BI. Původní číslování zůstává zachováno a zároveň dokumentuje vývoj od návrhu procesu k jeho implementaci a následně ke komplexnějšímu end-to-end řešení.
+Koncepční návrh automatizovaného denního reportu návštěvnosti poboček.
 
----
-
-## Case Study 03 — Daily Purchase Price Control Automation
-
-Nejkomplexnější projekt v repozitáři propojující externí API, Python, datovou validaci, SQL Server, Windows Task Scheduler a Power BI.
-
-Hlavní workflow:
-```text
-Windows Task Scheduler
-→ BAT
-→ Python
-→ produkty v SQL + kurzovní lístek ČNB + cenové limity v Excelu
-→ validace a business pravidla
-→ raw JSON + SQL databáze + log
-→ Power BI dashboard
-```
+Case study se zaměřuje na převod business požadavku do návrhu řízeného procesu ještě před výběrem konkrétní implementace.
 
 Použité koncepty:
-- načtení produktů z SQL databáze;
-- získání kurzovního lístku z API České národní banky;
-- archivace původních JSON odpovědí;
-- načtení cenových limitů z Excelu;
-- validace struktury, povinných hodnot a duplicit;
-- propojení více datových zdrojů;
-- přepočet nákupních cen do CZK;
-- klasifikace `BELOW LIMIT`, `OK` a `ABOVE LIMIT`;
-- idempotentní zápis podle kontrolního data;
-- databázový reportingový pohled;
-- logování a předání návratového kódu;
-- automatické denní spuštění;
-- DAX míry a interaktivní manažerský dashboard.
+- událostní a časový trigger;
+- závislosti mezi jednotlivými tasky;
+- práce s chybějícími a opožděnými vstupy;
+- zpracování opravených verzí souborů;
+- výběr poslední validní verze;
+- stavy `SUCCESS`, `WARNING` a `FAILED`;
+- idempotence;
+- bezpečné nahrazení výstupu;
+- ochrana posledního správného reportu;
+- návrh logování a provozních informací pro Power BI.
 
-Projekt demonstruje rozdělení rolí mezi jednotlivé technologie:
-```text
-Python
-→ ingestion, validation, transformation a orchestrace procesu
+Projekt ukazuje, že automatizace začíná správnou procesní a business logikou, nikoli až samotným kódem.
 
-SQL Server
-→ relační uložení, integrita a reportovací vrstva
-
-Windows Task Scheduler + BAT
-→ časové spuštění a řízení návratového kódu
-
-Power BI
-→ datový model, DAX, monitoring výsledků a reporting
-```
-
-![Power BI dashboard denní kontroly nákupních cen](automation-case-studies/03-daily-purchase-price-control-automation/screenshots/01_dashboard_overview.png)
-
-➡️ [Otevřít Case Study 03](automation-case-studies/03-daily-purchase-price-control-automation/)
+➡️ [Otevřít Case Study 01](automation-case-studies/01-daily-branch-report-automation.md)
 
 ---
 
 ## Case Study 02 — Daily Branch Report with Windows Task Scheduler
 
-Praktická implementace lokální automatizace denního reportu návštěvnosti poboček.
+Praktická implementace lokální automatizace denního reportu návštěvnosti poboček. Case study navazuje na case study 01.
 
 Hlavní workflow:
 ```text
@@ -168,30 +135,6 @@ Projekt převádí navržený proces do funkční lokální varianty a ukazuje p
 
 ---
 
-## Case Study 01 — Daily Branch Report Automation
-
-Koncepční návrh automatizovaného denního reportu návštěvnosti poboček.
-
-Case study se zaměřuje na převod business požadavku do návrhu řízeného procesu ještě před výběrem konkrétní implementace.
-
-Použité koncepty:
-- událostní a časový trigger;
-- závislosti mezi jednotlivými tasky;
-- práce s chybějícími a opožděnými vstupy;
-- zpracování opravených verzí souborů;
-- výběr poslední validní verze;
-- stavy `SUCCESS`, `WARNING` a `FAILED`;
-- idempotence;
-- bezpečné nahrazení výstupu;
-- ochrana posledního správného reportu;
-- návrh logování a provozních informací pro Power BI.
-
-Projekt ukazuje, že automatizace začíná správnou procesní a business logikou, nikoli až samotným kódem.
-
-➡️ [Otevřít Case Study 01](automation-case-studies/01-daily-branch-report-automation.md)
-
----
-
 # 🧩 Data Automation Skills
 
 Portfolio pokrývá praktickou práci s automatizací od návrhu procesu až po lokálně provozované end-to-end řešení.
@@ -201,7 +144,7 @@ Hlavní oblasti:
 - časové a událostní spouštění;
 - rozdělení procesu na navazující tasky;
 - Python skripty a práce s cestami;
-- CSV, JSON a Excel;
+- CSV a JSON;
 - veřejná API a HTTP komunikace;
 - pandas pro validaci a transformace;
 - SQL Server LocalDB;
@@ -211,9 +154,7 @@ Hlavní oblasti:
 - `try/except` a řízené ukončení procesu;
 - logging a provozní kontrola;
 - `.env` a oddělení konfigurace od zdrojového kódu;
-- BAT a Windows Task Scheduler;
-- Power Query, Power BI a DAX;
-- rozdíl mezi aktualizací zdroje, datového modelu a reportu.
+- BAT a Windows Task Scheduler.
 
 Důraz je kladen na tento princip:
 ```text
@@ -247,10 +188,7 @@ Python řídí hlavní proces a zajišťuje zejména:
 SQL Server LocalDB je v projektech použit pro:
 - relační uložení výsledků;
 - primární klíče a kontrolní omezení;
-- transakční zpracování;
-- ochranu před duplicitami;
-- kontrolní dotazy;
-- přípravu reportovací vrstvy pro Power BI.
+- kontrolní dotazy.
 
 ---
 

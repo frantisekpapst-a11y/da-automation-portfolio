@@ -1,0 +1,6 @@
+﻿2026-11-07 | CHYBA | Export nebyl dokončen.
+2026-11-07 | OK | Export stažen a přesunut.
+2026-11-08 | CHYBA | Kliknutí na odkaz na webové stránce se nezdařilo.
+2026-11-08 | CHYBA | Soubor k přejmenování nenalezen
+2026-11-08 | CHYBA | Časový limit vypršel.
+2026-11-08 | OK | Export stažen a přesunut.

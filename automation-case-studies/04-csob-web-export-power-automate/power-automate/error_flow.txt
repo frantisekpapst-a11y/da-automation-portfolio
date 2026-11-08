@@ -1,0 +1,6 @@
+FUNCTION Chyba_export GLOBAL
+    ERROR => LastError
+    File.WriteText File: $'''C:\\Users\\frant\\Documents\\data-analytics-workspace\\da-automation-portfolio\\automation-case-studies\\04-csob-web-export-power-automate\\output\\logs.txt''' TextToWrite: $'''%CasExportu% | CHYBA | %LastError.Message%''' AppendNewLine: True IfFileExists: File.IfFileExists.Append Encoding: File.FileEncoding.UTF8
+    WebAutomation.CloseWebBrowser BrowserInstance: Browser
+    EXIT Code: 0 ErrorMessage: $'''Export ČSOB nebyl dokončen.'''
+END FUNCTION

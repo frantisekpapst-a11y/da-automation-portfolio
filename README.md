@@ -35,21 +35,7 @@ da-automation-portfolio/
 │   ├── 01-daily-branch-report-automation.md
 │   ├── 02-daily-branch-report-task-scheduler/
 │   ├── 03-branch-sales-check-power-automate/
-│   │   ├── output/
-│   │   │   └── Trzby_pobocky.xlsx
-│   │   ├── screenshots/
-│   │   └── README.md
 │   └── 04-csob-web-export-power-automate/
-│       ├── data/
-│       ├── excel/
-│       │   └── CSOB.xlsx
-│       ├── output/
-│       │   └── logs.txt
-│       ├── power-automate/
-│       │   ├── error_flow.txt
-│       │   └── main_flow.txt
-│       ├── screenshots/
-│       └── README.md
 ├── automation-cheatsheet/
 │   ├── automation-cheatsheet.md
 │   └── power-automate-cheatsheet.md

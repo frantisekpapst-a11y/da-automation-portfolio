@@ -29,19 +29,19 @@ Cílem bylo vytvořit opakovatelný proces, který:
 ```text
 04-csob-web-export-power-automate/
 ├── data/
-│   ├── CSOB_BE6339813873_2026-11-07.csv
-│   └── CSOB_BE6339813873_2026-11-08.csv
+│   ├── CSOB_BE6339813873_2026-11-07.csv
+│   └── CSOB_BE6339813873_2026-11-08.csv
 ├── excel/
-│   └── CSOB.xlsx
+│   └── CSOB.xlsx
 ├── output/
-│   └── logs.txt
+│   └── logs.txt
 ├── power-automate/
-│   ├── error_flow.txt
-│   └── main_flow.txt
+│   ├── error_flow.txt
+│   └── main_flow.txt
 ├── screenshots/
-│   ├── 01_main_flow.png
-│   ├── 02_error_flow.png
-│   └── 03_power_query.png
+│   ├── 01_main_flow.png
+│   ├── 02_error_flow.png
+│   └── 03_power_query.png
 └── README.md
 ```
 
@@ -217,7 +217,7 @@ Stav `OK` popisuje dokončení desktopového exportu. Nepotvrzuje automatickou a
 
 ## Navazující Power Query
 
-Dotaz `CSOB_export` v sešitu [excel/CSOB.xlsx](excel/CSOB.xlsx) načítá soubory z nakonfigurované lokální složky.
+Dotaz `CSOB_export` v sešitu [excel/CSOB.xlsx](excel/CSOB.xlsx) načítá soubory ze složky `data`, jejíž cesta se odvozuje od umístění sešitu.
 
 Postup dotazu:
 
@@ -239,6 +239,35 @@ Navigační krok vybírá obsah prvního řádku výsledného seznamu:
 Tím se výběr neváže na konkrétní název exportu. Při další aktualizaci dotaz vybere soubor s nejnovějším datem v názvu.
 
 Denní exporty se nespojují pod sebe, protože každý z nich obsahuje úplnou historickou řadu. Jejich prosté připojení by vytvořilo opakované záznamy za stejná data.
+
+### Přenositelná cesta ke zdrojovým CSV
+
+Zdrojová složka se odvozuje od aktuálního umístění sešitu. Power Query tak nepoužívá pevnou cestu k počítači autora. Jde o dynamicky sestavenou absolutní cestu, která umožňuje přesun celé případové studie při zachování rozložení složek.
+
+Sešit obsahuje pomocný list `Nastavení`. V buňce A2 je vzorec:
+
+```excel
+=POLÍČKO("filename";A1)
+```
+
+Buňka A2 má název `CestaSesitu` platný pro celý sešit. Vrací cestu včetně názvu souboru a listu. Sešit musí být uložený lokálně; po změně jeho umístění je potřeba před aktualizací dotazu provést přepočet.
+
+Krok `Zdroj` v řádku vzorců Power Query používá:
+
+```powerquery
+= let
+    CestaSesitu = Excel.CurrentWorkbook(){[Name="CestaSesitu"]}[Content]{0}[Column1],
+    SlozkaExcel = Text.BeforeDelimiter(CestaSesitu, "["),
+    SlozkaStudie = Text.BeforeDelimiter(Text.TrimEnd(SlozkaExcel, "\"), "\", {0, RelativePosition.FromEnd}),
+    SlozkaDat = SlozkaStudie & "\data"
+in
+    Folder.Files(SlozkaDat)
+```
+
+Výraz načte pojmenovanou buňku, oddělí složku sešitu, přejde ze složky `excel` do nadřazené složky případové studie a připojí `data`. Následující kroky pro filtrování a výběr nejnovějšího exportu zůstávají stejné.
+
+Zdrojová CSV ve složce `data` není potřeba upravovat. Je však nutné stáhnout je společně se sešitem a zachovat strukturu `excel/CSOB.xlsx` a vedlejší složku `data`.
+
 
 ![Power Query — načtená historie a datové typy](screenshots/03_power_query.png)
 
@@ -286,22 +315,37 @@ Náhled Power Query ukazuje u všech tří sloupců 100 % platných hodnot a ž�
 
 Přenos akcí může vyžadovat úpravy podle verze Power Automate Desktop a místního prostředí. Soubory TXT nenahrazují úplnou konfiguraci běhového prostředí.
 
-### Nastavení cest a Power Query
+### Stažení z GitHubu a aktualizace ukázkových dat
 
-Screenshot hlavního toku zachycuje pracovní složku exportů `PA_test/CSOB_export`. Adresář `data` v repozitáři obsahuje uložené ukázky. Samotné zkopírování projektu nezmění původní absolutní cesty v toku ani v dotazu.
+Pro prohlédnutí a aktualizaci přiložených CSV není nutné spouštět Power Automate Desktop:
 
-Pro spuštění přímo s adresáři této případové studie:
+1. Stáhnout repozitář jako ZIP a rozbalit jej, případně použít `git clone`. Nestačí otevřít náhled sešitu na GitHubu ani stáhnout pouze Excel.
+2. Zachovat sešit `excel/CSOB.xlsx` a sousední složku `data` s CSV soubory.
+3. Otevřít lokální sešit v desktopovém Excelu; podle potřeby povolit úpravy a důvěryhodné datové připojení.
+4. Stisknout **Ctrl+Alt+F9**, aby se přepočítala buňka `CestaSesitu` podle aktuálního umístění.
+5. Na listu `Nastavení` ověřit, že cesta odpovídá otevřenému souboru.
+6. Použít **Data → Aktualizovat vše**, počkat na dokončení a sešit uložit.
 
-- nastavit cílovou složku přesunu na místní adresář `data`;
+Při zachování struktury není potřeba ručně přepisovat cestu v kroku `Zdroj`. Dotaz načítá místní CSV, nikoli soubory přímo z GitHubu. Novější export lze přidat do `data` se stejným formátem názvu; při další aktualizaci se vybere nejnovější soubor.
+
+Pokud se po přesunu načítá původní umístění, nejprve zkontrolovat výsledek pomocné buňky a přepočet sešitu. Případný požadavek Power Query na přístup nebo úroveň ochrany osobních údajů nastavit podle důvěryhodnosti místních zdrojů.
+
+### Nastavení cest pro nové stahování přes Power Automate
+
+Screenshot hlavního toku zachycuje původní pracovní složku exportů `PA_test/CSOB_export`. Dynamická cesta v Power Query nemění absolutní cesty v desktopových tocích.
+
+Pro nové exporty ukládané přímo do této případové studie je potřeba:
+
+- nastavit cílovou složku přesunu v PAD na místní adresář `data`;
 - nastavit zápis logu na místní soubor `output/logs.txt` v obou dílčích tocích;
-- v sešitu `excel/CSOB.xlsx` upravit zdrojovou složku Power Query na stejný adresář `data`.
+- upravit také cestu ke Staženým souborům pro konkrétní počítač.
 
 ### Ruční běh
 
 1. Ověřit, že ve Stažených souborech nezůstal starý soubor `export_BE6339813873_1.csv`.
 2. Spustit celý tok z `Main`.
 3. Ověřit přejmenovaný CSV soubor v cílové složce a nový záznam v logu.
-4. Otevřít `excel/CSOB.xlsx` a použít **Data → Aktualizovat vše**.
+4. Otevřít `excel/CSOB.xlsx`, po přesunu sešitu provést přepočet **Ctrl+Alt+F9** a použít **Data → Aktualizovat vše**.
 5. Zkontrolovat načtená data a poslední dostupné datum.
 
 ---
@@ -319,7 +363,8 @@ Aktuální řešení má zejména tato omezení:
 - čekání na existenci souboru samo o sobě nezaručuje dokončení zápisu ani správnost jeho obsahu;
 - neověřuje strukturu CSV, počet řádků ani aktuálnost poslední hodnoty před zápisem `OK`;
 - při chybě mohou zůstat pracovní soubory ve Stažených souborech nebo v cílové složce;
-- obsahuje cesty specifické pro lokální počítač;
+- desktopové toky obsahují cesty specifické pro lokální počítač; Power Query odvozuje cestu z umístění sešitu;
+- přenositelné načítání předpokládá místní uložení a zachování rozložení složek `excel` a `data`; po přesunu vyžaduje přepočet pomocné buňky;
 - Power Query vybírá nejnovější export podle názvu, nikoli podle věcné kontroly dat;
 - pokud ve zdrojové složce není žádný odpovídající export, dotaz nemá soubor k načtení.
 
@@ -332,18 +377,3 @@ Historie exportů umožňuje uchovat stažené verze. Nejde o inkrementální na
 Power Automate Desktop zde zajišťuje obsluhu webového rozhraní a práci se staženým souborem. Power Query připravuje tabulková data z nejnovějšího exportu. Každý nástroj tak řeší jinou část postupu.
 
 Případová studie ukazuje práci se selektory, čekáním, přenosem názvu souboru mezi akcemi, datem exportu, archivací a chybovým dílčím tokem. Pro dlouhodobé automatické získávání dat by bylo vhodné porovnat tuto variantu s dostupným přímým datovým rozhraním a nároky na jeho údržbu.
-
----
-
-## Možná další rozšíření
-
-- čekání na konkrétní stav webu místo pevné prodlevy;
-- oddělená pracovní složka pro každý běh a řízený úklid souborů;
-- kontrola dokončení stažení a velikosti souboru;
-- validace povinných sloupců a obsahu CSV před archivací;
-- kontrola posledního dostupného data v exportu;
-- doplnění času, identifikátoru běhu a názvu souboru do logu;
-- parametrizace cest, ISIN a zdrojové adresy;
-- řízené opakování vybraných dočasně neúspěšných kroků;
-- navazující automatická aktualizace Power Query;
-- upozornění při neúspěšném dokončení.

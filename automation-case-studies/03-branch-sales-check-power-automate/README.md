@@ -197,15 +197,3 @@ Zápis používá pevně určené sloupce D a E a předpokládá souvislé datov
 Studie ukazuje propojení čtení a zápisu do Excelu s řízením procesu: cyklem, podmínkou, počítadly a závěrečnou zprávou.
 
 Pro samotný výpočet odchylky a stavu by v běžné praxi byly jednodušší excelové vzorce. Power Query by bylo vhodné při přípravě a spojování dat z více souborů. Power Automate Desktop zde slouží především k procvičení automatizace celého postupu v desktopové aplikaci; větší přínos by měl při navazujících úkonech v dalších aplikacích.
-
----
-
-## Možná další rozšíření
-
-- ověření struktury a kvality vstupních dat před zápisem;
-- zachycení chyb a zápis výsledku běhu do logu;
-- oddělení vstupního a výstupního sešitu;
-- archivace výstupu podle data zpracování;
-- zpracování více souborů nebo více období;
-- doplnění přehledu celkových tržeb a cílů;
-- navazující předání výsledného reportu.
